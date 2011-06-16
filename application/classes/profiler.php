@@ -1,5 +1,22 @@
 <?php defined('SHCP_PATH') OR die('No direct script access.');
+/**
+ * shcproducts
+ *
+ * @author Brian Greenacre and Kyla Klein
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Wed 15 Jun 2011 07:32:09 PM
+ */
 
+// -----------------------------------------------------------------------------
+
+/**
+ * SHCP_Profiler - Provides a simple profiling mechanism for this plugin.
+ *
+ * @package shcproducts
+ * @subpackage  utility
+ * @category    utility
+ */
 class SHCP_Profiler {
 
 	/**

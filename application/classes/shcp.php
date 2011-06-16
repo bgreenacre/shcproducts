@@ -1,12 +1,26 @@
 <?php defined('SHCP_PATH') OR die('No direct script access.');
+/**
+ * shcproducts
+ *
+ * @author Brian Greenacre and Kyla Klein
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Wed 15 Jun 2011 07:32:09 PM
+ */
 
+// -----------------------------------------------------------------------------
+
+/**
+ * SHCP
+ *
+ */
 class SHCP {
 
     public static $delimiter = '.';
     public static $magic_quotes = FALSE;
     public static $global_data = array();
+    public static $profiling = TRUE;
     private static $_init = FALSE;
-    public static $profiling = FALSE;
 
     /**
      * init
@@ -14,7 +28,7 @@ class SHCP {
      * @static
      * @return void
      */
-    public static function init(array $params = NULL)
+    public static function init(array $params = array())
     {
         if (self::$_init !== FALSE)
         {
@@ -29,13 +43,9 @@ class SHCP {
 		$_POST   = self::sanitize($_POST);
 		$_COOKIE = self::sanitize($_COOKIE);
 
-		if ($profiling = (bool) self::get($params, 'profiling'))
+		if (isset($params['profiling']) === TRUE)
         {
-            self::$profiling = $profiling;
-		}
-		else
-		{
-		    self::$profiling = FALSE;
+            self::$profiling = (bool) $params['profiling'];
 		}
 
 		if (self::$profiling)

@@ -12,7 +12,7 @@ Plugin Name: SHC Products
 Plugin URI: http://wordpress.org/#
 Description: Loads a list of products from Sears.com API
 Author: Brian Greenacre
-Version: 1.1
+Version: 0.1
 */
 
 define('SHCP_PATH', WP_PLUGIN_DIR.'/shcproducts');
