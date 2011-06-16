@@ -11,9 +11,16 @@
 // -----------------------------------------------------------------------------
 
 /**
- * SHCP_Library_Api_Search
+ * SHCP_Library_Api_Cart
  *
  */
 class SHCP_Library_Api_Cart extends SHCP_Library_Api {
+
+    public function __construct($group = NULL)
+    {
+        parent::__construct($group);
+
+        $this->content_type = 'xml';
+    }
 }
 

@@ -11,7 +11,7 @@
 // -----------------------------------------------------------------------------
 
 /**
- * SHCP_Library_Api_Search
+ * SHCP_Library_Api_Product
  *
  */
 class SHCP_Library_Api_Product extends SHCP_Library_Api {

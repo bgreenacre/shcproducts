@@ -170,7 +170,16 @@ class SHCP_Library_Api implements Countable, Iterator, SeekableIterator, ArrayAc
 			throw new Exception('Error fetching remote ' . $this->url . ' [ status ' . $code . ' ] ' . $error);
 		}
 
-        $this->_object = json_decode($body);
+        if ($this->content_type == 'json')
+        {
+            $this->_object = json_decode($body);
+        }
+        elseif ($this->content_type == 'xml')
+        {
+            $this->_object = simplexml_load_string($body);
+        }
+
+        unset($body);
         $this->_request_made = TRUE;
     }
 
