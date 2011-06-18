@@ -15,5 +15,11 @@
  *
  */
 class SHCP_Library_Api_Product extends SHCP_Library_Api {
+
+    public function __construct($group = NULL, array $data = NULL)
+    {
+        $this->_id = (int) SHCP::get($data, 'id')
+    }
+
 }
 

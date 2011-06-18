@@ -43,7 +43,7 @@ class SHCP_Library_Api implements Countable, Iterator, SeekableIterator, ArrayAc
 	 */
 	protected $_total_rows;
 
-    public function __construct($group = NULL)
+    public function __construct($group = NULL, array $data = NULL)
     {
         $this->_initialize();
 
