@@ -71,7 +71,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             $group = 'default';
         }
 
-        $config = (array) Kohana::config('api.' . $group);
+        $config = (array) SHCP::config('api.' . $group);
 
         foreach ($config as $property => $value)
         {
@@ -401,4 +401,3 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	}
 
 }
-

@@ -39,7 +39,8 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
 
     public function keyword($q)
     {
-        $this->method('productsearch')
+        $this
+            ->method('productsearch')
             ->param('searchType', 'keyword')
             ->param('keyword', $q);
 
@@ -90,4 +91,3 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
     }
 
 }
-

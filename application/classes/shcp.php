@@ -43,10 +43,7 @@ class SHCP {
 		$_POST   = self::sanitize($_POST);
 		$_COOKIE = self::sanitize($_COOKIE);
 
-		if (isset($params['profiling']) === TRUE)
-        {
-            self::$profiling = (bool) $params['profiling'];
-		}
+        self::$profiling = (bool) self::get($params, 'profiling', TRUE);
 
 		if (self::$profiling)
         {
@@ -407,4 +404,3 @@ class SHCP {
 	}
 
 }
-
