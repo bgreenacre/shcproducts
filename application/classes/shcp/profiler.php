@@ -114,4 +114,3 @@ class SHCP_Profiler {
 		return $groups;
 	}
 }
-

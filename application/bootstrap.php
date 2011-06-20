@@ -23,7 +23,7 @@ if ( ! function_exists('SHCP_autoload'))
 
         try
         {
-            $file = str_replace(array('shcp_', '_'), array('', '/'), strtolower($class));
+            $file = str_replace('_', '/', strtolower($class));
             $fullpath = SHCP_CLASS . '/' . $file . '.php';
 
             if (is_file($fullpath))
@@ -45,4 +45,3 @@ if ( ! function_exists('SHCP_autoload'))
 }
 
 SHCP::init();
-
