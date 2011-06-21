@@ -26,6 +26,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         CURLOPT_HTTPHEADER      => array('X-SHCMMR-Client-Id: app_ui'),
     );
     protected $store;
+    protected $_group;
     protected $_params = array();
     protected $_url;
     protected $_method;
@@ -68,10 +69,14 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
         if ($group === NULL)
         {
-            $group = 'default';
+            $this->_group = 'default';
+        }
+        else
+        {
+            $this->_group = $group;
         }
 
-        $config = (array) SHCP::config('api.' . $group);
+        $config = (array) SHCP::config('api.' . $this->_group);
 
         foreach ($config as $property => $value)
         {
@@ -93,17 +98,13 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         }
     }
 
-    public function __get($key)
-    {
-    }
-
 	protected function _initialize()
 	{
 		$this->_object = NULL;
 		$this->_data = array();
 		$this->_position = 0;
 		$this->_total_rows = 0;
-		$this->_params = NULL;
+		$this->_params = array();
 		$this->_request_made = FALSE;
 		$this->_parent = NULL;
 		$this->_url = NULL;
@@ -138,7 +139,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 		return $this;
 	}
 
-    public function param($name, $value = NULL)
+    public function param($name, $value = NULL, $append = FALSE)
     {
         if (is_array($name))
         {
@@ -151,7 +152,22 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             return SHCP::get($this->_params, $name);
         }
 
-        $this->_params[$name] = $value;
+        if ($append !== FALSE)
+        {
+            if ($this->_params[$name])
+            {
+                $this->_params[$name] .= ',' . $value;
+            }
+            else
+            {
+                $this->_params[$name] = $value;
+            }
+        }
+        else
+        {
+            $this->_params[$name] = $value;
+        }
+
         return $this;
     }
 
@@ -224,6 +240,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
             if (isset($fault[0]) === TRUE)
             {
+                var_dump($this);
                 throw new Exception('Invalid API request made.');
             }
             elseif (isset($fault['faultstring']) === TRUE)
@@ -344,7 +361,6 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
 	public function seek($offset)
 	{
-	    var_dump($offset);
 		if ($this->offsetExists($offset))
 		{
 			$this->_position = $offset;

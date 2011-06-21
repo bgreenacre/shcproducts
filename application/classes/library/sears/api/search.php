@@ -20,13 +20,14 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
     {
         if ($key === 'product')
         {
-            return Library_Sears_Api::factory('product', current($this));
+            $product = $this->current();
+            return Library_Sears_Api::factory('product', $this->_group, $product)->get()->load();
         }
 
         return parent::__get($key);
     }
 
-    public function _load()
+    protected function _load()
     {
         parent::_load();
 
@@ -39,8 +40,7 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
 
     public function keyword($q)
     {
-        $this
-            ->method('productsearch')
+        $this->method('productsearch')
             ->param('searchType', 'keyword')
             ->param('keyword', $q);
 
