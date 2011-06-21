@@ -13,24 +13,112 @@
 /**
  * Library_Sears_Api
  *
+ * @package     shcproducts
+ * @subpackage  API
+ * @category    Library
  */
 class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayAccess, Serializable {
 
+    /**
+     * Contains the absolute URL to the API.
+     *
+     * @var string
+     */
     protected $endpoint;
+
+    /**
+     * API Key.
+     *
+     * @var string
+     */
     protected $apikey;
+
+    /**
+     * Auth ID.
+     *
+     * @var string
+     */
     protected $authid;
+
+    /**
+     * APP ID
+     *
+     * @var string
+     */
     protected $appid;
+
+    /**
+     * Flag to state if the request is a success.
+     *
+     * @var bool
+     */
+    protected $success = FALSE;
+
+    /**
+     * Content type to get from API.
+     *
+     * @var string json OR xml
+     */
     protected $content_type = 'json';
+
+    /**
+     * Array of CURL options to set for the curl request.
+     *
+     * @var array
+     */
     protected $curl_options = array(
         CURLOPT_RETURNTRANSFER  => 1,
         CURLOPT_HTTPHEADER      => array('X-SHCMMR-Client-Id: app_ui'),
     );
+
+    /**
+     * Store name. Can be Sears, Kmart, MyGofer, Craftsman.
+     *
+     * @var string
+     */
     protected $store;
+
+    /**
+     * Config group name to use.
+     *
+     * @var string
+     */
     protected $_group;
+
+    /**
+     * Parameters to pass in the URL.
+     *
+     * @var array
+     */
     protected $_params = array();
+
+    /**
+     * Complete url the curl request will use.
+     *
+     * @var string
+     */
     protected $_url;
+
+    /**
+     * API method to call.
+     *
+     * @var string
+     */
     protected $_method;
+
+    /**
+     * This contains an object to provide context for the magic variables
+     * made available in each extend class.
+     *
+     * @var object
+     */
     protected $_parent;
+
+    /**
+     * Contents from the request made. Used as the iterator.
+     *
+     * @var array
+     */
     protected $_data;
 
 	/**
@@ -49,7 +137,16 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	 */
 	protected $_total_rows;
 
-    public static function factory($class, $group = NULL, & $parent = NULL)
+    /**
+     * factory - Instantiate objects that are extended from this class.
+     *
+     * @static
+     * @param string $class     Name of Sears API class.
+     * @param string $group = NULL  Config group to use.
+     * @param mixed $parent = NULL  Any context the object needs.
+     * @return object instanceof Library_Sears_Api
+     */
+    public static function factory($class, $group = NULL, $parent = NULL)
     {
         $class = 'Library_Sears_Api_' . ucfirst($class);
 
@@ -63,7 +160,14 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         }
     }
 
-    public function __construct($group = NULL, & $parent = NULL)
+    /**
+     * __construct - Set config properties.
+     *
+     * @param string $group = NULL  Config group to use.
+     * @param mixed $parent = NULL  Any context the object needs.
+     * @return void
+     */
+    public function __construct($group = NULL, $parent = NULL)
     {
         $this->_initialize();
 
@@ -98,6 +202,11 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         }
     }
 
+    /**
+	 * _initialize - Initialize propertys of this class.
+	 *
+	 * @return void
+	 */
 	protected function _initialize()
 	{
 		$this->_object = NULL;
@@ -106,11 +215,23 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 		$this->_total_rows = 0;
 		$this->_params = array();
 		$this->_request_made = FALSE;
-		$this->_parent = NULL;
 		$this->_url = NULL;
 		$this->_method = NULL;
+		$this->success = FALSE;
 	}
 
+    /**
+     * method - The API method to call.
+     *
+     *  // As a setter.
+     *  $this->method('AddtoCart');
+     *
+     *  // As a getter.
+     *  $this->method();
+     *
+     * @param string $method = NULL
+     * @return object $this
+     */
     public function method($method = NULL)
     {
         if ($method === NULL)
@@ -118,11 +239,20 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             return $this->_method;
         }
 
+        // Force a initialize so each method is standalone.
+        $this->_initialize();
+
         $this->_method = $method;
 
         return $this;
     }
 
+    /**
+	 * reload - Reload the response for a specific api call.
+	 *
+	 * @param bool $refresh = FALSE
+	 * @return object $this
+	 */
 	public function reload($refresh = FALSE)
 	{
 		if ($refresh !== FALSE OR ( ! $this->_result AND ! $this->_object))
@@ -130,15 +260,39 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 			$this->_request();
 		}
 
-		return $this->_load();
+		$this->_load();
+		return $this;
 	}
 
+    /**
+	 * load - Public method to load up a API call.
+	 *
+	 * @return object $this
+	 */
 	public function load()
 	{
 		$this->_load();
 		return $this;
 	}
 
+    /**
+	 * success - Getter to check if the API call was successful.
+	 *
+	 * @return bool
+	 */
+	public function success()
+	{
+	    return $this->success;
+	}
+
+    /**
+     * param
+     *
+     * @param string $name
+     * @param string $value = NULL
+     * @param bool $append = FALSE
+     * @return mixed
+     */
     public function param($name, $value = NULL, $append = FALSE)
     {
         if (is_array($name))
@@ -171,6 +325,12 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         return $this;
     }
 
+    /**
+     * build_url - Build a complete URL to use for the Curl request to the
+     * API.
+     *
+     * @return string
+     */
     protected function build_url()
     {
         $url = rtrim($this->endpoint, '/') . '/' . $this->method();
@@ -191,22 +351,32 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         return $url;
     }
 
+    /**
+     * _request - Execute a curl request and parse the result into the
+     * $this->_object for further processing by the _load method.
+     *
+     * @return void
+     */
     protected function _request()
     {
+        // Require the endpoint property.
         if ($this->endpoint === NULL)
         {
             throw new Exception('No endpoint provided for Sears API request');
         }
 
+        // Set global params for all requests to Sears API.
         $this
             ->param('store', $this->store)
             ->param('contentType', $this->content_type)
-            ->param('authid', $this->authid)
-            ->param('appid', $this->appid)
-            ->param('apikey', $this->apikey);
+            ->param('apikey', $this->apikey)
+            ->param('authID', $this->authid)
+            ->param('appID', $this->appid);
 
+        // Get the complete url.
         $this->_url = $this->build_url();
 
+        // Init the curl resource.
         $ch = curl_init($this->_url);
 
 		// Set connection options
@@ -234,13 +404,14 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 			throw new Exception('Error fetching remote ' . $this->url . ' [ status ' . $code . ' ] ' . $error);
 		}
 
+        // Check for the posibility of a fault xml repsponse and
+        // throw as an error.
 		if (strpos($body, '<fault>') !== FALSE)
         {
             $fault = simplexml_load_string($body);
 
             if (isset($fault[0]) === TRUE)
             {
-                var_dump($this);
                 throw new Exception('Invalid API request made.');
             }
             elseif (isset($fault['faultstring']) === TRUE)
@@ -251,19 +422,34 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             return FALSE;
         }
 
+        // parse out the body.
         if ($this->content_type == 'json')
         {
             $this->_object = json_decode($body);
         }
         elseif ($this->content_type == 'xml')
         {
+            /**
+             * This, this right here! This is completely ridiculous that this
+             * regex has to be performed on the response xml to strip out, in
+             * some cases, whitespace that is up to 100 characters in length.
+             */
+            $body = preg_replace('~\s*(<([^>]*)>[^<\s]*</\2>|<[^>]*>)\s*~', '$1', $body);
             $this->_object = simplexml_load_string($body);
         }
 
+        // Cleanup
         unset($body);
+
+        // Make sure the flag to state the request has been made is set.
         $this->_request_made = TRUE;
     }
 
+    /**
+	 * _load
+	 *
+	 * @return bool
+	 */
 	protected function _load()
 	{
 		if ($this->_request_made !== TRUE)
@@ -295,11 +481,22 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 		return TRUE;
 	}
 
+    /**
+	 * sort
+	 *
+	 * @param unknown $sort
+	 * @return void
+	 */
 	public function sort($sort)
 	{
 	    $this->param('sortBy', $sort);
 	}
 
+    /**
+	 * serialize
+	 *
+	 * @return void
+	 */
 	public function serialize()
 	{
 		if ( ! $this->_request_made)
@@ -315,6 +512,12 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 		return serialize($data);
 	}
 
+    /**
+	 * unserialize
+	 *
+	 * @param array $data
+	 * @return void
+	 */
 	public function unserialize($data)
 	{
 		$this->_initialize();

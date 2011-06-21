@@ -18,11 +18,12 @@ class Library_Sears_Api_Product extends Library_Sears_Api {
 
     protected function _load()
     {
-        parent::_load();
+        if ( ! parent::_load())
+            return;
 
-        if ($this->_object->productdetail->softhardproductdetails)
+        if ($this->_object->productdetail)
         {
-            $this->_data = $this->_object->productdetail->softhardproductdetails[1];
+            $this->_data = array($this->_object->productdetail);
             $this->_total_rows = 1;
         }
     }
@@ -77,6 +78,8 @@ class Library_Sears_Api_Product extends Library_Sears_Api {
 
     public function add_to_cart()
     {
+        $this->load();
+
         return Library_Sears_Api_Cart::factory('cart', $this->_group, $this->current())
             ->add()
             ->load();

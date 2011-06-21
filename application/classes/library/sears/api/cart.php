@@ -24,9 +24,9 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
 
     protected static $_session;
 
-    public function __construct($group = NULL)
+    public function __construct($group = NULL, $parent = NULL)
     {
-        parent::__construct($group);
+        parent::__construct($group, $parent);
 
         $this->content_type = 'xml';
     }
@@ -38,6 +38,20 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         self::$_session = NULL;
     }
 
+    protected function _load()
+    {
+        parent::_load();
+
+        if (isset($this->_object->StatusData) === TRUE)
+        {
+            $this->success = ($this->_object->StatusData == 0) ? TRUE : FALSE;
+        }
+        else
+        {
+            $this->success = FALSE;
+        }
+    }
+
     public function session($key = NULL)
     {
         if ($key === NULL)
@@ -47,12 +61,26 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
 
         self::$_session = $key;
 
-        return TRUE;
+        return $this;
+    }
+
+    public function cart()
+    {
+        $this->load();
+
+        if ($this->success)
+        {
+            return $this->_object->Shoppingcart;
+        }
+
+        return FALSE;
     }
 
     public function view()
     {
-        return $this->method('ViewCart');
+        $this->method('ViewCart');
+
+        return $this;
     }
 
     public function add($catalog_id = NULL, $catentry_id = NULL, $quantity = 1)
@@ -61,8 +89,8 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         {
             if ($this->_parent)
             {
-                $this->products_to_add['catalogId'][] = $this->_parent->catalogId;
-                $this->products_to_add['catentry_id'][] = $this->_parent->catentryId;
+                $this->products_to_add['catalogId'][] = $this->_parent->catalogid;
+                $this->products_to_add['catentry_id'][] = $this->_parent->catentryid;
                 $this->products_to_add['quantity'][] = $quantity;
             }
             else
@@ -77,14 +105,14 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
             $this->products_to_add['quantity'][] = $quantity;
         }
 
-        $this->method('AddToCart');
+        $this->method('AddtoCart');
 
         return $this;
     }
 
     public function clear()
     {
-        $this->method('EmptyCart');
+        $this->method('EmptyCart')->load();
 
         return $this;
     }
@@ -97,13 +125,13 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         }
         else
         {
-            $this->param('loginId', 'guest');
+            $this->param('loginId', 'Guest');
         }
     }
 
     protected function _request()
     {
-        if ($this->method() == 'AddToCart')
+        if ($this->method() == 'AddtoCart')
         {
             if ($catalog_id = implode(',', $this->products_to_add['catalogId']))
             {
@@ -114,6 +142,8 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
                 ->param('catentryId', implode(',', $this->products_to_add['catentry_id']))
                 ->param('quantity', implode(',', $this->products_to_add['quantity']));
         }
+
+        $this->_add_session();
 
         return parent::_request();
     }
