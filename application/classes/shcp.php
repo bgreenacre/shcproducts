@@ -20,6 +20,8 @@ class SHCP {
     public static $magic_quotes = FALSE;
     public static $global_data = array();
     public static $profiling = TRUE;
+    public static $cache_dir = SHCP_CACHE;
+    public static $lifespan = 2000;
     private static $_init = FALSE;
 
     /**
@@ -43,7 +45,10 @@ class SHCP {
 		$_POST   = self::sanitize($_POST);
 		$_COOKIE = self::sanitize($_COOKIE);
 
-        self::$profiling = (bool) self::get($params, 'profiling', TRUE);
+		if (isset($params['profiling']) === TRUE)
+        {
+            self::$profiling = (bool) $params['profiling'];
+		}
 
 		if (self::$profiling)
         {
@@ -142,6 +147,103 @@ class SHCP {
             echo ob_get_clean();
         }
     }
+
+	/**
+	 * Provides simple file-based caching for strings and arrays:
+	 *
+	 *     // Set the "foo" cache
+	 *     SHCP::cache('foo', 'hello, world');
+	 *
+	 *     // Get the "foo" cache
+	 *     $foo = SHCP::cache('foo');
+	 *
+	 * All caches are stored as PHP code, generated with [var_export][ref-var].
+	 * Caching objects may not work as expected. Storing references or an
+	 * object or array that has recursion will cause an E_FATAL.
+	 *
+	 * The cache directory and default cache lifetime is set by [SHCP::init]
+	 *
+	 * [ref-var]: http://php.net/var_export
+	 *
+	 * @throws  Exception
+	 * @param   string   name of the cache
+	 * @param   mixed    data to cache
+	 * @param   integer  number of seconds the cache is valid for
+	 * @return  mixed    for getting
+	 * @return  boolean  for setting
+	 */
+	public static function cache($name, $data = NULL, $lifetime = NULL)
+	{
+		// Cache file is a hash of the name
+		$file = sha1($name).'.txt';
+
+		// Cache directories are split by keys to prevent filesystem overload
+		$dir = self::$cache_dir.DIRECTORY_SEPARATOR.$file[0].$file[1].DIRECTORY_SEPARATOR;
+
+		if ($lifetime === NULL)
+		{
+			// Use the default lifetime
+			$lifetime = self::$cache_life;
+		}
+
+		if ($data === NULL)
+		{
+			if (is_file($dir.$file))
+			{
+				if ((time() - filemtime($dir.$file)) < $lifetime)
+				{
+					// Return the cache
+					try
+					{
+						return unserialize(file_get_contents($dir.$file));
+					}
+					catch (Exception $e)
+					{
+						// Cache is corrupt, let return happen normally.
+					}
+				}
+				else
+				{
+					try
+					{
+						// Cache has expired
+						unlink($dir.$file);
+					}
+					catch (Exception $e)
+					{
+						// Cache has mostly likely already been deleted,
+						// let return happen normally.
+					}
+				}
+			}
+
+			// Cache not found
+			return NULL;
+		}
+
+		if ( ! is_dir($dir))
+		{
+			// Create the cache directory
+			mkdir($dir, 0777, TRUE);
+
+			// Set permissions (must be manually set to fix umask issues)
+			chmod($dir, 0777);
+		}
+
+		// Force the data to be a string
+		$data = serialize($data);
+
+		try
+		{
+			// Write the cache
+			return (bool) file_put_contents($dir.$file, $data, LOCK_EX);
+		}
+		catch (Exception $e)
+		{
+			// Failed to write cache
+			return FALSE;
+		}
+	}
 
     /**
      * set_global - Set a global variable to be used in the views.
