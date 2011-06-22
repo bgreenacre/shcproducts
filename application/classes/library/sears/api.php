@@ -20,6 +20,12 @@
 class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayAccess, Serializable {
 
     /**
+     * @static
+     * @var object
+     */
+    protected static $user;
+
+    /**
      * Contains the absolute URL to the API.
      *
      * @var string
@@ -77,6 +83,13 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      * @var string
      */
     protected $store;
+
+    /**
+     * Cache enabled or disabled. Default is TRUE.
+     *
+     * @var bool
+     */
+    protected $cache;
 
     /**
      * Config group name to use.
@@ -218,6 +231,22 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 		$this->_url = NULL;
 		$this->_method = NULL;
 		$this->success = FALSE;
+	}
+
+    /**
+	 * user - Convience wrapper to get the logged in user.
+	 * This is dependant on the searsSso plugin.
+	 *
+	 * @return object|bool  FALSE if no user exists in session else user object.
+	 */
+	public function user()
+	{
+	    if (isset($_SESSION['user']) === TRUE AND $_SESSION['user'] instanceof User)
+        {
+            return $_SESSION['user'];
+        }
+
+        return FALSE;
 	}
 
     /**
@@ -387,6 +416,12 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         // Get the complete url.
         $this->_url = $this->build_url();
 
+        if ($this->cache AND $this->_object = SHCP::cache($this->_url))
+        {
+            $this->_request_made = TRUE;
+            return TRUE;
+        }
+
         // Init the curl resource.
         $ch = curl_init($this->_url);
 
@@ -454,6 +489,13 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
         // Make sure the flag to state the request has been made is set.
         $this->_request_made = TRUE;
+
+        if ($this->cache)
+        {
+            SHCP::cache($this->_url, $this->_object);
+        }
+
+        return TRUE;
     }
 
     /**
@@ -474,10 +516,10 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
 		if ($this->_object)
 		{
-			if (isset($this->_object->error) === TRUE)
-			{
-				throw new Exception($this->_object->error->message);
-			}
+		    if (isset($this->_object->statusdata) AND $this->_object->statusdata->responsecode > 0)
+            {
+                throw new Exception('Error in API call ' . $this->method() . ' [code ' . $this->_object->statusdata->responsecode . '] ' . $this->_object->statusdata->respmessage);
+            }
 		}
 		else
 		{

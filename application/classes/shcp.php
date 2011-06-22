@@ -21,7 +21,7 @@ class SHCP {
     public static $global_data = array();
     public static $profiling = TRUE;
     public static $cache_dir = SHCP_CACHE;
-    public static $lifespan = 2000;
+    public static $cache_life = 2000;
     private static $_init = FALSE;
 
     /**

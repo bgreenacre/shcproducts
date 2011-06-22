@@ -50,16 +50,21 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         {
             $this->success = FALSE;
         }
+
+        if ($this->success AND $this->method() == 'AddtoCart' AND ! $this->session())
+        {
+            $this->session($this->_object->clientSessionkey);
+        }
     }
 
     public function session($key = NULL)
     {
         if ($key === NULL)
         {
-            return self::$_session;
+            return SHCP::get($_SESSION, 'cartSessionkey');
         }
 
-        self::$_session = $key;
+        $_SESSION['cartSessionkey'] = $key;
 
         return $this;
     }
@@ -122,6 +127,10 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         if ($key = $this->session())
         {
             $this->param('sessionKey', $key);
+        }
+        elseif ($user = $this->user())
+        {
+            $this->param('loginId', $user->id);
         }
         else
         {
