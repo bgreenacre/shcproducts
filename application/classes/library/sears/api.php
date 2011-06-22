@@ -286,7 +286,18 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	}
 
     /**
-     * param
+     * param - Add a parameter which be sent to the API in the form of $_GET
+     * variable.
+     *
+     *  // Single name and value. This method can be chained.
+     *  $this->param('store', 'Sears')->param('catalogId', 12605);
+     *
+     *  // Can take an Array of parameters.
+     *  $this->param(array('store' => 'Sears', 'catalogId' => '12605'));
+     *
+     *  // It can also append to an existing parameter and separates
+     *  // the values witha comma ",".
+     *  $this->param('partNumber', '3948302P', TRUE);
      *
      * @param string $name
      * @param string $value = NULL
@@ -308,7 +319,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
         if ($append !== FALSE)
         {
-            if ($this->_params[$name])
+            if (isset($this->_params[$name]) === TRUE)
             {
                 $this->_params[$name] .= ',' . $value;
             }
@@ -446,7 +457,11 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     }
 
     /**
-	 * _load
+	 * _load - Load the response from the API call.
+	 *
+	 * * Request the API call if needed.
+	 * * Check the $this->_object and look for any errors.
+	 * * Each extended should overload this method to do additional validation.
 	 *
 	 * @return bool
 	 */
