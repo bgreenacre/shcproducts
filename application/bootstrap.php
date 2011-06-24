@@ -16,10 +16,6 @@ if ( ! function_exists('SHCP_autoload'))
 {
     function SHCP_autoload($class)
     {
-        if (strpos($class, 'SHCP') === FALSE)
-        {
-            return FALSE;
-        }
 
         try
         {
@@ -40,7 +36,7 @@ if ( ! function_exists('SHCP_autoload'))
             die;
         }
     }
-
+    
     spl_autoload_register('SHCP_autoload');
 }
 
