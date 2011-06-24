@@ -23,6 +23,24 @@ class SHCP {
     public static $cache_dir = SHCP_CACHE;
     public static $lifespan = 2000;
     private static $_init = FALSE;
+    
+    /**
+  	 * this is a prefix used for class names, options and anything else
+  	 * that requires some sort of namespace.
+  	 *
+  	 * @access	private
+  	 * @var		string
+  	 */
+  	private static $_prefix = 'SHCP_';
+  	
+  	/**
+  	 * cache any data gathered from language files.
+  	 *
+  	 * @access	private
+  	 * @var		array
+  	 */
+  	private static $_lang = array();
+
 
     /**
      * init
@@ -83,6 +101,8 @@ class SHCP {
         {
             foreach ($controllers as $ctl)
             {
+                $ctl = "Controller_" . ucfirst($ctl);
+                
                 // Merely instantiate the controller.
                 // Any action hooks and filters should be set in the
                 // Controllers constructor.
@@ -112,8 +132,10 @@ class SHCP {
         $view = SHCP_VIEW . '/' . $view . '.php';
 
 		// Import the view variables to local namespace
-		extract($data, EXTR_SKIP);
-
+		if($data !== NULL) 
+		{
+		  extract($data, EXTR_SKIP);
+    }
         // Extract the global data array.
 		if (self::$global_data)
         {
@@ -288,19 +310,37 @@ class SHCP {
         return (isset($data[$index]) === TRUE) ? $data[$index] : $default;
     }
 
+  	/**
+  	 * prefix - Prefix a given string with a given string.
+  	 *
+  	 * @access	public
+  	 * @param	string	String to be prefixed.
+  	 * @param	string	Prefix string.
+  	 * @return	string
+  	 */
+  	public static function prefix($str = NULL, $prefix = NULL)
+  	{
+  		if ($prefix === NULL)
+  		{
+  			$prefix = self::$_prefix;
+  		}
+
+  		return $prefix.$str;
+  	}
+
 	/**
-	 * Gets a value from an Shcpay using a dot separated path.
+	 * Gets a value from an array using a dot separated path.
 	 *
-	 *     // Get the value of $Shcpay['foo']['bar']
-	 *     $value = Shcp::path($Shcpay, 'foo.bar');
+	 *     // Get the value of $array['foo']['bar']
+	 *     $value = Shcp::path($array, 'foo.bar');
 	 *
-	 * Using a wildcard "*" will search intermediate Shcpays and return an Shcpay.
+	 * Using a wildcard "*" will search intermediate array and return an array.
 	 *
 	 *     // Get the values of "color" in theme
-	 *     $colors = Shcp::path($Shcpay, 'theme.*.color');
+	 *     $colors = Shcp::path($array, 'theme.*.color');
 	 *
 	 *     // Using an array of keys
-	 *     $colors = Shcp::path($Shcpay, Shcpay('theme', '*', 'color'));
+	 *     $colors = Shcp::path($array, array('theme', '*', 'color'));
 	 *
 	 * @param   array   array to search
 	 * @param   mixed   key path string (delimiter separated) or array of keys
@@ -312,7 +352,7 @@ class SHCP {
 	{
 		if ( ! is_array($array))
 		{
-			// This is not an Shcpay!
+			// This is not an array!
 			return $default;
 		}
 
@@ -411,6 +451,25 @@ class SHCP {
 		// Unable to find the value requested
 		return $default;
 	}
+	
+	/**
+	 * get_option - This a wrapper method for the word press function get_option.
+	 * Just makes it easier getting the options specific to this plugin.
+	 *
+	 * @access	public
+	 * @param	string	The path of the option you want.
+	 * @param	mixed	Default value to return if option path is not found.
+	 * @return	mixed
+	 */
+	public static function get_option($option = NULL, $default = NULL)
+	{
+		if ($option === NULL)
+		{
+			return $default;
+		}
+		
+		return self::path(get_option(self::prefix('options')), $option, $default);
+	}
 
 	/**
 	 * Loads a file within a totally empty scope and returns the output:
@@ -459,13 +518,31 @@ class SHCP {
 		}
 
 		if (isset($path))
-		{
+		{		  
 			return self::path($config[$group], $path, NULL, '.');
 		}
 		else
 		{
 			return $config[$group];
 		}
+	}
+
+	/**
+	 * lang - Fetch a language line.
+	 *
+	 * @access	public
+	 * @param	string	The name of the message file to use.
+	 * @param	string	The path to the message line in the array.
+	 * @return	string
+	 */
+	public static function lang($file, $path = NULL)
+	{
+		if ( ! array_key_exists($file, self::$_lang))
+		{
+			self::$_lang[$file] = self::load(SHCP_LANG.'/'.$file.'.php');
+		}
+
+		return self::path(self::$_lang[$file], $path);
 	}
 
 	/**
