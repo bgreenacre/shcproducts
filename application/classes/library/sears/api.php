@@ -76,7 +76,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      */
     protected $curl_options = array(
         CURLOPT_RETURNTRANSFER  => 1,
-        CURLOPT_HTTPHEADER      => array('X-SHCMMR-Client-Id: app_ui'),
+        //CURLOPT_HTTPHEADER      => array('X-SHCMMR-Client-Id: app_ui'),
     );
 
     /**
