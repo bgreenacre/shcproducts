@@ -19,6 +19,8 @@
  */
 class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayAccess, Serializable {
 
+    protected static $_session;
+
     /**
      * @static
      * @var object
@@ -90,6 +92,15 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      * @var bool
      */
     protected $cache;
+
+    /**
+     * Names of Sears API classes that will be called and merged into the top
+     * call repsonse. This is to maintain some consistency where the API
+     * _clearly_ falls apart.
+     *
+     * @var array
+     */
+    protected $_with;
 
     /**
      * Config group name to use.
@@ -173,6 +184,16 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         }
     }
 
+    public static function session($key = NULL)
+    {
+        if ($key === NULL)
+        {
+            return Library_Sears_Api::$_session;
+        }
+
+        Library_Sears_Api::$_session = $key;
+    }
+
     /**
      * __construct - Set config properties.
      *
@@ -233,20 +254,9 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 		$this->success = FALSE;
 	}
 
-    /**
-	 * user - Convience wrapper to get the logged in user.
-	 * This is dependant on the searsSso plugin.
-	 *
-	 * @return object|bool  FALSE if no user exists in session else user object.
-	 */
-	public function user()
+	public function with($with)
 	{
-	    if (isset($_SESSION['user']) === TRUE AND $_SESSION['user'] instanceof User)
-        {
-            return $_SESSION['user'];
-        }
-
-        return FALSE;
+	    $this->_with[] = $with;
 	}
 
     /**
@@ -289,7 +299,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 			$this->_request();
 		}
 
-		$this->_load();
+		$this->load();
 		return $this;
 	}
 
@@ -301,6 +311,15 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	public function load()
 	{
 		$this->_load();
+
+		if ($this->success() AND $this->_with)
+        {
+            foreach ($this->_with as $with)
+            {
+                $with = Library_Sears_Api::factory($with, $this->_group);
+            }
+        }
+
 		return $this;
 	}
 
@@ -312,6 +331,18 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	public function success()
 	{
 	    return $this->success;
+	}
+
+	public function cache($cache = NULL)
+	{
+	    if ($cache === NULL)
+        {
+            return $this->cache;
+        }
+
+        $this->cache = (bool) $cache;
+
+        return $this;
 	}
 
     /**
@@ -365,6 +396,18 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         return $this;
     }
 
+    public function url($method = NULL, array $params = NULL)
+    {
+        if ( ! $this->_url OR $method !== NULL)
+        {
+            $this->_method = $method;
+            $this->param($params);
+            return $this->build_url();
+        }
+
+        return $this->_url;
+    }
+
     /**
      * build_url - Build a complete URL to use for the Curl request to the
      * API.
@@ -416,9 +459,29 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         // Get the complete url.
         $this->_url = $this->build_url();
 
-        if ($this->cache AND $this->_object = SHCP::cache($this->_url))
+        if (SHCP::$profiling)
+        {
+            $request_token = Profiler::start('Request', $this->_url);
+        }
+
+        if ($this->cache AND $body = SHCP::cache($this->_url))
         {
             $this->_request_made = TRUE;
+
+            // parse out the body.
+            if ($this->content_type == 'json')
+            {
+                $this->_object = json_decode($body);
+            }
+            elseif ($this->content_type == 'xml')
+            {
+                // Load the xml into a simplexml object
+                $this->_object = simplexml_load_string($body);
+            }
+
+            // Cleanup
+            unset($body);
+
             return TRUE;
         }
 
@@ -481,19 +544,26 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
              * some cases, whitespace that is up to 100 characters in length.
              */
             $body = preg_replace('~\s*(<([^>]*)>[^<\s]*</\2>|<[^>]*>)\s*~', '$1', $body);
+
+            // Load the xml into a simplexml object
             $this->_object = simplexml_load_string($body);
         }
-
-        // Cleanup
-        unset($body);
 
         // Make sure the flag to state the request has been made is set.
         $this->_request_made = TRUE;
 
         if ($this->cache)
         {
-            SHCP::cache($this->_url, $this->_object);
+            SHCP::cache($this->_url, $body);
         }
+
+        if (isset($request_token))
+        {
+            Profiler::stop($request_token);
+        }
+
+        // Cleanup
+        unset($body);
 
         return TRUE;
     }
@@ -516,32 +586,33 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
 		if ($this->_object)
 		{
-		    if (isset($this->_object->statusdata) AND $this->_object->statusdata->responsecode > 0)
+		    if (isset($this->_object->StatusData))
             {
-                throw new Exception('Error in API call ' . $this->method() . ' [code ' . $this->_object->statusdata->responsecode . '] ' . $this->_object->statusdata->respmessage);
+                if ($this->_object->StatusData->ResponseCode > 0)
+                {
+                    $this->success = FALSE;
+                    throw new Exception('Error in API call ' . $this->method() . ' [code ' . $this->_object->StatusData->ResponseCode . '] ' . $this->_object->StatusData->RespMessage);
+                }
+                else
+                {
+                    $this->success = TRUE;
+                }
             }
 		}
 		else
 		{
+		    $this->success = FALSE;
 			return FALSE;
 		}
 
-		if (isset($this->_object->data) === TRUE)
-		{
-			$this->_total_rows = count($this->_object->data);
-		}
-		else
-		{
-		    $this->_total_rows = 0;
-		}
-
+        $this->success = TRUE;
 		return TRUE;
 	}
 
     /**
 	 * sort
 	 *
-	 * @param unknown $sort
+	 * @param string $sort
 	 * @return void
 	 */
 	public function sort($sort)
@@ -556,10 +627,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	 */
 	public function serialize()
 	{
-		if ( ! $this->_request_made)
-		{
-			$this->_load();
-		}
+        $this->load();
 
 		foreach (array('_object', '_url', '_params', '_request_made') as $var)
 		{

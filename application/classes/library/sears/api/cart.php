@@ -22,8 +22,6 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         'quantity'      => array(),
     );
 
-    protected static $_session;
-
     public function __construct($group = NULL, $parent = NULL)
     {
         parent::__construct($group, $parent);
@@ -31,54 +29,40 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         $this->content_type = 'xml';
     }
 
-    protected function _initialize()
-    {
-        parent::_initialize();
-
-        self::$_session = NULL;
-    }
-
     protected function _load()
     {
         parent::_load();
 
-        if (isset($this->_object->StatusData) === TRUE)
+        if ($this->success())
         {
-            $this->success = ($this->_object->StatusData == 0) ? TRUE : FALSE;
+            // Cache the session key for the cart.
+            if ($this->method() == 'AddtoCart' AND ! Library_Sears_Api::session())
+            {
+                Library_Sears_Api::session((string) $this->_object->ServiceHeaders->clientSessionKey);
+            }
+
+            if (empty($this->_object->Shoppingcart))
+            {
+                $this->_total_rows = 0;
+                $this->_data = array();
+            }
+            else
+            {
+                /*
+                if ( ! is_array($this->_object->Shoppingcart->OrderItems->OrderItem))
+                {
+                    $this->_object->Shoppingcart->OrderItems = array($this->_object->Shoppingcart->OrderItems->OrderItem);
+                }
+                else
+                {
+                    $this->_object->Shoppingcart->OrderItems = $this->_object->Shoppingcart->OrderItems->OrderItem;
+                }
+                */
+
+                $this->_total_rows = 1;
+                $this->_data = array(& $this->_object->Shoppingcart);
+            }
         }
-        else
-        {
-            $this->success = FALSE;
-        }
-
-        if ($this->success AND $this->method() == 'AddtoCart' AND ! $this->session())
-        {
-            $this->session($this->_object->clientSessionkey);
-        }
-    }
-
-    public function session($key = NULL)
-    {
-        if ($key === NULL)
-        {
-            return SHCP::get($_SESSION, 'cartSessionkey');
-        }
-
-        $_SESSION['cartSessionkey'] = $key;
-
-        return $this;
-    }
-
-    public function cart()
-    {
-        $this->load();
-
-        if ($this->success)
-        {
-            return $this->_object->Shoppingcart;
-        }
-
-        return FALSE;
     }
 
     public function view()
@@ -88,7 +72,75 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         return $this;
     }
 
-    public function add($catalog_id = NULL, $catentry_id = NULL, $quantity = 1)
+    /**
+     * add
+     *
+     *  // Typical response from addtocart current() method.
+     *       object SimpleXMLElement(6) {
+     *           public OrderId => string(9) "243090446"
+     *           public CatalogId => string(5) "12605"
+     *           public OrderItems => object SimpleXMLElement(1) {
+     *               public OrderItem => object SimpleXMLElement(26) {
+     *                   public OOSMessage => object SimpleXMLElement(0)
+     *                   public ImageURL => string(173) "http://c.shld.net/rpx/i/s/pi/mp/1645/218839052p?src=http%3A%2F%2Fimagehost.vendio.com%2Fa%2F35058039%2Fview%2FAEYBOAF8-P184118.jpg&d=b03c0e9d77614c6a438f1cbd3551ed1f99659c0b"
+     *                   public PartNo => string(12) "SPM218839052"
+     *                   public ManufacturePartNo => string(9) "MOV232562"
+     *                   public DisplayPartNumber => string(13) "SPM218839052P"
+     *                   public Qty => string(1) "1"
+     *                   public Soldby => string(24) "Sold by Prints and Stuff"
+     *                   public ArrivalMethods => object SimpleXMLElement(2) {
+     *                       public AvailableArrivalMethod => object SimpleXMLElement(2) {
+     *                           public AvailableArrivalMethodName => string(4) "Ship"
+     *                           public AvailableFFMCenter => string(2) "VD"
+     *                       }
+     *                       public SelectedArrivalMethod => object SimpleXMLElement(3) {
+     *                           public SelectedArrivalMethodName => string(4) "Ship"
+     *                           public SelectedFFMCenter => string(2) "VD"
+     *                           public SelectedStore => object SimpleXMLElement(0)
+     *                       }
+     *                   }
+     *                   public ParentPartNumber => string(12) "SPM218839052"
+     *                   public Price => string(6) "$25.00"
+     *                   public SalePrice => string(5) "25.00"
+     *                   public RegularPrice => string(5) "25.00"
+     *                   public MappedPrice => object SimpleXMLElement(0)
+     *                   public MapIndicator => string(1) "0"
+     *                   public MapPriceDescription => object SimpleXMLElement(0)
+     *                   public TotalPrice => string(6) "$25.00"
+     *                   public CatEntryId => string(10) "1605698544"
+     *                   public ItemDescription => object SimpleXMLElement(0)
+     *                   public BrandName => object SimpleXMLElement(0)
+     *                   public OrderItemID => string(9) "856606857"
+     *                   public Variant => string(12) "NONVARIATION"
+     *                   public PromotionDetails => object SimpleXMLElement(0)
+     *                   public ItemTotal => string(6) "$25.00"
+     *                   public GiftRegistryInfo => object SimpleXMLElement(0)
+     *                   public AvailableProductOptions => object SimpleXMLElement(0)
+     *                   public SelectedProductOptions => object SimpleXMLElement(0)
+     *               }
+     *           }
+     *           public CartErrorMessage => object SimpleXMLElement(0)
+     *           public IsPayPalEligible => string(1) "Y"
+     *           public Summary => object SimpleXMLElement(9) {
+     *               public AssociateDiscount => string(5) "$0.00"
+     *               public EstimatedPreTaxTotal => string(6) "$31.25"
+     *               public SubTotal => string(6) "$25.00"
+     *               public EstimatedDeliveryCharge => string(5) "$0.00"
+     *               public OversizedDeliveryCharge => string(5) "$0.00"
+     *               public StandardShippingCharge => string(5) "$6.25"
+     *               public ShippingSavings => string(5) "$0.00"
+     *               public CouponDiscount => string(5) "$0.00"
+     *               public TotalSavings => string(5) "$0.00"
+     *           }
+     *       }
+     *   }
+     *
+     * @param int $quantity = 1
+     * @param string $catalog_id = NULL
+     * @param string $catentry_id = NULL
+     * @return void
+     */
+    public function add($quantity = 1, $catalog_id = NULL, $catentry_id = NULL)
     {
         if ($catentry_id === NULL)
         {
@@ -115,22 +167,82 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         return $this;
     }
 
-    public function clear()
+    public function clear($order_id = NULL, $catalog_id = NULL)
     {
-        $this->method('EmptyCart')->load();
+        if ($order_id === NULL OR $catalog_id === NULL)
+        {
+            if ($this->method())
+            {
+                $this->load();
+            }
+            else
+            {
+                $this
+                    ->view()
+                    ->load();
+            }
+
+            if ($this->success() AND $this->current())
+            {
+                $order_id = $this->current()->OrderId;
+                $catalog_id = $this->current()->CatalogId;
+            }
+            else
+            {
+                throw new Exception('No cart is loaded to remove items from');
+                return $this;
+            }
+        }
+
+        $this->method('EmptyCart')
+            ->param('orderId', $order_id)
+            ->param('catalogId', $catalog_id);
+
+        return $this;
+    }
+
+    public function remove($line_id, $order_id = NULL, $catalog_id = NULL)
+    {
+        if ($order_id === NULL OR $catalog_id === NULL)
+        {
+            $this->load();
+
+            if ($this->success())
+            {
+                $order_id = $this->current()->OrderId;
+                $catalog_id = $this->current()->CatalogId;
+            }
+            else
+            {
+                throw new Exception('No cart is loaded to remove items from');
+            }
+        }
+
+        $this->method('DeleteFrmCart')
+            ->param('orderId', $order_id)
+            ->param('catalogId', $catalog_id)
+            ->param('orderItemId', $line_id);
+
+        return $this;
+    }
+
+    public function checkout($tracking_id = NULL)
+    {
+        $this->method('Checkout');
+
+        if ($tracking_id !== NULL)
+        {
+            $this->param('trackingId', $tracking_id);
+        }
 
         return $this;
     }
 
     protected function _add_session()
     {
-        if ($key = $this->session())
+        if ($key = self::session())
         {
             $this->param('sessionKey', $key);
-        }
-        elseif ($user = $this->user())
-        {
-            $this->param('loginId', $user->id);
         }
         else
         {

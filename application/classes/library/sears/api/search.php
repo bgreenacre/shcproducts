@@ -16,17 +16,6 @@
  */
 class Library_Sears_Api_Search extends Library_Sears_Api {
 
-    public function __get($key)
-    {
-        if ($key === 'product')
-        {
-            $product = $this->current();
-            return Library_Sears_Api::factory('product', $this->_group, $product)->get()->load();
-        }
-
-        return parent::__get($key);
-    }
-
     protected function _load()
     {
         parent::_load();
@@ -34,7 +23,7 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
         if (isset($this->_object->mercadoresult->products->product[1]))
         {
             $this->_total_rows = (int) count($this->_object->mercadoresult->products->product[1]);
-            $this->_data = $this->_object->mercadoresult->products->product[1];
+            $this->_data =& $this->_object->mercadoresult->products->product[1];
         }
     }
 
