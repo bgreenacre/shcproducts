@@ -20,6 +20,7 @@ define('SHCP_CONFIG', SHCP_PATH.'/application/config');
 define('SHCP_CLASS', SHCP_PATH.'/application/classes');
 define('SHCP_VIEW', SHCP_PATH.'/application/views');
 define('SHCP_FUNCTIONS', SHCP_PATH.'/application/functions');
+define('SHCP_LANG', SHCP_PATH . '/application/messages');
 define('SHCP_URL', plugins_url('/shcproducts'));
 define('SHCP_CSS', SHCP_URL . '/assets/css');
 define('SHCP_IMAGES', SHCP_URL . '/assets/images');
