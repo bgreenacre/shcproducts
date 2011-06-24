@@ -128,7 +128,7 @@ class Controller_Options {
 	}
 	
 	/**
-	 * api_key_field - Display the business field selector.
+	 * api_key_field - Display the api_key text field.
 	 *
 	 * @access	public
 	 * @return	void
