@@ -48,17 +48,6 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
             }
             else
             {
-                /*
-                if ( ! is_array($this->_object->Shoppingcart->OrderItems->OrderItem))
-                {
-                    $this->_object->Shoppingcart->OrderItems = array($this->_object->Shoppingcart->OrderItems->OrderItem);
-                }
-                else
-                {
-                    $this->_object->Shoppingcart->OrderItems = $this->_object->Shoppingcart->OrderItems->OrderItem;
-                }
-                */
-
                 $this->_total_rows = 1;
                 $this->_data = array(& $this->_object->Shoppingcart);
             }
@@ -205,7 +194,17 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
     {
         if ($order_id === NULL OR $catalog_id === NULL)
         {
-            $this->load();
+            if ($this->method())
+            {
+                $this->load();
+            }
+            else
+            {
+                $this
+                    ->view()
+                    ->load();
+            }
+
 
             if ($this->success())
             {
@@ -234,6 +233,41 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         {
             $this->param('trackingId', $tracking_id);
         }
+
+        return $this;
+    }
+
+    public function update($line_id, $quantity, $order_id = NULL, $catalog_id = NULL)
+    {
+        if ($order_id === NULL OR $catalog_id === NULL)
+        {
+            if ($this->method())
+            {
+                $this->load();
+            }
+            else
+            {
+                $this
+                    ->view()
+                    ->load();
+            }
+
+            if ($this->success())
+            {
+                $order_id = $this->current()->OrderId;
+                $catalog_id = $this->current()->CatalogId;
+            }
+            else
+            {
+                throw new Exception('No cart is loaded to remove items from');
+            }
+        }
+
+        $this->method('UpdateCart')
+            ->param('orderId', $order_id)
+            ->param('catalogId', $catalog_id)
+            ->param('orderItemId', $line_id)
+            ->param('quantity', (int) $quantity);
 
         return $this;
     }
