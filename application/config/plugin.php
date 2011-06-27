@@ -3,7 +3,8 @@
 return array(
 	'stores'	=> array(
 		'sears'		=> 'Sears', 
-		'kmart'	=> 'Kmart'
+		'kmart'	=> 'Kmart',
+		'mygofer'	=> 'MyGofer'
 		),
 	'options'	=> array(
 		'api_key'	=> array(
