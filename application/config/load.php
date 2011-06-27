@@ -10,6 +10,5 @@
 
 return array(
     'functions'     => array('register_post_types', 'register_taxonomy'),
-    'controllers'   => array('app', 'options', 'public'),
+    'controllers'   => array('app', 'admin_options'),
 );
-

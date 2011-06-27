@@ -23,7 +23,7 @@ class SHCP {
     public static $cache_dir = SHCP_CACHE;
     public static $cache_life = 2000;
     private static $_init = FALSE;
-    
+
     /**
   	 * this is a prefix used for class names, options and anything else
   	 * that requires some sort of namespace.
@@ -32,7 +32,7 @@ class SHCP {
   	 * @var		string
   	 */
   	private static $_prefix = 'SHCP_';
-  	
+
   	/**
   	 * cache any data gathered from language files.
   	 *
@@ -40,7 +40,6 @@ class SHCP {
   	 * @var		array
   	 */
   	private static $_lang = array();
-
 
     /**
      * init
@@ -102,7 +101,7 @@ class SHCP {
             foreach ($controllers as $ctl)
             {
                 $ctl = "Controller_" . ucfirst($ctl);
-                
+
                 // Merely instantiate the controller.
                 // Any action hooks and filters should be set in the
                 // Controllers constructor.
@@ -114,6 +113,35 @@ class SHCP {
         {
             SHCP_Profiler::stop($load_ctl);
             unset($load_ctl);
+        }
+    }
+
+    /**
+     * autoload - Method used to autoload class files.
+     *
+     * @static
+     * @param string $class
+     * @return void
+     */
+    public static function autoload($class)
+    {
+        try
+        {
+            $file = str_replace('_', '/', strtolower($class));
+            $fullpath = SHCP_CLASS . '/' . $file . '.php';
+
+            if (is_file($fullpath))
+            {
+                require $fullpath;
+                return TRUE;
+            }
+
+            return FALSE;
+        }
+        catch(Exception $e)
+        {
+            throw Exception($e);
+            die;
         }
     }
 
@@ -132,10 +160,11 @@ class SHCP {
         $view = SHCP_VIEW . '/' . $view . '.php';
 
 		// Import the view variables to local namespace
-		if($data !== NULL) 
+		if($data !== NULL)
 		{
 		  extract($data, EXTR_SKIP);
-    }
+        }
+
         // Extract the global data array.
 		if (self::$global_data)
         {
@@ -451,7 +480,7 @@ class SHCP {
 		// Unable to find the value requested
 		return $default;
 	}
-	
+
 	/**
 	 * get_option - This a wrapper method for the word press function get_option.
 	 * Just makes it easier getting the options specific to this plugin.
@@ -467,7 +496,7 @@ class SHCP {
 		{
 			return $default;
 		}
-		
+
 		return self::path(get_option(self::prefix('options')), $option, $default);
 	}
 
@@ -518,7 +547,7 @@ class SHCP {
 		}
 
 		if (isset($path))
-		{		  
+		{
 			return self::path($config[$group], $path, NULL, '.');
 		}
 		else

@@ -9,7 +9,8 @@
  * @author		Kyla Klein
  */
 
-class Controller_Options {
+class Controller_Admin_Options {
+
 	/**
 	 * The field name to use for api key. It's used in more then one area.
 	 *
@@ -33,7 +34,7 @@ class Controller_Options {
 	 * @var		string
 	 */
 	public $app_id_field_name;
-	
+
 	/**
 	 * Name of the auth ID field.
 	 *
@@ -41,7 +42,7 @@ class Controller_Options {
 	 * @var		string
 	 */
 	public $auth_id_field_name;
-	
+
 	/**
 	 * Initialize the class. Add menu and admin wordpress init.
 	 *
@@ -50,7 +51,7 @@ class Controller_Options {
 	 * @return	void
 	 */
 	public function __construct(array $params = NULL)
-	{ 
+	{
 		$this->api_key_field_name = SHCP::config('plugin.options.api_key.name');
 		$this->store_field_name = SHCP::config('plugin.options.store.name');
 		$this->app_id_field_name = SHCP::config('plugin.options.app_id.name');
@@ -58,7 +59,7 @@ class Controller_Options {
 		add_action('admin_menu', array(&$this, 'add_menu'));
 		add_action('admin_init', array(&$this, 'init'));
 	}
-	
+
 	/**
 	 * init - Register the settings form and every section and field.
 	 *
@@ -67,15 +68,15 @@ class Controller_Options {
 	 */
 	public function init()
 	{
-		register_setting(SHCP::prefix('options'), SHCP::prefix('options')); 
-		
+		register_setting(SHCP::prefix('options'), SHCP::prefix('options'));
+
 		// Display the options.
-		add_settings_section('product_section', SHCP::lang('plugin', 'form.product.title'), array(&$this, 'product_section'), __CLASS__);
-		add_settings_section('cart_section', SHCP::lang('plugin', 'form.cart.title'), array(&$this, 'cart_section') , __CLASS__);
-		add_settings_field($this->api_key_field_name, '', array(&$this, 'api_key_field'), __CLASS__, 'product_section');
-		add_settings_field($this->store_field_name, '', array(&$this, 'store_field'), __CLASS__, 'product_section');
-		add_settings_field($this->app_id_field_name, '', array(&$this, 'app_id_field'), __CLASS__, 'cart_section');
-		add_settings_field($this->auth_id_field_name, '', array(&$this, 'auth_id_field'), __CLASS__, 'cart_section');
+		add_settings_section('action_product_section', SHCP::lang('plugin', 'form.product.title'), array(&$this, 'action_product_section'), __CLASS__);
+		add_settings_section('action_cart_section', SHCP::lang('plugin', 'form.cart.title'), array(&$this, 'action_cart_section') , __CLASS__);
+		add_settings_field($this->api_key_field_name, '', array(&$this, 'action_api_key_field'), __CLASS__, 'action_product_section');
+		add_settings_field($this->store_field_name, '', array(&$this, 'action_store_field'), __CLASS__, 'action_product_section');
+		add_settings_field($this->app_id_field_name, '', array(&$this, 'action_app_id_field'), __CLASS__, 'action_cart_section');
+		add_settings_field($this->auth_id_field_name, '', array(&$this, 'action_auth_id_field'), __CLASS__, 'action_cart_section');
 	}
 
 	/**
@@ -86,72 +87,72 @@ class Controller_Options {
 	 */
 	public function add_menu()
 	{
-		add_options_page(SHCP::lang('plugin', 'menu.name'), SHCP::lang('plugin', 'menu.name'), 'manage_options', SHCP::prefix('options'), array(&$this, 'option_page'));
+		add_options_page(SHCP::lang('plugin', 'menu.name'), SHCP::lang('plugin', 'menu.name'), 'manage_options', SHCP::prefix('options'), array(&$this, 'action_option_page'));
 	}
-	
+
 	/**
-	 * option_page - Display the option settings page.
+	 * action_option_page - Display the option settings page.
 	 *
 	 * @access	public
 	 * @return	void
 	 */
-	public function option_page()
+	public function action_option_page()
 	{
 		$data = array(
 			'classname'	=> __CLASS__,
 			'lang'		=> SHCP::lang('plugin', 'options')
 			);
-		
-		echo SHCP::view('option_page', $data);
+
+		echo SHCP::view('admin/options/page', $data);
 	}
 
 	/**
-	 * product_section - Display the top of the product api section of the form.
+	 * action_product_section - Display the top of the product api section of the form.
 	 *
 	 * @access	public
 	 * @return	void
 	 */
-	public function product_section()
+	public function action_product_section()
 	{
-		echo SHCP::view('product_section');
+		echo SHCP::view('admin/options/product');
 	}
 
 	/**
-	 * cart_section - Display the top of the cart api section of the form.
+	 * action_cart_section - Display the top of the cart api section of the form.
 	 *
 	 * @access	public
 	 * @return	void
 	 */
-	public function cart_section()
+	public function action_cart_section()
 	{
-		echo SHCP::view('cart_section');
+		echo SHCP::view('admin/options/cart');
 	}
-	
+
 	/**
-	 * api_key_field - Display the api_key text field.
+	 * action_api_key_field - Display the api_key text field.
 	 *
 	 * @access	public
 	 * @return	void
 	 */
-	public function api_key_field()
-	{ 
+	public function action_api_key_field()
+	{
 		$data = array(
 			'id'		=> $this->api_key_field_name,
 			'name'	=> SHCP::prefix('options['.$this->api_key_field_name.']'),
 			'value'	=> SHCP::get_option($this->api_key_field_name, SHCP::config('plugin.options.api_key.default')),
 			'lang'	=> SHCP::lang('plugin', 'options.'.$this->api_key_field_name)
 			);
-		
-		echo SHCP::view('fields/api_key', $data);
+
+		echo SHCP::view('admin/options/fields/api_key', $data);
 	}
 
 	/**
-	 * store_field - Display the store radio button field.
+	 * action_store_field - Display the store radio button field.
 	 *
 	 * @access	public
 	 * @return	void
 	 */
-	public function store_field()
+	public function action_store_field()
 	{
 		$data = array(
 			'id'	  => $this->store_field_name,
@@ -160,16 +161,16 @@ class Controller_Options {
 			'lang'	=> SHCP::lang('plugin', 'options.'.$this->store_field_name)
 			);
 
-		echo SHCP::view('fields/store', $data);
+		echo SHCP::view('admin/options/fields/store', $data);
 	}
 
 	/**
-	 * app_id_field - Display the app_id text field.
+	 * action_app_id_field - Display the app_id text field.
 	 *
 	 * @access	public
 	 * @return	void
 	 */
-	public function app_id_field()
+	public function action_app_id_field()
 	{
 		$data = array(
 			'id'	  => $this->app_id_field_name,
@@ -178,16 +179,16 @@ class Controller_Options {
 			'lang'	=> SHCP::lang('plugin', 'options.'.$this->app_id_field_name)
 			);
 
-		echo SHCP::view('fields/app_id', $data);
+		echo SHCP::view('admin/options/fields/app_id', $data);
 	}
 
 	/**
-	 * auth_id_field - Display the auth_id text field.
+	 * action_auth_id_field - Display the auth_id text field.
 	 *
 	 * @access	public
 	 * @return	void
 	 */
-	public function auth_id_field()
+	public function action_auth_id_field()
 	{
 		$data = array(
 			'id'	  => $this->auth_id_field_name,
@@ -196,7 +197,7 @@ class Controller_Options {
 			'lang'	=> SHCP::lang('plugin', 'options.'.$this->auth_id_field_name)
 			);
 
-		echo SHCP::view('fields/auth_id', $data);
+		echo SHCP::view('admin/options/fields/auth_id', $data);
 	}
 
 }
