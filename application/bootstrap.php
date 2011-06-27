@@ -10,34 +10,9 @@
 
 // -----------------------------------------------------------------------------
 
-/**
- */
-if ( ! function_exists('SHCP_autoload'))
-{
-    function SHCP_autoload($class)
-    {
+// Require the core class file.
+require_once SHCP_CLASS . '/shcp.php';
 
-        try
-        {
-            $file = str_replace('_', '/', strtolower($class));
-            $fullpath = SHCP_CLASS . '/' . $file . '.php';
-
-            if (is_file($fullpath))
-            {
-                require $fullpath;
-                return TRUE;
-            }
-
-            return FALSE;
-        }
-        catch(Exception $e)
-        {
-            throw Exception($e);
-            die;
-        }
-    }
-    
-    spl_autoload_register('SHCP_autoload');
-}
-
+// Register the auloader for SHCP plugin
+spl_autoload_register(array('SHCP', 'autoload'));
 SHCP::init();
