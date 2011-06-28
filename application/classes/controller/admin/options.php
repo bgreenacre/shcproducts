@@ -56,7 +56,7 @@ class Controller_Admin_Options {
 		$this->store_field_name = SHCP::config('plugin.options.store.name');
 		$this->app_id_field_name = SHCP::config('plugin.options.app_id.name');
 		$this->auth_id_field_name = SHCP::config('plugin.options.auth_id.name');
-		add_action('admin_menu', array(&$this, 'add_menu'));
+		add_action('admin_menu', array(&$this, 'menu'));
 		add_action('admin_init', array(&$this, 'init'));
 	}
 
@@ -85,9 +85,12 @@ class Controller_Admin_Options {
 	 * @access	public
 	 * @return	void
 	 */
-	public function add_menu()
+	public function menu()
 	{
+	    global $submenu;
 		add_options_page(SHCP::lang('plugin', 'menu.name'), SHCP::lang('plugin', 'menu.name'), 'manage_options', SHCP::prefix('options'), array(&$this, 'action_option_page'));
+
+		unset($submenu['edit.php?post_type=shcproduct'][10]);
 	}
 
 	/**

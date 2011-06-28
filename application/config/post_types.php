@@ -16,8 +16,12 @@ return array(
             'parent_item_colon'   => '',
         ),
         'public'      => true,
-        'supports'    => array('title'),
+        'supports'    => array('title', 'custom-fields'),
         'taxonomies'  => array('category'),  // this is IMPORTANT
+        'capabilities'  => array(
+            'delete_post'   => FALSE,
+            'edit_post'     => FALSE,
+        ),
         'rewrite' => array(
             'slug' => 'product',
             'with_front' => true,
