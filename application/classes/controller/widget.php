@@ -10,6 +10,10 @@
 
 // ----------------------------------------------------------------------------
 
+/**
+ * Controller_Widget
+ *
+ */
 class Controller_Widget extends WP_Widget {
 
 	protected $widget_template = 'widget/template';

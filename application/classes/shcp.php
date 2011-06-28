@@ -225,11 +225,23 @@ class SHCP {
 	 */
 	public static function cache($name, $data = NULL, $lifetime = NULL)
 	{
-		// Cache file is a hash of the name
-		$file = sha1($name).'.txt';
-
 		// Cache directories are split by keys to prevent filesystem overload
-		$dir = self::$cache_dir.DIRECTORY_SEPARATOR.$file[0].$file[1].DIRECTORY_SEPARATOR;
+		$dir = self::$cache_dir.DIRECTORY_SEPARATOR;
+
+	    if (($pos = strrpos($name, '/')) !== FALSE)
+	    {
+	        $dir .= substr($name, 0, $pos);
+
+	        // Cache file is a hash of the name
+	        $file = sha1(substr($name, $pos+1)) . '.txt';
+	    }
+	    else
+	    {
+	        // Cache file is a hash of the name
+	        $file = sha1($name) . '.txt';
+	    }
+
+	    $dir .= $file[0].$file[1].DIRECTORY_SEPARATOR;
 
 		if ($lifetime === NULL)
 		{
