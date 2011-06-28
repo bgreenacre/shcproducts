@@ -66,6 +66,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 * @var		int
 	 */
 	protected $_total_rows;
+	protected $_total_display;
 
     public function __construct()
     {
@@ -91,10 +92,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		if ($this->_executed !== TRUE)
 		{
 		    // Instantiate the query object to get posts.
-		    $query = new WP_Query($this->params());
+		    $query = new WP_Query($this->_params);
 
 		    // Dump the posts into this object.
 		    $this->_data = $query->posts;
+		    $this->_position = 0;
+		    $this->_total_rows = $query->found_posts;
+		    $this->_total_display = $query->post_count;
 
 		    // Destroy the query object.
 		    unset($query);
@@ -102,15 +106,11 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		    $this->_executed = TRUE;
 		}
 
-		if ($this->_data)
-		{
-		    $this->_position = 0;
-		    $this->_total_rows = count($this->_data);
-		}
-		else
+		if ( ! $this->_data)
 		{
 		    $this->_position = 0;
 		    $this->_total_rows = 0;
+		    $this->_total_display = 0;
 			return FALSE;
 		}
 
@@ -158,6 +158,195 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         }
 
         $this->_params[$name] = $value;
+
+        return $this;
+    }
+
+    public function author($author)
+    {
+        if (is_numeric($author))
+        {
+            $this->param('author', (int) $author);
+        }
+        else
+        {
+            $this->param('author_name', $author);
+        }
+
+        return $this;
+    }
+
+    public function category($cat, $compare = 'AND')
+    {
+        $ids = array();
+        $slugs = array();
+
+        if ($current_cat = $this->param('cat') OR $current_cat = $this->param('category_name'))
+        {
+            unset($this->_params['cat']);
+            unset($this->_params['category_name']);
+
+            if (is_numeric($current_cat))
+            {
+                $ids[] = $current_cat;
+            }
+            else
+            {
+                $slugs[] = $current_cat;
+            }
+        }
+
+        if (is_numeric($cat))
+        {
+            $ids[] = (int) $cat;
+        }
+        else
+        {
+            $slugs[] = $cat;
+        }
+
+        if ($ids)
+        {
+            if (count($ids) > 1)
+            {
+            }
+            else
+            {
+                $this->param('cat', $ids[0]);
+            }
+        }
+        elseif ($slugs)
+        {
+            if (count($slugs) > 1)
+            {
+            }
+            else
+            {
+                $this->param('cat_name', $slugs[0]);
+            }
+        }
+
+        return $this;
+    }
+
+    public function tag($tag, $compare = 'AND')
+    {
+        $ids = array();
+        $slugs = array();
+
+        if ($current_tag = $this->param('tag') OR $current_tag = $this->param('tag_id'))
+        {
+            unset($this->_params['tag']);
+            unset($this->_params['tag_id']);
+
+            if (is_numeric($current_tag))
+            {
+                $ids[] = $current_tag;
+            }
+            else
+            {
+                $slugs[] = $current_tag;
+            }
+        }
+
+        if (is_numeric($tag))
+        {
+            $ids[] = (int) $tag;
+        }
+        else
+        {
+            $slugs[] = $tag;
+        }
+
+        if ($ids)
+        {
+            if (count($ids) > 1)
+            {
+            }
+            else
+            {
+                $this->param('tag_id', $ids[0]);
+            }
+        }
+        elseif ($slugs)
+        {
+            if (count($slugs) > 1)
+            {
+            }
+            else
+            {
+                $this->param('tag', $slugs[0]);
+            }
+        }
+
+        return $this;
+    }
+
+    public function tax_relation($rel = 'AND')
+    {
+        if ($query = $this->param('tax_query'))
+        {
+            $query['relation'] = $rel;
+
+            $this->param('tax_query', $query);
+        }
+
+        return $this;
+    }
+
+    public function tax($terms, $tax, $field = 'slug', $op = 'AND')
+    {
+        // Get any meta query already existing.
+        $query = (array) $this->param('tax_query');
+
+        // Append an array with the parameters.
+        $query[] = array(
+            'taxonomy'  => $tax,
+            'terms'     => $terms,
+            'field'     => $field,
+            'operator'  => $op,
+        );
+
+        // Set the meta_query parameter to pass onto WP_Query.
+        $this->param('tax_query', $query);
+
+        return $this;
+    }
+
+    public function meta($key, $compare = '=', $value = NULL, $type = 'CHAR')
+    {
+        // Get any meta query already existing.
+        $query = (array) $this->param('meta_query');
+
+        // Append an array with the parameters.
+        $query[] = array(
+            'key'       => $key,
+            'value'     => $value,
+            'compare'   => $compare,
+            'type'      => $type,
+        );
+
+        // Set the meta_query parameter to pass onto WP_Query.
+        $this->param('meta_query', $query);
+
+        return $this;
+    }
+
+    public function limit($limit = -1, $paged = NULL)
+    {
+        $this->param('posts_per_page', (int) $limit);
+
+        if ($paged !== NULL)
+        {
+            $this->param('paged', (int) $paged);
+        }
+
+        return $this;
+    }
+
+    public function orderby($orderby = 'none', $order = 'ASC')
+    {
+        $this->param(array('orderby' => $orderby, 'order' => $order));
 
         return $this;
     }
