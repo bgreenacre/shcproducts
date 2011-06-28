@@ -21,4 +21,20 @@ class Model_Products extends Model_SHCP {
         $this->param('post_type', 'shcproduct');
     }
 
+    public function related($id)
+    {
+        $ids = (array) get_post_meta($id, 'shcp_related');
+
+        if ($ids)
+        {
+            $this->param('post__in', $ids);
+        }
+        else
+        {
+            $this->param('p', -1);
+        }
+
+        return $this;
+    }
+
 }

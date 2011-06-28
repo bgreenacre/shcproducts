@@ -1,0 +1,21 @@
+#shcp_products {
+float: left;
+min-height: 100px;
+width: 60%;
+border-right: solid 1px #ccc;
+}
+#shcp_related {
+min-height: 100px;
+float: right;
+width: 35%;
+}
+#shcproducts_related hr {
+border: 0px;
+clear: both;
+}
+#shcp_related_tank {
+border: solid 1px #ccc;
+min-height: 70px;
+width: 80%;
+}
+

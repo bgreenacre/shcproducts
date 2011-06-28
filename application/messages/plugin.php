@@ -1,4 +1,4 @@
-<?php
+<?php defined('SHCP_PATH') OR die('No direct script access.');
 
 return array(
 	'menu'	=> array(
@@ -10,7 +10,7 @@ return array(
 			),
 		'cart'	=> array(
 			'title'	=> 'SHC Cart API Settings'
-			)	
+			)
 		),
 	'options'	=> array(
 		'title'	=> 'SHC Product/Cart API Settings',
@@ -26,6 +26,6 @@ return array(
 			),
 		'auth_id'	=> array(
 			'label'	=> 'Cart Auth ID'
-			),	
+			),
 		)
 );
