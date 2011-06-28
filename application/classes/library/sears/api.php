@@ -464,7 +464,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             $request_token = Profiler::start('Request', $this->_url);
         }
 
-        if ($this->cache AND $body = SHCP::cache($this->_url))
+        if ($this->cache AND $body = SHCP::cache('api/'.$this->_url))
         {
             $this->_request_made = TRUE;
 
@@ -554,7 +554,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
         if ($this->cache)
         {
-            SHCP::cache($this->_url, $body);
+            SHCP::cache('api/'.$this->_url, $body);
         }
 
         if (isset($request_token))
