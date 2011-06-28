@@ -621,6 +621,25 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	}
 
     /**
+	 * limit - Limit the results from the api by start and end index.
+	 *
+	 * @param int $start
+	 * @param int $end = NULL
+	 * @return void
+	 */
+	public function limit($start, $end = NULL)
+	{
+	    $this->param('startIndex', $start);
+
+	    if ($end !== NULL)
+	    {
+	        $this->param('endIndex', $end);
+	    }
+
+	    return $this;
+	}
+
+    /**
 	 * serialize
 	 *
 	 * @return void
