@@ -17,7 +17,7 @@ return array(
         ),
         'public'      => true,
         'supports'    => array('title'),
-        'taxonomies'  => array('product_category', 'category'),  // this is IMPORTANT
+        'taxonomies'  => array('category'),  // this is IMPORTANT
         'rewrite' => array(
             'slug' => 'product',
             'with_front' => true,
@@ -25,4 +25,3 @@ return array(
         'has_archive' => 'products',
     ),
 );
-
