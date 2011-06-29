@@ -34,6 +34,13 @@ class Controller_Admin_Import {
 
     public function action_save()
     {
+        $product = new Model_Product();
+        $product->values($_POST);
+
+        if ($product->check())
+        {
+            $product->save();
+        }
     }
 
 }

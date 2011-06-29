@@ -308,6 +308,18 @@ class SHCP {
 		}
 	}
 
+	/**
+	 * get_global - Get a particular global var that's been set.
+	 *
+	 * @param string $name
+	 * @param mixed $default = NULL
+	 * @return void
+	 */
+	public function get_global($name, $default = NULL)
+	{
+	    return self::get(self::$global_data, $default);
+	}
+
     /**
      * set_global - Set a global variable to be used in the views.
      *
