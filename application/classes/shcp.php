@@ -22,6 +22,7 @@ class SHCP {
     public static $profiling = TRUE;
     public static $cache_dir = SHCP_CACHE;
     public static $cache_life = 2000;
+    public static $is_ajax = FALSE;
     private static $_init = FALSE;
 
     /**
@@ -56,6 +57,9 @@ class SHCP {
 
 		// Determine if the extremely evil magic quotes are enabled
 		self::$magic_quotes = (bool) get_magic_quotes_gpc();
+
+		// Determine if this is an ajax request
+		self::$is_ajax = ($with = self::get($_SERVER, 'HTTP_X_REQUESTED_WITH') AND 'xmlhttprequest' == strtolower($with));
 
 		// Sanitize all request variables
 		$_GET    = self::sanitize($_GET);

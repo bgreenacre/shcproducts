@@ -100,10 +100,16 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($id = NULL)
     {
         $this->_initialize();
         $this->fields();
+
+        if ($id !== NULL)
+        {
+            $this->_id = (int) $id;
+            $this->param('p', $this->_id);
+        }
     }
 
     /**
@@ -210,6 +216,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      */
     protected function _initialize()
     {
+        $this->_id = 0;
 		$this->_data = array();
 		$this->_position = 0;
 		$this->_total_rows = 0;
@@ -343,6 +350,16 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	    }
 
 	    return ( ! $this->_errors) ? TRUE : FALSE;
+	}
+
+	/**
+	 * errors - Accessor for the errors array.
+	 *
+	 * @return array
+	 */
+	public function errors()
+	{
+	    return $this->_errors;
 	}
 
     /**
