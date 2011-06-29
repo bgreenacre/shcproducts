@@ -31,6 +31,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     }
 
     /**
+     * Name of the table. Default is the posts table.
+     *
+     * @var string
+     */
+    protected $_table_name = 'posts';
+
+    /**
      * Parameters to pass in the query_posts call.
      *
      * @var array
@@ -66,19 +73,149 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 * @var		int
 	 */
 	protected $_total_rows;
+
+	/**
+	 * Number of posts to be displayed.
+	 *
+	 * @var int
+	 */
 	protected $_total_display;
 
+	/**
+	 * Array of indexed new values to set to the current post.
+	 *
+	 * @var array
+	 */
+	protected $_values;
+
+	/**
+     * Contains any error messages thrown when saving a post.
+     *
+	 * @var array
+	 */
+	protected $_errors;
+
+    /**
+     * __construct - Call the _initialize method to set the object up.
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->_initialize();
+        $this->fields();
     }
 
+    /**
+     * __get - Magic method to make accessing custom post fields easier.
+     *
+     *  //Example of getting a custom field "partNumber"
+     *  $post = new Model_Product()->param('p', 22)->load();
+     *  $post->ID; // the post id.
+     *  $post->partNumber; // look up the custom field value for the post.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        if (array_key_exists($key, $this->_values))
+        {
+            return $this->_values[$key];
+        }
+        elseif (is_object($this->current()))
+        {
+            if (isset($this->current()->{$key}) === TRUE)
+            {
+                return $this->current()->{$key};
+            }
+            elseif ($meta = get_post_meta($this->current()->ID, $key))
+            {
+                return $meta;
+            }
+        }
+
+        return NULL;
+    }
+
+    /**
+     * __set - Set a property of the current post with a given value.
+     *
+     * @param string $key
+     * @param string $value
+     * @return object
+     */
+    public function __set($key, $value)
+    {
+        // Simply add this set value into the _values property.
+        // Typical the save method would then be called in order to persist
+        // the new values for the post.
+        $this->_values[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+	 * values - Set the values for the post to be saved later.
+	 *
+	 * @param array $values = NULL
+	 * @return object $this
+	 */
+	public function values(array $values = NULL)
+	{
+	    $this->_values += $values;
+
+	    return $this;
+	}
+
+    /**
+	 * fields - Get the columns for the current table.
+	 *
+	 * @return array
+	 */
+	public function fields()
+	{
+	    global $wpdb;
+
+        // First check to see if the global has been set.
+	    if ($this->_fields = SHCP::get_global($this->_table_name.'_table_fields'))
+	    {
+	        return $this->_fields;
+	    }
+
+        // Query for the columns of the table
+	    $columns = $wpdb->get_results(
+	        'SHOW COLUMNS FROM `' . $wpdb->prefix . $this->_table_name. '`;'
+	    );
+
+        // Dump the result into an array.
+	    if ($columns)
+	    {
+	        foreach ($columns as $column)
+	        {
+	            $this->_fields[$column->Field] = $column;
+	        }
+	    }
+
+        // Set the global so this query isn't executed more then once per table.
+	    SHCP::set_global($this->_table_name.'_table_fields', $this->_fields);
+
+	    return $this->_fields;
+	}
+
+    /**
+     * _initialize - Initialize the object properties.
+     *
+     * @return void
+     */
     protected function _initialize()
     {
 		$this->_data = array();
 		$this->_position = 0;
 		$this->_total_rows = 0;
 		$this->_params = array();
+		$this->_values = array();
+        $this->_errors = array();
 		$this->_execute = FALSE;
     }
 
@@ -94,7 +231,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		    // Instantiate the query object to get posts.
 		    $query = new WP_Query($this->_params);
 
-		    // Dump the posts into this object.
+		    // Dump the posts into this object and set the iterator props.
 		    $this->_data = $query->posts;
 		    $this->_position = 0;
 		    $this->_total_rows = $query->found_posts;
@@ -118,6 +255,147 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	}
 
     /**
+	 * _save - Internal method to save the current post to the database.
+	 *
+	 * This method will merge $this->_values array into the current post
+	 * of this object. Then it will figure out if this is an update or a
+	 * creation of a new post. Execute the save and then ensure the current
+	 * post object is updated with the saved data.
+	 *
+	 * @return void
+	 */
+	protected function _save()
+	{
+	    // Nothing to save so just return.
+	    if ( ! $this->_values)
+	    {
+	        return;
+	    }
+
+	    $post = $this->as_array();
+
+	    foreach (array_keys($this->_fields) as $field)
+	    {
+	        if (isset($this->_values[$field]) === TRUE)
+	        {
+	            $post[$field] = $this->_values[$field];
+	        }
+	    }
+
+	    if ($post['ID'] > 0)
+	    {
+            $id = wp_update_post($post);
+	    }
+	    else
+	    {
+	        $id = wp_insert_post($post, FALSE);
+	    }
+
+        if ($id > 0)
+        {
+            $post['ID'] = $id;
+
+            // Set the current post to the updated data and reset the total_rows
+            // property since this could be an addition rather then an update.
+	        $this->_data[$this->_position] = (object) $post;
+	        $this->_total_rows = count($this->_data);
+
+	        // Now that the post has been saved, save any values that are not
+	        // post fields as meta tags in the post.
+	        if ($meta = array_diff_key($this->_values, $this->_data[$this->_position]))
+	        {
+	            foreach ($meta as $key => $value)
+	            {
+	                update_post_meta($id, $key, $value);
+	            }
+	        }
+	    }
+	}
+
+    /**
+	 * check - By default only trivial things are validated for a post save.
+	 * Extend this method to add in additional specific validation routines.
+	 *
+	 * For storing errors, the field name should be the index and the value
+	 * an array of messages. Each message index should be the name of the
+	 * validation routine and the value should be a generic message describing
+	 * the reason the routine failed.
+	 *
+	 *  // Example array of errors.
+	 *  array(
+	 *      'post_title'    => array(
+	 *          'empty'         => 'Empty title',
+	 *          'max_length'    => 'title too long',
+	 *          'min_length'    => 'Title too short',
+	 *      ),
+	 *      'post_status'   => array(
+	 *          'empty'     => 'A post status must be set',
+	 *      ),
+	 *  );
+	 *
+	 * @return bool TRUE is validation routines pass else FALSE.
+	 */
+	public function check()
+	{
+	    if ($this->post_title == '')
+	    {
+	        $this->_errors['post_title']['empty'] = 'There is no post title set';
+	    }
+
+	    return ( ! $this->_errors) ? TRUE : FALSE;
+	}
+
+    /**
+	 * save - Save the current post to the database.
+	 *
+     * @return object
+	 */
+	public function save()
+	{
+	    $this->_save();
+
+	    // Reset the _values property to empty array
+	    $this->_values = array();
+	    return $this;
+	}
+
+    /**
+	 * save_all - Save all posts to the database.
+	 *
+     * @return object
+	 */
+	public function save_all()
+	{
+	    // Rewind the iteratable array to position 0
+	    $this->rewind();
+
+        // Blast through the array of posts and save the data for them
+	    while ($this->valid())
+	    {
+	        $this->_save();
+	        $this->next();
+	    }
+
+        // Rewind to begining of the posts array.
+        $this->rewind();
+
+        // Reset the values array.
+        $this->_values = array();
+
+	    return $this;
+	}
+
+    /**
+	 * as_array - Get the current post as an array rather than an object.
+	 *
+	 * @return array
+	 */
+	public function as_array()
+	{
+	    return (array) $this->current();
+	}
+
+    /**
 	 * load - Public method to load up a API call.
 	 *
 	 * @return object $this
@@ -130,8 +408,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	}
 
     /**
-     * param - Add a parameter which be sent to the API in the form of $_GET
-     * variable.
+     * param - Add a parameter which will passed to the WP_Query object.
      *
      *  // Single name and value. This method can be chained.
      *  $this->param('store', 'Sears')->param('catalogId', 12605);
@@ -162,6 +439,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * author - set the author for the query.
+     *
+     * @param string|int $author
+     * @return object
+     */
     public function author($author)
     {
         if (is_numeric($author))
@@ -176,6 +459,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * category - Filter post results by category.
+     *
+     * @param string|int $cat
+     * @param string $compare = 'AND'
+     * @return void
+     */
     public function category($cat, $compare = 'AND')
     {
         $ids = array();
@@ -229,6 +519,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * tag - Filter post results by tags.
+     *
+     * @param string|int $tag
+     * @param string $compare = 'AND'
+     * @return object
+     */
     public function tag($tag, $compare = 'AND')
     {
         $ids = array();
@@ -282,6 +579,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * tax_relation - Set the relationship between multiple taxonomy filters.
+     *
+     * @param string $rel = 'AND'
+     * @return object
+     */
     public function tax_relation($rel = 'AND')
     {
         if ($query = $this->param('tax_query'))
@@ -294,6 +597,15 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * tax - Filter results by taxonomy.
+     *
+     * @param string|array $terms
+     * @param string $tax
+     * @param string $field = 'slug'
+     * @param string $op = 'AND'
+     * @return object
+     */
     public function tax($terms, $tax, $field = 'slug', $op = 'AND')
     {
         // Get any meta query already existing.
@@ -313,6 +625,15 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * meta - Filter results by custom field values.
+     *
+     * @param string $key
+     * @param string $compare = '='
+     * @param string $value = NULL
+     * @param string $type = 'CHAR'
+     * @return void
+     */
     public function meta($key, $compare = '=', $value = NULL, $type = 'CHAR')
     {
         // Get any meta query already existing.
@@ -332,6 +653,14 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * limit - Only allow certain amount of posts to show in the results pf
+     * the query executed.
+     *
+     * @param unknown $limit = -1
+     * @param unknown $paged = NULL
+     * @return void
+     */
     public function limit($limit = -1, $paged = NULL)
     {
         $this->param('posts_per_page', (int) $limit);
@@ -344,6 +673,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * orderby - Order results by a specified field.
+     *
+     * @param string $orderby = 'none'
+     * @param string $order = 'ASC'
+     * @return void
+     */
     public function orderby($orderby = 'none', $order = 'ASC')
     {
         $this->param(array('orderby' => $orderby, 'order' => $order));
