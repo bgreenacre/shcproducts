@@ -18,4 +18,13 @@ border: solid 1px #ccc;
 min-height: 70px;
 width: 80%;
 }
+#shcp_products .shcp_product:hover {
+    cursor: move;
+}
+.shcp_product {
+border: dotted 1px #ccc;
+width: 200px;
+height: 200px;
+float: left;
+}
 

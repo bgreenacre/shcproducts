@@ -7,10 +7,7 @@
 <input type="text" value="" name="keyword" id="keyword" />
 <input type="button" value="<?php echo __('Submit'); ?>" name="filter" id="filter" />
 </div>
-<?php foreach ($products as $product): ?>
-<div class="shcp_product" data-post_id="<?php echo $product->ID; ?>">
-</div>
-<?php endforeach; ?>
+<?php echo SHCP::view('admin/related/grid', array('products' => $products)); ?>
 </div>
 <div id="shcp_related">
 <h4><?php echo __('Current Related Products'); ?></h4>
