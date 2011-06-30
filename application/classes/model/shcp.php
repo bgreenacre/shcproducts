@@ -45,6 +45,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     protected $_params = array();
 
     /**
+     * Contains DB columns of the table.
+     *
+     * @var array
+     */
+    protected $_fields = array();
+
+    /**
      * Tracks whether the posts have been queried.
      *
      * @var bool
@@ -223,6 +230,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		$this->_params = array();
 		$this->_values = array();
         $this->_errors = array();
+        $this->_fields = array();
 		$this->_execute = FALSE;
     }
 
@@ -281,7 +289,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
 	    $post = $this->as_array();
 
-	    foreach (array_keys($this->_fields) as $field)
+	    foreach (array_keys($this->fields()) as $field)
 	    {
 	        if (isset($this->_values[$field]) === TRUE)
 	        {
