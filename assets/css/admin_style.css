@@ -3,6 +3,7 @@ float: left;
 min-height: 100px;
 width: 60%;
 }
+
 #shcp_related {
 border-left: solid 1px #ccc;
 min-height: 100px;
@@ -10,16 +11,66 @@ float: right;
 width: 35%;
 padding: 0 0 0 30px;
 }
+
 #shcproducts_related hr {
-border: 0px;
-clear: both;
+  border: 0px;
+  clear: both;
 }
+
 #shcp_related_tank {
 position: relative;
 border: solid 1px #ccc;
 min-height: 70px;
 width: 80%;
 }
+
+/*Import Products Form*/
+
+.shcp_form_labels {
+  clear: left;  
+  float: left;
+  width: 110px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.shcp_form_fields {
+  margin-left: 120px;  
+  overflow: auto;  
+  margin-bottom: 20px;
+}
+
+.shcp_form_fields .radio {
+  display: block;
+  clear: left;
+  float: left;
+  height: 18px;
+  margin-top: 4px;
+  margin-right: 5px;
+}
+
+.shcp_form_fields label {
+  height: 18px;
+  float: left;
+}
+
+#search_terms,
+#search_term_subcategory {
+  width: 300px;
+}
+
+.subcategory_option {
+  display: none;
+  margin-left: 20px;
+}
+
+#search_term_subcategory {
+  float: left;  
+
+}
+
+/*-------------------------------*/
+
 #shcp_related_tank li {
 border: 0px;
 width: 100%;
@@ -34,3 +85,8 @@ height: 200px;
 float: left;
 }
 
+.subcategory_option label {
+  clear: left;
+  font-weight: bold;
+  margin-right: 10px;
+}
