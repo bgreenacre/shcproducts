@@ -425,6 +425,18 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	}
 
     /**
+	 * loaded - Check whether a result has been loaded from the DB.
+	 *
+	 * @return bool TRUE when there are results else FALSE on empty results.
+	 */
+	public function loaded()
+	{
+	    $this->load();
+
+	    return ($this->_total_rows > 0);
+	}
+
+    /**
      * param - Add a parameter which will passed to the WP_Query object.
      *
      *  // Single name and value. This method can be chained.

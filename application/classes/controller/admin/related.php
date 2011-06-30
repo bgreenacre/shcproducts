@@ -13,7 +13,6 @@ class Controller_Admin_Related {
 
     public function __construct()
     {
-        add_action('wp_ajax_action_save_related', array(&$this, 'action_save'));
         add_action('add_meta_boxes', array(&$this, 'metabox'));
         add_action('save_post', array(&$this, 'action_save'));
         add_action('init', array(&$this, 'init'));
@@ -59,60 +58,27 @@ class Controller_Admin_Related {
      *
      * @return void
      */
-    public function action_save()
+    public function action_save($post_id = NULL)
     {
         $response = SHCP::config('json', 'response');
 
         if ($products = (array) SHCP::get($_POST, 'products'))
         {
-            $key = 0;
-            $count = count($products);
-            $error = FALSE;
+            $related = array();
 
-            // Loop through products from the post and save into DB.
-            while ($error === FALSE AND $key < $count)
+            foreach ($products as $product)
             {
-                // Set the main fields for the post.
-                $data['partNumber'] = $product;
-                $data['ID'] = SHCP::get($_POST['product_id'], $key);
-                $data['post_title'] = SHCP::get($_POST['product_title'], $key);
-
-                // Query the API to get the search result fields for this
-                // product.
-                $search = Library_Sears_Api::factory('search')
-                    ->keyword($product)
-                    ->load();
-
-                if (count($search) > 0)
-                {
-                    // Merge the results into the array of post data.
-                    $data = array_merge($data, $search->current());
-
-                    // Get the details from the API and store them in the
-                    // custom field product_details.
-                    $data['product_details'] = Library_Sears_Api::factory('product', NULL, $search->current())
-                        ->get()
-                        ->load()
-                        ->current();
-                }
-
-                // Instantiate a model object and set the values.
                 $product = new Model_Product($product);
-                $product->values($data);
 
-                // Check the values and save the post.
-                if ($product->check())
+                if ($product->loaded())
                 {
-                    $product->save();
-                    $response['success'] = TRUE;
-                    $response['messages']['information'][] = __('Successfully imported products.');
+                    $related[] = $poduct->ID;
                 }
-                else
-                {
-                    $error = TRUE;
-                    $response['success'] = FALSE;
-                    $response['messages']['errors'] = $product->errors();
-                }
+            }
+
+            if ($related)
+            {
+                update_post_meta($post_id, $related);
             }
         }
         else
