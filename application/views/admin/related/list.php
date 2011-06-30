@@ -11,12 +11,12 @@
 </div>
 <div id="shcp_related">
 <h4><?php echo __('Current Related Products'); ?></h4>
-<div id="shcp_related_tank">
+<ul id="shcp_related_tank">
 <?php foreach ($related as $product): ?>
-<div class="shcp_product">
-</div>
+<li class="shcp_product">
+</li>
 <?php endforeach; ?>
-</div>
+</ul>
 <h2><?php echo __('Drag Products Here to Relate Them'); ?></h2>
 </div>
 <hr />
