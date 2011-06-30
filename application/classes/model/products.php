@@ -37,4 +37,16 @@ class Model_Products extends Model_SHCP {
         return $this;
     }
 
+    public function save()
+    {
+        $this->post_type = 'shcproduct';
+
+        if ( ! $this->post_status)
+        {
+            $this->post_status = 'publish';
+        }
+
+        return parent::save();
+    }
+
 }
