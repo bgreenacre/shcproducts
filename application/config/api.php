@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined('SHCP_PATH') or die('No direct script access.');
 
 return array(
     'default'   => array(

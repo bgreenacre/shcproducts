@@ -86,7 +86,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 *
 	 * @var array
 	 */
-	protected $_values;
+	protected $_values = array();
 
 	/**
      * Contains any error messages thrown when saving a post.
@@ -169,7 +169,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 */
 	public function values(array $values = NULL)
 	{
-	    $this->_values += $values;
+	    $this->_values = array_merge($this->_values, $values);
 
 	    return $this;
 	}

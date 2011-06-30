@@ -484,7 +484,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
         if (SHCP::$profiling)
         {
-            $request_token = Profiler::start('Request', $this->_url);
+            $request_token = SHCP_Profiler::start('Request', $this->_url);
         }
 
         if ($this->cache AND $body = SHCP::cache('api/'.$this->_url))
@@ -582,7 +582,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
         if (isset($request_token))
         {
-            Profiler::stop($request_token);
+            SHCP_Profiler::stop($request_token);
         }
 
         // Cleanup

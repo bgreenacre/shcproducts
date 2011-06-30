@@ -25,3 +25,240 @@ jQuery(document).ready(function($) {
     });
 });
 
+jQuery.noConflict();
+		
+jQuery(document).ready(function(){
+  //jQuery(".chooseCategory").change(function() { showSelectedProducts(); });
+  //jQuery("#choosePartNumber").click(function() { showProductDetail(); });
+  
+  init_import_form();
+  
+  // displays products from the api via ajax when form is submitted
+  jQuery("#submit").click(function(e) { 
+    e.preventDefault();
+    import_products(); 
+  });
+
+});
+
+function init_import_form() {
+  
+  // toggles the subcategory textbox to show or hide when category search method is selected or deselected
+  jQuery('input[name="search_method"]').change(function() {
+
+    var selected_method = jQuery("input[name='search_method']").filter(":checked").val();
+    var subcategory_option = jQuery('.subcategory_option');
+    
+    if(selected_method == 'category' || selected_method == 'subcategory') {
+      subcategory_option.show();
+    } else {
+      subcategory_option.hide();
+    }
+  });
+
+}
+
+function import_products(el) {
+  
+  // var product_count = el.attr('data-product-count');
+  // var page_number = el.attr('data-page-number');
+  // var category = jQuery(".chooseCategory").val();
+  var method      = jQuery("input[name='search_method']").filter(":checked").val();
+  var subcategory = jQuery("#search_term_subcategory").val();
+  var terms       = jQuery("#search_terms").val();
+  
+  subcategory = subcategory != "Enter Subcategory" ? subcategory : null;
+  terms = terms != "Enter Search Term(s)" ? terms : '';
+  
+  jQuery.post(
+    shcp_ajax.ajaxurl,
+    {
+      action        : "action_list", 
+      method        : method,
+      subcategory   : subcategory,
+      search_terms  : terms
+      //'category'      : category,
+      // 'page_number'   : page_number,
+      // 'product_count' : product_count
+    },
+     function(response) {
+      jQuery('#shcp_import_list').html(response);  
+      import_callback(this);
+    }
+  );  
+}
+// 
+// 
+// function showSelectedProducts() {
+// 
+//  var category = jQuery(".chooseCategory").val();
+//  var product_count = jQuery(".product_count").text();
+// 
+//   jQuery.post(
+//     SHCP_ajax.ajaxurl,
+//     {
+//       action      : "show_import_product_list", 
+//       'category'  : category,
+//       'page_number'   : 1,
+//       'product_count' : product_count
+//     },
+//      function(response) {  
+//       jQuery('#load_product_list').html(response);
+//       import_callback();
+//     }
+//   );
+// 
+// }
+// 
+function import_callback() {
+
+  console.log("import_callback");
+
+    // check all to import
+    jQuery("#import_all").change(function() {
+      var status = jQuery(el).is(":checked") ? true : false;
+      jQuery("input[name='import_single']").each(function() {
+        jQuery(this).attr('checked', status);
+      });
+    });
+  
+// 
+//   // event handlers for response html
+//   jQuery(".catSelect").change(function() {
+//    rowColor = jQuery(this).attr('value') != "-1" ? "#d6f0d6" : "transparent";    
+//     jQuery(this).parents("tr").css({ background : rowColor });
+//   });
+//   
+//   // assign all categories with a single dropdown (still neccessary to save at the bottom)
+//   jQuery(".selectAllCategories").change(function() {
+//     var category = jQuery(this).val();
+//     jQuery(".catSelect").each(function() {
+//       jQuery(this).val(category);
+//       rowColor = jQuery(this).attr('value') != "-1" ? "#d6f0d6" : "transparent";    
+//       jQuery(this).parents("tr").css({ background : rowColor });
+//     });
+//   });
+//   
+//   // check all featured
+//   jQuery("#selectAllFeatured").change(function() {
+//     var status = jQuery(this).is(":checked") ? true : false;
+//     jQuery("input[name='isFeatured']").each(function() {
+//       jQuery(this).attr('checked', status);
+//     });
+//   });
+// 
+//   // check all hidden
+//   jQuery("#selectAllHidden").change(function() {
+//     var status = jQuery(el).is(":checked") ? true : false;
+//     jQuery("input[name='isHidden']").each(function() {
+//       jQuery(this).attr('checked', status);
+//     });
+//   });
+// 
+   jQuery("#save_products").click(function() { save_products(); });
+//   jQuery("#addProductSubmit").click(function() { submitProductDetail(); });
+//   jQuery(".product_page_link").click(function() { loadProductPage(jQuery(this)); });  
+}
+ 
+function save_products(){
+  
+  console.log("save_products");
+
+ var import_table = jQuery("#shcp_import_table");
+ var items = [];
+ 
+ jQuery('#shcp_import_table tbody tr').each(function(index) {
+   
+    if(jQuery(this).find("input[name='import_single']").is(":checked")) {
+
+     var r = jQuery(import_table).find('tbody tr').eq(index);
+
+     items.push({
+       "row_count"    : r.attr('id'),
+       "post_title"   : r.find('.name').html(), 
+       "imageid"      : r.find('input[name=imageid]').val(), 
+       "catentryid"   : r.find('input[name=catentryid]').val(), 
+       "partnumber"   : r.find('.partnumber').html(), 
+       "numreview"    : r.find('input[name="numreview"]').val(), 
+       "rating"       : r.find('input[name="rating"]').val(), 
+       "cutprice"     : r.find('input[name="cutprice"]').val(),
+       "displayprice" : r.find('input[name="displayprice"]').val(),
+       "is_featured"  : r.find('input[name="is_featured"]').is(':checked'),
+       "is_hidden"    : r.find('input[name="is_hidden"]').is(':checked')       
+     });
+    }
+ 
+  /*
+   test out data object 
+   items() = question(title, link, category);
+  */    
+  });
+ 
+  jQuery.post(
+    shcp_ajax.ajaxurl,
+    {
+      action      : "action_save", 
+      'products'  : items
+    },
+     function() {      
+       // on success, mark rows as imported
+       for(var i in items) {
+         row = jQuery("#" + items[i]["row_count"]);
+       
+         row.css({ background : '#f1f1f1' }).addClass('disable');
+         row.find('input[name="is_featured"]').remove();
+         row.find('input[name="is_hidden"]').remove();
+         row.find('input[name="import_single"]').remove();
+         row.find('.partnumber').text("imported");
+       }
+    }
+  );
+}
+// 
+// function showProductDetail(){
+// 
+//  /* Get the data from the recent questions form */
+//  var partNumber = jQuery("#partNumber").val();
+// 
+//   jQuery.post(
+//     SearsAjax.ajaxurl,
+//     {
+//       action        : "show_import_product_detail", 
+//       'partNumber'  : partNumber
+//     },
+//      function(response) {
+//       jQuery('#load_product_detail').html(response);
+//       jQuery("#addProductSubmit").click(function() { submitProductDetail(); });
+//     }
+//   );
+// }
+// 
+// function submitProductDetail() {
+// 
+//  var items = [];
+// 
+//  items.push({
+//    "title"         : jQuery('#title').val(), 
+//    "imageId"       : jQuery('#imageId').val(), 
+//    "partNumber"    : jQuery('#partNumber').val(), 
+//    "category"      : jQuery('.chooseSingleCategory').val(), 
+//    "isFeatured"    : jQuery('#isFeatured').is(':checked'),
+//    "isHidden"      : jQuery('#isHidden').is(':checked'),
+//    "numReview"     : jQuery('#numReview').val(), 
+//    "rating"        : jQuery('#rating').val(), 
+//    "cutPrice"      : jQuery('#cutPrice').val(),
+//    "displayPrice"  : jQuery('#displayPrice').val()
+//  });
+//  
+//   jQuery.post(
+//     SearsAjax.ajaxurl,
+//     {
+//       action      : "add_product_content", 
+//       'cookie'    : encodeURIComponent(document.cookie), 
+//       'products'  : items
+//     },
+//      function() {
+//        jQuery('#message').addClass('updated').html("<p>Product Imported</p>");
+//     }
+//   );
+// }
