@@ -237,6 +237,22 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     }
 
     /**
+     * __get - Magic method to access properties.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        if (isset($this->current()->{$key}) === TRUE)
+        {
+            return $this->current()->{$key};
+        }
+
+        return NULL;
+    }
+
+    /**
 	 * _initialize - Initialize propertys of this class.
 	 *
 	 * @return void
@@ -257,6 +273,13 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	public function with($with)
 	{
 	    $this->_with[] = $with;
+	}
+
+	public function detail()
+	{
+	    return Library_Sears_Api::factory('product', $this->_group, $this->current())
+	        ->get()
+	        ->load();
 	}
 
     /**
