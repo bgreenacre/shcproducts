@@ -2,21 +2,27 @@
 float: left;
 min-height: 100px;
 width: 60%;
-border-right: solid 1px #ccc;
 }
 #shcp_related {
+border-left: solid 1px #ccc;
 min-height: 100px;
 float: right;
 width: 35%;
+padding: 0 0 0 30px;
 }
 #shcproducts_related hr {
 border: 0px;
 clear: both;
 }
 #shcp_related_tank {
+position: relative;
 border: solid 1px #ccc;
 min-height: 70px;
 width: 80%;
+}
+#shcp_related_tank li {
+border: 0px;
+width: 100%;
 }
 #shcp_products .shcp_product:hover {
     cursor: move;

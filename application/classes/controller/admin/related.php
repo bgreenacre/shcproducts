@@ -25,6 +25,7 @@ class Controller_Admin_Related {
         {
             wp_enqueue_script('jquery-ui-draggable');
             wp_enqueue_script('jquery-ui-droppable');
+            wp_enqueue_script('jquery-ui-sortable');
         }
     }
 
@@ -68,28 +69,38 @@ class Controller_Admin_Related {
             $count = count($products);
             $error = FALSE;
 
+            // Loop through products from the post and save into DB.
             while ($error === FALSE AND $key < $count)
             {
+                // Set the main fields for the post.
                 $data['partNumber'] = $product;
                 $data['ID'] = SHCP::get($_POST['product_id'], $key);
                 $data['post_title'] = SHCP::get($_POST['product_title'], $key);
 
+                // Query the API to get the search result fields for this
+                // product.
                 $search = Library_Sears_Api::factory('search')
                     ->keyword($product)
                     ->load();
 
                 if (count($search) > 0)
                 {
+                    // Merge the results into the array of post data.
                     $data = array_merge($data, $search->current());
+
+                    // Get the details from the API and store them in the
+                    // custom field product_details.
                     $data['product_details'] = Library_Sears_Api::factory('product', NULL, $search->current())
                         ->get()
                         ->load()
                         ->current();
                 }
 
+                // Instantiate a model object and set the values.
                 $product = new Model_Product($product);
                 $product->values($data);
 
+                // Check the values and save the post.
                 if ($product->check())
                 {
                     $product->save();
