@@ -71,6 +71,8 @@ class Controller_Admin_Import {
 
     public function action_save()
     {
+      
+      var_dump($_POST['data']);
       $product_count = count($_POST['import_single']);
       echo "PRODUCT COUNT: " . $product_count . "<br />";
       $keys = array_keys($_POST);

@@ -1,4 +1,4 @@
-<form action="/wp-admin/admin-ajax.php?action=action_save" method="post">
+<form action="" id="shcp_import_form" method="post">
 <table class="widefat" id="shcp_import_table">
   <thead>
     <tr>
