@@ -155,66 +155,47 @@ function import_callback() {
 //     });
 //   });
 // 
-   //jQuery("#save_products").click(function() { save_products(); });
+  jQuery("#save_products").click(function(e) { 
+    e.preventDefault();
+    save_products(); 
+  });
 //   jQuery("#addProductSubmit").click(function() { submitProductDetail(); });
 //   jQuery(".product_page_link").click(function() { loadProductPage(jQuery(this)); });  
 }
  
 function save_products(){
-  
   console.log("save_products");
 
  var import_table = jQuery("#shcp_import_table");
  var items = [];
  
- jQuery('#shcp_import_table tbody tr').each(function(index) {
+ import_table.find('tbody tr').each(function(index) {
    
-    if(jQuery(this).find("input[name='import_single']").is(":checked")) {
-
-     var r = jQuery(import_table).find('tbody tr').eq(index);
-
-     items.push({
-       "row_count"    : r.attr('id'),
-       "post_title"   : r.find('.name').html(), 
-       "imageid"      : r.find('input[name=imageid]').val(), 
-       "catentryid"   : r.find('input[name=catentryid]').val(), 
-       "partnumber"   : r.find('.partnumber').html(), 
-       "numreview"    : r.find('input[name="numreview"]').val(), 
-       "rating"       : r.find('input[name="rating"]').val(), 
-       "cutprice"     : r.find('.cutprice').html(),
-       "displayprice" : r.find('.displayprice').html(),
-       "is_featured"  : r.find('input[name="is_featured"]').is(':checked'),
-       "is_hidden"    : r.find('input[name="is_hidden"]').is(':checked')       
-     });
+    if(jQuery(this).find("input[name='import_single[]']").is(":checked")) {
+      items.push(index);
     }
- 
-  /*
-   test out data object 
-   items() = question(title, link, category);
-  */    
   });
- 
-  jQuery.post(
-    shcp_ajax.ajaxurl,
-    {
-      action      : "action_save",
-      'products'  : jQuery('input[type=hidden]', r)
-    },
-     function() {      
-       // on success, mark rows as imported
-       for(var i in items) {
-         row = jQuery("#" + items[i]["row_count"]);
-       
-         row.css({ background : '#f1f1f1' }).addClass('disable');
-         row.find('input[name="is_featured"]').remove();
-         row.find('input[name="is_hidden"]').remove();
-         row.find('input[name="import_single"]').remove();
-         row.find('.partnumber').text("imported");
-         row.find('.cutprice').text("");
-         row.find('.displayprice').text("");
-       }
+  
+  data = jQuery('#shcp_import_form').serialize();
+  
+  jQuery.ajax({
+    type: 'post',
+    url: '/wp-admin/admin-ajax.php?action=action_save',
+    data: data,
+    success: function() {
+      for(var i in items) {
+        row = jQuery("#row_" + items[i]);
+      
+        row.css({ background : '#f1f1f1' }).addClass('disable');
+        row.find('input[name="is_featured"]').remove();
+        row.find('input[name="is_hidden"]').remove();
+        row.find('input[name="import_single"]').remove();
+        row.find('.partnumber').text("imported");
+        row.find('.cutprice').text("");
+        row.find('.displayprice').text("");
+      }      
     }
-  );
+  });
 }
 // 
 // function showProductDetail(){
