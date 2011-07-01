@@ -1,6 +1,16 @@
 <?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
- * HSC Products plugin.
+ * shcproducts
+ *
+ * @author Brian Greenacre and Kyla Klein
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Wed 15 Jun 2011 07:32:09 PM
+ */
+
+// -----------------------------------------------------------------------------
+
+/**
  * Options controller.
  *
  * @package		shcproducts

@@ -1,6 +1,20 @@
 <?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
- * Sears and Kmart product plugin.
+ * Sears Holding Company Products Wordpress plugin.
+ *
+ * Provides the ability to import products via the Sears API and storing in
+ * wordpress as custom post type.
+ *
+ * @author Brian Greenacre and Kyla Klein
+ * @package shcproducts
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Wed 15 Jun 2011 07:32:09 PM
+ */
+
+// -----------------------------------------------------------------------------
+
+/**
  * Product import controller.
  *
  * @package		shcproducts
@@ -11,6 +25,11 @@
 
 class Controller_Admin_Related {
 
+    /**
+     * __construct - Setup the actions used by this controller.
+     *
+     * @return void
+     */
     public function __construct()
     {
         add_action('add_meta_boxes', array(&$this, 'metabox'));
@@ -18,6 +37,11 @@ class Controller_Admin_Related {
         add_action('init', array(&$this, 'init'));
     }
 
+    /**
+     * init - Enqueue js files to the head.
+     *
+     * @return void
+     */
     public function init()
     {
         if (is_admin())
@@ -28,6 +52,11 @@ class Controller_Admin_Related {
         }
     }
 
+    /**
+     * metabox - Adds the large metabox to the post edit form.
+     *
+     * @return void
+     */
     public function metabox()
     {
         add_meta_box(
@@ -38,6 +67,12 @@ class Controller_Admin_Related {
         );
     }
 
+    /**
+     * action_list - Display available products and current related products.
+     *
+     * @param object $post = NULL
+     * @return void
+     */
     public function action_list($post = NULL)
     {
         $products = new Model_Products();
@@ -87,6 +122,7 @@ class Controller_Admin_Related {
             $response['messages']['notices'][] = __('No products were set to import.');
         }
 
+        /*
         if (SHCP::$is_ajax)
         {
             $response = json_encode($response);
@@ -102,6 +138,7 @@ class Controller_Admin_Related {
             echo $response;
             exit;
         }
+        */
     }
 
 }

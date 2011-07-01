@@ -1,8 +1,12 @@
 <?php
 /**
- * shcproducts.php
+ * Sears Holding Company Products Wordpress plugin.
+ *
+ * Provides the ability to import products via the Sears API and storing in
+ * wordpress as custom post type.
  *
  * @author Brian Greenacre and Kyla Klein
+ * @package shcproducts
  * @email bgreenacre42@gmail.com
  * @version $Id$
  * @since Wed 15 Jun 2011 07:32:09 PM
@@ -10,7 +14,8 @@
 /*
 Plugin Name: SHC Products
 Plugin URI: http://wordpress.org/#
-Description: Loads a list of products from Sears.com API
+Description:    Provides the ability to import products via the Sears API and
+                storing in wordpress as custom post type.
 Author: Brian Greenacre and Kyla Klein
 Version: 0.1
 */
