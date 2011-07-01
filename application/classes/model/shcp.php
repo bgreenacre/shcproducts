@@ -258,6 +258,8 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		    $this->_executed = TRUE;
 		}
 
+
+
 		if ( ! $this->_data)
 		{
 		    $this->_position = 0;
@@ -281,13 +283,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 */
 	protected function _save()
 	{
-	    // Nothing to save so just return.
+        // Nothing to save so just return.
 	    if ( ! $this->_values)
 	    {
 	        return;
 	    }
 
-	    $post = $this->as_array();
+	    $post = (array) SHCP::get($this->_data, $this->_position);
 
 	    foreach (array_keys($this->fields()) as $field)
 	    {

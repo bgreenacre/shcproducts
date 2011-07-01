@@ -19,6 +19,7 @@ class Model_Products extends Model_SHCP {
     public function __construct()
     {
         $this->param('post_type', 'shcproduct');
+        parent::__construct();
     }
 
     public function related($id)
@@ -40,11 +41,7 @@ class Model_Products extends Model_SHCP {
     public function save()
     {
         $this->post_type = 'shcproduct';
-
-        if ( ! $this->post_status)
-        {
-            $this->post_status = 'publish';
-        }
+        $this->post_status = 'publish';
 
         return parent::save();
     }
