@@ -317,7 +317,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
 	        // Now that the post has been saved, save any values that are not
 	        // post fields as meta tags in the post.
-	        if ($meta = array_diff_key($this->_values, $this->_data[$this->_position]))
+	        if ($meta = array_diff_key($this->_values, (array) $this->_data[$this->_position]))
 	        {
 	            foreach ($meta as $key => $value)
 	            {

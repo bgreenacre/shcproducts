@@ -3,10 +3,16 @@
   <p>To see products select a search method, enter the search terms and click the Search button.</p>
   <form action="" method="post">
     <div class="shcp_form_labels">
+      <label for="search_terms">Search Term(s): </label>
+    </div>
+    <div class="shcp_form_fields">
+      <input type="text" name="search_terms" id="search_terms" value="Enter Search Term(s)" />
+    </div>
+    <div class="shcp_form_labels">
       <label for="search_method">Search Method: </label>
     </div>
     <div class="shcp_form_fields">
-      <input type="radio" class="radio" name="search_method" id="search_method_keyword" value="keyword" />
+      <input type="radio" class="radio" name="search_method" id="search_method_keyword" value="keyword" checked="checked" />
       <label for="search_method_keyword">Keyword</label>
     
       <input type="radio" class="radio" name="search_method" id="search_method_vertical" value="vertical" />
@@ -20,13 +26,9 @@
         <input type="text" name="search_term_subcategory" id="search_term_subcategory" value="Enter Subcategory" />
       </div>
     </div>
-    <div class="shcp_form_labels">
-      <label for="search_terms">Search Term(s): </label>
-    </div>
     <div class="shcp_form_fields">
-      <input type="text" name="search_terms" id="search_terms" value="Enter Search Term(s)" />
       <input type="submit" name="submit" id="submit" value="Search" />
-    </div>
+    </div>  
   </form>  
   <div id="shcp_import_list"></div>  
 </div>

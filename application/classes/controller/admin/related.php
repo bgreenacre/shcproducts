@@ -103,7 +103,7 @@ class Controller_Admin_Related {
 
             foreach ($products as $product)
             {
-                $product = new Model_Product($product);
+                $product = new Model_Products($product);
 
                 if ($product->loaded())
                 {
