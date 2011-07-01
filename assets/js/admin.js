@@ -116,8 +116,8 @@ function import_callback() {
 
     // check all to import
     jQuery("#import_all").change(function() {
-      var status = jQuery(el).is(":checked") ? true : false;
-      jQuery("input[name='import_single']").each(function() {
+      var status = jQuery(this).is(":checked") ? true : false;
+      jQuery("input[name='import_single[]']").each(function() {
         jQuery(this).attr('checked', status);
       });
     });
@@ -155,7 +155,7 @@ function import_callback() {
 //     });
 //   });
 // 
-   jQuery("#save_products").click(function() { save_products(); });
+   //jQuery("#save_products").click(function() { save_products(); });
 //   jQuery("#addProductSubmit").click(function() { submitProductDetail(); });
 //   jQuery(".product_page_link").click(function() { loadProductPage(jQuery(this)); });  
 }
@@ -181,8 +181,8 @@ function save_products(){
        "partnumber"   : r.find('.partnumber').html(), 
        "numreview"    : r.find('input[name="numreview"]').val(), 
        "rating"       : r.find('input[name="rating"]').val(), 
-       "cutprice"     : r.find('input[name="cutprice"]').val(),
-       "displayprice" : r.find('input[name="displayprice"]').val(),
+       "cutprice"     : r.find('.cutprice').html(),
+       "displayprice" : r.find('.displayprice').html(),
        "is_featured"  : r.find('input[name="is_featured"]').is(':checked'),
        "is_hidden"    : r.find('input[name="is_hidden"]').is(':checked')       
      });
@@ -197,8 +197,8 @@ function save_products(){
   jQuery.post(
     shcp_ajax.ajaxurl,
     {
-      action      : "action_save", 
-      'products'  : items
+      action      : "action_save",
+      'products'  : jQuery('input[type=hidden]', r)
     },
      function() {      
        // on success, mark rows as imported
@@ -210,6 +210,8 @@ function save_products(){
          row.find('input[name="is_hidden"]').remove();
          row.find('input[name="import_single"]').remove();
          row.find('.partnumber').text("imported");
+         row.find('.cutprice').text("");
+         row.find('.displayprice').text("");
        }
     }
   );

@@ -66,24 +66,63 @@ class Controller_Admin_Import {
 
     echo SHCP::view('admin/import/list', $data);
 
-
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
     public function action_save()
     {
-      foreach($_POST['products'] as $product) {
-
-        error_log("IMPORT action_save: SAVING..." . $product['post_title']);
-
+      $product_count = count($_POST['import_single']);
+      echo "PRODUCT COUNT: " . $product_count . "<br />";
+      $keys = array_keys($_POST);
+      unset($keys[array_search('import_all', $keys)]);
+      
+      var_dump($keys);
+      echo "<br /><br />";
+    
+      var_dump($_POST);
+      echo "<br /><br />";
+      //exit;
+      
+      for($i=0; $i<$product_count; $i++) 
+      {
         $shcproduct = new Model_Products();
-        $shcproduct->values($product);
-
+        $data = array();
+        
+        foreach($keys as $field_name)
+        {
+          $data[$field_name] = SHCP::get($_POST[$field_name], $i);          
+        }
+        
+        var_dump($data);
+        
+        $shcproduct->values($data);
+        
         if ($shcproduct->check())
         {
-            $shcproduct->save();
+          var_dump($shcproduct);
+          $shcproduct->save();
+        }
+        else
+        {
+          var_dump($shcproduct->errors());
         }
       }
+      
+      
+      // foreach($_POST['products'] as $product) {
+      // 
+      //   error_log("IMPORT action_save: SAVING..." . $product['post_title']);
+      // 
+      //   $shcproduct = new Model_Products();
+      //   $shcproduct->values($product);
+      // 
+      //   if ($shcproduct->check())
+      //   {
+      //       $shcproduct->save();
+      //   }
+      // }
+      
+      die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
 
   public function action_index()
