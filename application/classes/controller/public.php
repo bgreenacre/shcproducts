@@ -1,5 +1,20 @@
 <?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
+ * Sears Holding Company Products Wordpress plugin.
+ *
+ * Provides the ability to import products via the Sears API and storing in
+ * wordpress as custom post type.
+ *
+ * @author Brian Greenacre and Kyla Klein
+ * @package shcproducts
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Wed 15 Jun 2011 07:32:09 PM
+ */
+
+// -----------------------------------------------------------------------------
+
+/**
  * Sears and Kmart product plugin.
  * Public controller.
  *
@@ -15,10 +30,10 @@ class Controller_Public {
 
 	public function __construct(array $params = NULL)
 	{
-		$name = SHCP::config('plugin', 'options.api_key.name'); 
+		$name = SHCP::config('plugin', 'options.api_key.name');
 		$default = SHCP::config('plugin', 'options.api_key.default');
 		$this->path = SHCP::get_option($name, $default);
-		
+
 		add_action('init', array(&$this, 'init'));
 	}
 
@@ -45,25 +60,25 @@ class Controller_Public {
   //    echo '<script type="text/javascript" src="'.SK_JS_URL.'/kmart/foot_v9.js"></script>';
   //  }
   // }
-  // 
+  //
   // public function header()
   // {
   //  $show_name = SK_Base::config('plugin', 'options.header.name');
   //  $show_default = SK_Base::config('plugin', 'options.header.default');
   //  $show = (bool) SK_Base::get_option($show_name, $show_default);
-  // 
+  //
   //  if ($show)
   //  {
   //    echo SK_Base::view($this->path.'/header');
   //  }
   // }
-  // 
+  //
   // public function footer()
   // {
   //  $show_name = SK_Base::config('plugin', 'options.footer.name');
   //  $show_default = SK_Base::config('plugin', 'options.footer.default');
   //  $show = (bool) SK_Base::get_option($show_name, $show_default);
-  // 
+  //
   //  if ($show)
   //  {
   //    echo SK_Base::view($this->path.'/footer');
@@ -71,3 +86,4 @@ class Controller_Public {
   // }
 
 }
+

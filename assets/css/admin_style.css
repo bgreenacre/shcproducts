@@ -27,7 +27,7 @@ width: 80%;
 /*Import Products Form*/
 
 .shcp_form_labels {
-  clear: left;  
+  clear: left;
   float: left;
   width: 110px;
   font-weight: bold;
@@ -35,8 +35,8 @@ width: 80%;
 }
 
 .shcp_form_fields {
-  margin-left: 120px;  
-  overflow: auto;  
+  margin-left: 120px;
+  overflow: auto;
   margin-bottom: 20px;
 }
 
@@ -65,7 +65,7 @@ width: 80%;
 }
 
 #search_term_subcategory {
-  float: left;  
+  float: left;
 }
 
 /*Import Products Table*/
@@ -80,11 +80,14 @@ width: 80%;
 #shcp_related_tank li {
 border: 0px;
 width: 100%;
+clear: both;
+float: none;
 }
 #shcp_products .shcp_product:hover {
     cursor: move;
 }
 .shcp_product {
+position: relative;
 border: dotted 1px #ccc;
 width: 200px;
 height: 200px;
@@ -96,3 +99,4 @@ float: left;
   font-weight: bold;
   margin-right: 10px;
 }
+

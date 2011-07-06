@@ -97,7 +97,7 @@ class Controller_Admin_Related {
     {
         $response = SHCP::config('json', 'response');
 
-        if ($products = (array) SHCP::get($_POST, 'related_products'))
+        if ($products = (array) SHCP::get($_POST, 'shcp_related_products'))
         {
             $related = array();
 
@@ -107,13 +107,13 @@ class Controller_Admin_Related {
 
                 if ($product->loaded())
                 {
-                    $related[] = $poduct->ID;
+                    $related[] = $product->ID;
                 }
             }
 
             if ($related)
             {
-                update_post_meta($post_id, 'related_products', $related);
+                update_post_meta($post_id, 'shcp_related_products', $related);
             }
         }
         else

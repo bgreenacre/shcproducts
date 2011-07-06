@@ -16,15 +16,15 @@
  */
 class Model_Products extends Model_SHCP {
 
-    public function __construct()
+    public function __construct($id = NULL)
     {
+        parent::__construct($id);
         $this->param('post_type', 'shcproduct');
-        parent::__construct();
     }
 
     public function related($id)
     {
-        $ids = (array) get_post_meta($id, 'shcp_related');
+        $ids = (array) get_post_meta($id, 'shcp_related_products', TRUE);
 
         if ($ids)
         {
@@ -40,7 +40,7 @@ class Model_Products extends Model_SHCP {
 
     public function save()
     {
-        $this->post_type = 'shcproduct';
+        $this->post_type = $this->param('post_type');
         $this->post_status = 'publish';
 
         return parent::save();
