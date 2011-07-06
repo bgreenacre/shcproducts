@@ -308,4 +308,3 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
     }
 
 }
-

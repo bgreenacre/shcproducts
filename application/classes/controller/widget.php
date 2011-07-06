@@ -84,4 +84,3 @@ class Controller_Widget extends WP_Widget {
     }
 
 }
-
