@@ -30,6 +30,8 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         }
     }
 
+    protected $_id;
+
     /**
      * Name of the table. Default is the posts table.
      *
@@ -142,7 +144,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             {
                 return $this->current()->{$key};
             }
-            elseif ($meta = get_post_meta($this->current()->ID, $key))
+            elseif ($meta = get_post_meta($this->current()->ID, $key, TRUE))
             {
                 return $meta;
             }
@@ -231,7 +233,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		$this->_values = array();
         $this->_errors = array();
         $this->_fields = array();
-		$this->_execute = FALSE;
+		$this->_executed = FALSE;
     }
 
     /**
@@ -249,7 +251,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		    // Dump the posts into this object and set the iterator props.
 		    $this->_data = $query->posts;
 		    $this->_position = 0;
-		    $this->_total_rows = $query->found_posts;
+		    $this->_total_rows = count($this->_data);
 		    $this->_total_display = $query->post_count;
 
 		    // Destroy the query object.

@@ -1,5 +1,20 @@
 <?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
+ * Sears Holding Company Products Wordpress plugin.
+ *
+ * Provides the ability to import products via the Sears API and storing in
+ * wordpress as custom post type.
+ *
+ * @author Brian Greenacre and Kyla Klein
+ * @package shcproducts
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Wed 15 Jun 2011 07:32:09 PM
+ */
+
+// -----------------------------------------------------------------------------
+
+/**
  * Sears and Kmart product plugin.
  * Product import controller.
  *
@@ -71,8 +86,6 @@ class Controller_Admin_Import {
 
     public function action_save()
     {
-      
-      var_dump($_POST['data']);
       $product_count = count($_POST['import_single']);
       echo "PRODUCT COUNT: " . $product_count . "<br />";
       $keys = array_keys($_POST);
@@ -96,7 +109,6 @@ class Controller_Admin_Import {
         }
         else
         {
-          var_dump($shcproduct->errors());
         }
       }
 
