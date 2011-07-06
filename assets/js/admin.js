@@ -23,7 +23,11 @@ jQuery(document).ready(function($) {
             var $el = $(this),
                 $sender = $(ui.draggable);
             if ($('li', $el).length <= 2 && $('#post_id_'+$sender.data('post_id'), $el).length == 0)
-                $el.append($sender.draggable('disable').append('<input type="hidden" name="shcp_related_products[]" value="'+$sender.data('post_id')+'" />'));
+                $el.append(
+                    $sender.draggable('disable')
+                    .append('<input type="hidden" name="shcp_related_products[]" value="'+$sender.data('post_id')+'" />')
+                    .append('<a href="#" class="shcp_trash"><img src="/wp-content/plugins/shcproducts/assets/images/trash.png" alt="Remove Product" height="22px" width="20px" /></a>')
+                );
             else
                 return false;
         },
@@ -36,6 +40,10 @@ jQuery(document).ready(function($) {
         }
     }).sortable({
         tolerance: 'touch'
+    });
+    $('#shcp_related_tank li .shcp_trash').live('click', function() {
+        $(this).parent().remove();
+        return false;
     });
     //jQuery(".chooseCategory").change(function() { showSelectedProducts(); });
     //jQuery("#choosePartNumber").click(function() { showProductDetail(); });
