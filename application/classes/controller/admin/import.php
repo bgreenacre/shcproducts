@@ -25,6 +25,7 @@
  */
 
 class Controller_Admin_Import {
+  
 	public function __construct(array $params = NULL)
 	{
 		add_action('wp_ajax_action_save', array(&$this, 'action_save'));
@@ -48,31 +49,35 @@ class Controller_Admin_Import {
 		$current_page         = isset($_POST['page_number'])    ? $_POST['page_number']   : 1;
 		$product_count        = isset($_POST['product_count'])  ? $_POST['product_count'] : 0;
 		$selected_category_id = isset($_POST['category'])       ? $_POST['category']      : 0;
+    
+    $next_page            = $current_page + 1;
+    $previous_page        = $current_page - 1;
 
     // $selected_category      = get_term($selected_category_id, 'product_category');
     // $selected_category_name = isset($selected_category->name) ? $selected_category->name : '';
-
-		$start_index = ($current_page - 1) * $num_per_page + 1;
-		$end_index = ($start_index + $num_per_page > $product_count) ? $product_count : $start_index + $num_per_page;
+    
+	  $start_index          = ($current_page - 1) * $num_per_page + 1;
+	  $end_index            = ($start_index + $num_per_page > $product_count && $product_count > 0) ? $product_count : $start_index + $num_per_page;
 
     $result = Library_Sears_Api::factory('search')
       ->$method($search_terms, $subcategory)
-      ->limit(0, 5)
+      ->limit($start_index, $end_index)
       ->load();
-
-    // echo "RESULT COUNT: " . $result->count();
-    // echo "<pre>";
-    // print_r($result->current());
-    // echo "</pre>";
+    
+    $product_count        = $result->mercadoresult->productcount;
+    $num_pages            = ceil($product_count / $num_per_page);  
 
 	  $args = array(
 			'num_per_page'  => $num_per_page,
 			'page_range'	  => $page_range,
 			'current_page'	=> $current_page,
-			'product_count'	=> $result->productcount,
+			'product_count'	=> $product_count,
 			'method'	      => $method,
 			'search_terms'	=> $search_terms,
 			'subcategory'	  => $subcategory,
+			'num_pages'     => $num_pages,
+			'next_page'     => $next_page,
+			'previous_page' => $previous_page,
 			'start_index'   => $start_index,
 			'end_index'     => $end_index
 			);
@@ -87,7 +92,7 @@ class Controller_Admin_Import {
     public function action_save()
     {
       $product_count = count($_POST['import_single']);
-      echo "PRODUCT COUNT: " . $product_count . "<br />";
+
       $keys = array_keys($_POST);
       unset($keys[array_search('import_all', $keys)]);
 
@@ -111,20 +116,6 @@ class Controller_Admin_Import {
         {
         }
       }
-
-
-      // foreach($_POST['products'] as $product) {
-      //
-      //   error_log("IMPORT action_save: SAVING..." . $product['post_title']);
-      //
-      //   $shcproduct = new Model_Products();
-      //   $shcproduct->values($product);
-      //
-      //   if ($shcproduct->check())
-      //   {
-      //       $shcproduct->save();
-      //   }
-      // }
 
       die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
