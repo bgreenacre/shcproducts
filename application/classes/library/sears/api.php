@@ -149,6 +149,8 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      */
     protected $_data;
 
+    protected $_object;
+
 	/**
 	 * Current position within the object.data
 	 *
@@ -251,6 +253,10 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         if (isset($this->current()->{$key}) === TRUE)
         {
             return $this->current()->{$key};
+        }
+        elseif (isset($this->_object->{$key}) === TRUE)
+        {
+            return $this->_object->{$key};
         }
 
         return NULL;
@@ -791,4 +797,3 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	}
 
 }
-

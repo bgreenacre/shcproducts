@@ -26,15 +26,16 @@ jQuery(document).ready(function($) {
                 $el.append($sender.draggable('disable').append('<input type="hidden" name="shcp_related_products[]" value="'+$sender.data('post_id')+'" />'));
             else
                 return false;
-        }
-    }).sortable({
-        over: function(e, ui) {
+        },
+        out: function(e, ui) {
             var $el = $(this),
                 $sender = $(ui.draggable),
-                curHeight = $el.height(),
-                addHeight = $sender.height();
-            $el.height(curHeight+addHeight);
+                liHeight = parseInt($('li', $el).height()),
+                plHeight = parseInt($sender.height());
+            $el.height(liHeight + plHeight);
         }
+    }).sortable({
+        tolerance: 'touch'
     });
     //jQuery(".chooseCategory").change(function() { showSelectedProducts(); });
     //jQuery("#choosePartNumber").click(function() { showProductDetail(); });

@@ -1,14 +1,14 @@
 #shcp_products {
 float: left;
 min-height: 100px;
-width: 60%;
+width: 75%;
 }
 
 #shcp_related {
 border-left: solid 1px #ccc;
 min-height: 100px;
 float: right;
-width: 35%;
+width: 20%;
 padding: 0 0 0 30px;
 }
 
@@ -20,8 +20,7 @@ padding: 0 0 0 30px;
 #shcp_related_tank {
 position: relative;
 border: solid 1px #ccc;
-min-height: 70px;
-width: 80%;
+width: 200px;
 }
 
 /*Import Products Form*/
