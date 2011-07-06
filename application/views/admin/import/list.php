@@ -1,3 +1,33 @@
+<div class='products_found'><span class='product_count'><?php echo $data['product_count']; ?></span> products found</div>
+<?php if($data['current_page'] > 1) 
+{ ?>
+<a class="product_page_link" href="#" data-product-count="<?php $data['product_count']; ?>" data-page-number="1">&laquo; First</a>
+<a class="product_page_link" href="#" data-product-count="<?php $data['product_count']; ?>" data-page-number="<?php echo $data['previous_page']; ?> ">&laquo; Previous</a>
+<?php 
+} 
+?>
+<?php 
+  for($i=($data['current_page'] - $data['page_range']); $i<=($data['current_page'] + $data['page_range']); $i++) {
+// if it's a valid page number...
+   if (($i > 0) && ($i <= $data['num_pages'])) {
+      // if we're on current page...
+      if ($i == $data['current_page']) { ?>
+        <span class='current_page'><?php echo $i; ?></span>
+<?php } 
+      else 
+      {  ?>
+        <a class="product_page_link" href="#" data-product-count="<?php echo $data['product_count']; ?>" data-page-number="<?php echo $i; ?>"><?php echo $i; ?></a>
+<?php } 
+   } 
+}
+if($data['current_page'] < $data['num_pages']) 
+{ ?>
+  <a class="product_page_link" href="#" data-product-count="<?php echo $data['product_count']; ?>" data-page-number="<?php echo $data['next_page']; ?>">Next &raquo;</a>
+  <a class="product_page_link" href="#" data-product-count="<?php echo $data['product_count']; ?>" data-page-number="<?php echo $data['num_pages']; ?>">Last &raquo;</a>
+<?php 
+} 
+?>
+
 <form action="" id="shcp_import_form" method="post">
 <table class="widefat" id="shcp_import_table">
   <thead>
@@ -38,6 +68,8 @@
           <input type="hidden" name="partnumber[]" value="<?php echo $result->partnumber; ?>" />
           <input type="hidden" name="cutprice[]" value="<?php echo $result->cutprice; ?>" />
           <input type="hidden" name="displayprice[]" value="<?php echo $result->displayprice; ?>" />
+          <input type="hidden" name="longdescription[]" value="<?php echo $result->detail()->longdescription; ?>" />
+          <input type="hidden" name="shortdescription[]" value="<?php echo $result->detail()->shortdescription; ?>" />          
         </td>
         <td class="image">
           <img src="http://s.shld.net/is/image/Sears/<?php echo $result->current()->image; ?>?hei=100&amp;wid=100" style="width: 100px;" alt="<?php echo $result->current()->image; ?>" />
