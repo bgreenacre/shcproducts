@@ -49,4 +49,3 @@ class Controller_App {
 	}
 
 }
-
