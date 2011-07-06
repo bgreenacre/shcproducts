@@ -1,0 +1,45 @@
+<?php defined('SHCP_PATH') OR die('No direct script access.');
+/**
+ * Sears Holding Company Products Wordpress plugin.
+ *
+ * Provides the ability to import products via the Sears API and storing in
+ * wordpress as custom post type.
+ *
+ * @author Brian Greenacre and Kyla Klein
+ * @package shcproducts
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Wed 15 Jun 2011 07:32:09 PM
+ */
+
+// -----------------------------------------------------------------------------
+
+class Helper_Products {
+
+    public static function image($image, array $attrs = NULL)
+    {
+        $attrs['height'] = SHCP::get($attrs, 'height', 100);
+        $attrs['width'] = SHCP::get($attrs, 'width', 100);
+        $attrs_str = '';
+
+        if (strpos($image, '://') === FALSE)
+        {
+            $image = 'http://s.shld.net/is/image/Sears/'.$image
+                .'?hei='.$attrs['height'].'&wid='.$attrs['width'];
+        }
+
+        $attrs['src'] = $image;
+
+        foreach ($attrs as $key => $value)
+        {
+            $attrs_str .= $key . '='
+                .htmlspecialchars( (string) $value, ENT_QUOTES)
+                .'&';
+        }
+
+        $attrs_str = ' ' . rtrim($sttrs_str, '&');
+
+        return '<img'.$attrs_str.' />';
+    }
+
+}
