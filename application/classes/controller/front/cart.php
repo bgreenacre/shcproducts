@@ -22,7 +22,7 @@
  *  // Example of template usage
  *  if (defined('SHCP_PATH'))
  *  {
- *      Controller::factory('front_products')->action_grid();
+ *      Controller::factory('front_cart')->action_view();
  *  }
  *
  * @package		shcproducts
@@ -31,35 +31,48 @@
  * @author		Brian Greenacre
  */
 
-class Controller_Front_Products {
+class Controller_Front_Cart {
+
+    /**
+     * Cart object
+     *
+     * @var object
+     */
+    public $cart;
 
     public function __construct()
     {
-        add_shortcode('shcp_products', array(&$this, 'action_grid'));
-        add_shortcode('shcp_product', array(&$this, 'action_detail'));
-        add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
+        add_shortcode('shcp_cart', array(&$this, 'action_view'));
+        add_shortcode('shcp_minicart', array(&$this, 'action_mini'));
+
+        $this->cart = Library_Sears_Api::factory('cart');
+        SHCP::bind_global('cart', $this->cart);
     }
 
-    public function action_grid()
+    public function action_mini()
+    {
+    }
+
+    public function action_view()
     {
         $data = array(
         );
-
-        echo SHCP::view('front/product/grid', $data);
     }
 
-    public function action_detail()
+    public function action_add()
     {
-        $data = array();
-
-        echo SHCP::view('front/product/detail', $data);
     }
 
-    public function action_quickview()
+    public function action_remove()
     {
-        $data = array();
+    }
 
-        echo SHCP::view('front/product/quickview', $data);
+    public function action_update()
+    {
+    }
+
+    public function action_empty()
+    {
     }
 
 }

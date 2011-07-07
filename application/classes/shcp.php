@@ -21,9 +21,28 @@
  */
 class SHCP {
 
+    /**
+     * A global delimiter character used for SHCP.
+     *
+     * @var string
+     */
     public static $delimiter = '.';
+
+    /**
+     * Is magic quotes enabled?
+     *
+     * @var bool
+     */
     public static $magic_quotes = FALSE;
+
+    /**
+     * Contains an array of indexed global data. Useful for cacheing variables
+     * during a complete php execution.
+     *
+     * @var array
+     */
     public static $global_data = array();
+
     public static $profiling = TRUE;
     public static $cache_dir = SHCP_CACHE;
     public static $cache_life = 2000;
@@ -527,10 +546,35 @@ class SHCP {
 	{
 		if ($option === NULL)
 		{
-			return $default;
+			return (array) get_option(self::prefix('options'));
 		}
 
 		return self::path(get_option(self::prefix('options')), $option, $default);
+	}
+
+	/**
+	 * set_option - Save an option into the array of options for SHCP plugin.
+	 *
+	 * @static
+	 * @access public
+	 * @param   string|arrays option name or array options and their values.
+	 * @param   mixed   The value to set to the option.
+	 * @return  bool
+	 */
+	public static function set_option($option, $value = NULL)
+	{
+	    $current_options = (array) get_option(self::prefix('options'));
+
+	    if (is_array($option))
+        {
+            $current_options = array_merge($current_options, $option);
+        }
+        else
+        {
+            $current_options[$option] = $value;
+        }
+
+        return update_option(self::prefix('options'), $current_options);
 	}
 
 	/**
