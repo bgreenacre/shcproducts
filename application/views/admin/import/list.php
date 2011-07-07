@@ -71,9 +71,7 @@ if($data['current_page'] < $data['num_pages'])
           <input type="hidden" name="longdescription[]" value="<?php echo $result->detail()->longdescription; ?>" />
           <input type="hidden" name="shortdescription[]" value="<?php echo $result->detail()->shortdescription; ?>" />          
         </td>
-        <td class="image">
-          <img src="http://s.shld.net/is/image/Sears/<?php echo $result->current()->image; ?>?hei=100&amp;wid=100" style="width: 100px;" alt="<?php echo $result->current()->image; ?>" />
-        </td>
+        <td class="image"><?php echo Helper_Products::image($result->image); ?></td>
         <td class="name"><?php echo $result->name; ?></td>     
         <td class="partnumber"><?php echo $result->partnumber; ?></td>
         <td class="cutprice"><?php echo $result->cutprice; ?></td>
