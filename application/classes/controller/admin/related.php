@@ -89,10 +89,17 @@ class Controller_Admin_Related {
         echo SHCP::view('admin/related/list', $data);
     }
 
+    /**
+     * action_filter_list - This is an ajax action to return product posts based
+     * on search terms.
+     *
+     * @return void
+     */
     public function action_filter_list()
     {
         $products = new Model_Products();
 
+        // Add in the search query to filter results.
         $products->param('s', SHCP::get($_GET, 's', SHCP::get($_POST, 's', '')));
 
         $data = array('products' => $products);

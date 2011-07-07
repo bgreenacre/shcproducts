@@ -1,14 +1,21 @@
 jQuery(document).ready(function($) {
     var timer;
     // Make products draggable in post editor.
-    $('.shcp_product').draggable({
-        scope: 'shcp',
-        containment: '#shcproducts_related .inside',
-        cursor: 'move',
-        revert: true,
-        connectToSortable: '#shcp_related_tank',
-        helper: 'clone'
-    });
+    $('.shcp_product')
+        .live('update', function() {
+            $(this).draggable('destroy').draggable({
+                scope: 'shcp',
+                containment: '#shcproducts_related .inside',
+                cursor: 'move',
+                revert: true,
+                connectToSortable: '#shcp_related_tank',
+                helper: 'clone'
+            });
+        })
+        .trigger('update')
+        .ajaxSuccess(function() {
+            $(this).trigger('update');
+        });
     // Make related products tank droppable and sortable.
     $('#shcp_related_tank').droppable({
         scope: 'shcp',
@@ -68,6 +75,7 @@ jQuery(document).ready(function($) {
                         s: $keyword.val()
                     }, function() {
                         $('#shcp_loader').hide();
+                        $('.shcp_product').trigger('update');
                     });
             }, 1000);
         });

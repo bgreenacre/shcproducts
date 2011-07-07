@@ -170,6 +170,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         // Typical the save method would then be called in order to persist
         // the new values for the post.
         $this->_values[$key] = $value;
+        $this->param($key, $value);
 
         return $this;
     }

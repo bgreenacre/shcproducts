@@ -227,14 +227,12 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             $this->{$property} = $value;
         }
 
-        /*
-        $settings = (array) get_option('shcproducts');
+        $settings = SHCP::get_option();
 
         foreach ($settings as $setting => $value)
         {
             $this->{$setting} = $value;
         }
-        */
 
         if ($parent)
         {
