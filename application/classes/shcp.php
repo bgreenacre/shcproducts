@@ -156,6 +156,15 @@ class SHCP {
         try
         {
             $file = str_replace('_', '/', strtolower($class));
+
+            $themepath = get_stylesheet_directory() . '/application/classes/' . $file . '.php';
+
+            if (is_file($themepath))
+            {
+                require $themepath;
+                return TRUE;
+            }
+
             $fullpath = SHCP_CLASS . '/' . $file . '.php';
 
             if (is_file($fullpath))
@@ -185,8 +194,6 @@ class SHCP {
      */
     public static function view($view, array $data = NULL, $ret = TRUE)
     {
-        $view = SHCP_VIEW . '/' . $view . '.php';
-
 		// Import the view variables to local namespace
 		if($data !== NULL)
 		{
@@ -204,8 +211,19 @@ class SHCP {
 
 		try
 		{
-			// Load the view within the current scope
-			include $view;
+		    $themepath = get_stylesheet_directory() . '/application/views/' . $view . '.php';
+
+		    if (is_file($themepath))
+		    {
+		        include $themepath;
+		    }
+		    else
+		    {
+                $view = SHCP_VIEW . '/' . $view . '.php';
+
+			    // Load the view within the current scope
+			    include $view;
+            }
 		}
 		catch (Exception $e)
 		{
