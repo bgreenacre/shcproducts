@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+    var timer;
     // Make products draggable in post editor.
     $('.shcp_product').draggable({
         scope: 'shcp',
@@ -31,20 +32,45 @@ jQuery(document).ready(function($) {
             else
                 return false;
         },
-        out: function(e, ui) {
+        deactivate: function(e, ui) {
             var $el = $(this),
                 $sender = $(ui.draggable),
-                liHeight = parseInt($('li', $el).height()),
+                liHeight = parseInt($('li', $el).height()) * $('li', $el).length,
                 plHeight = parseInt($sender.height());
-            $el.height(liHeight + plHeight);
+            $el.height(liHeight);
         }
-    }).sortable({
-        tolerance: 'touch'
     });
+    // Click of the trash icon should remove the related product.
     $('#shcp_related_tank li .shcp_trash').live('click', function() {
         $(this).parent().remove();
         return false;
     });
+    $keyword = $('#shcp_keyword');
+    $keyword
+        .val($keyword.data('label'))
+        .bind('blur', function() {
+            if ( ! $keyword.val())
+                $keyword.val($keyword.data('label')).css({color: '#ccc'});
+        })
+        .bind('focus', function() {
+            if ($keyword.val() == $keyword.data('label'))
+                $keyword.val('');
+            $keyword.css({color: '#666'});
+        })
+        .bind('keypress', function() {
+            if (timer)
+                clearTimeout(timer);
+            $('#shcp_loader').show();
+            timer = setTimeout(function() {
+                $('#shcp_products_tank').load(shcp_ajax.ajaxurl,
+                    {
+                        action: "action_filter_list",
+                        s: $keyword.val()
+                    }, function() {
+                        $('#shcp_loader').hide();
+                    });
+            }, 1000);
+        });
     //jQuery(".chooseCategory").change(function() { showSelectedProducts(); });
     //jQuery("#choosePartNumber").click(function() { showProductDetail(); });
     init_import_form();

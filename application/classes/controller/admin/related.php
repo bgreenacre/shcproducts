@@ -32,6 +32,7 @@ class Controller_Admin_Related {
      */
     public function __construct()
     {
+        add_action('wp_ajax_action_filter_list', array(&$this, 'action_filter_list'));
         add_action('add_meta_boxes', array(&$this, 'metabox'));
         add_action('save_post', array(&$this, 'action_save'));
         add_action('init', array(&$this, 'init'));
@@ -86,6 +87,18 @@ class Controller_Admin_Related {
         );
 
         echo SHCP::view('admin/related/list', $data);
+    }
+
+    public function action_filter_list()
+    {
+        $products = new Model_Products();
+
+        $products->param('s', SHCP::get($_GET, 's', SHCP::get($_POST, 's', '')));
+
+        $data = array('products' => $products);
+
+        echo SHCP::view('admin/related/grid', $data);
+        exit;
     }
 
     /**

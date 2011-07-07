@@ -1,11 +1,13 @@
 <?php wp_nonce_field('shcproducts_related', 'shcproducts_noncename'); ?>
 <div id="shcp_products">
 <div id="shcp_filter_products">
-<input type="text" value="" name="shcp_keyword" id="shcp_keyword" />
-<input type="button" value="<?php echo __('Submit'); ?>" name="shcp_filter" id="shcp_filter" />
+<input type="text" value="" name="shcp_keyword" id="shcp_keyword" data-label="<?php echo __('Type in keywords to filter products'); ?>" />
+<img src="<?php echo SHCP_IMAGES.'/ajax-loader.gif'; ?>" id="shcp_loader" height="16px" width="16px" />
 </div>
 <hr />
+<div id="shcp_products_tank">
 <?php echo SHCP::view('admin/related/grid', array('products' => $products)); ?>
+</div>
 </div>
 <div id="shcp_related">
 <h4><?php echo __('Current Related Products'); ?></h4>

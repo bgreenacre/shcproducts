@@ -101,8 +101,17 @@ height: 200px;
 float: left;
 }
 .subcategory_option label {
-  clear: left;
-  font-weight: bold;
-  margin-right: 10px;
+clear: left;
+font-weight: bold;
+margin-right: 10px;
+}
+#shcp_keyword {
+width: 300px;
+font-size: 18px;
+color: #ccc;
+padding: 5px;
+}
+#shcp_loader {
+display: none;
 }
 
