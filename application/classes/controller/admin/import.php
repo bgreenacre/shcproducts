@@ -24,6 +24,7 @@
  * @author		Kyla Klein
  */
 class Controller_Admin_Import {
+  
 	public function __construct(array $params = NULL)
 	{
 		add_action('wp_ajax_action_save', array(&$this, 'action_save'));
@@ -39,41 +40,65 @@ class Controller_Admin_Import {
 	 */
   public function action_list()
   {
-		$num_per_page         = 20;
-		$page_range           = 3;
-		$method               = isset($_POST['method'])         ? $_POST['method']        : 'keyword';
-		$search_terms         = isset($_POST['search_terms'])   ? $_POST['search_terms']  : '';
-		$subcategory          = isset($_POST['subcategory'])    ? $_POST['subcategory']   : NULL;
-		$current_page         = isset($_POST['page_number'])    ? $_POST['page_number']   : 1;
-		$product_count        = isset($_POST['product_count'])  ? $_POST['product_count'] : 0;
-		$selected_category_id = isset($_POST['category'])       ? $_POST['category']      : 0;
+		$num_per_page   = 20;
+		$page_range     = 3;
+		$method         = isset($_POST['method'])         ? $_POST['method']        : 'keyword';
+		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']  : '';
+		$subcategory    = isset($_POST['subcategory'])    ? $_POST['subcategory']   : NULL;
+		$current_page   = isset($_POST['page_number'])    ? $_POST['page_number']   : 1;
+		$product_count  = isset($_POST['product_count'])  ? $_POST['product_count'] : 0;
+    
+    $next_page      = $current_page + 1;
+    $previous_page  = $current_page - 1;
 
     // $selected_category      = get_term($selected_category_id, 'product_category');
     // $selected_category_name = isset($selected_category->name) ? $selected_category->name : '';
-
-		$start_index = ($current_page - 1) * $num_per_page + 1;
-		$end_index = ($start_index + $num_per_page > $product_count) ? $product_count : $start_index + $num_per_page;
+    
+	  $start_index    = ($current_page - 1) * $num_per_page + 1;
+	  $end_index      = ($start_index + $num_per_page > $product_count && $product_count > 0) ? $product_count : $start_index + $num_per_page;
 
     $result = Library_Sears_Api::factory('search')
       ->$method($search_terms, $subcategory)
-      ->limit(0, 5)
+      ->limit($start_index, $end_index)
       ->load();
+    
+    $product_count  = $result->mercadoresult->productcount;
+    $num_pages      = ceil($product_count / $num_per_page);  
 
-    // echo "RESULT COUNT: " . $result->count();
-    // echo "<pre>";
-    // print_r($result->current());
-    // echo "</pre>";
+    if($current_page > 1) {
+      // first page link
+      $pagination['first']['number'] = 1;
+      $pagination['first']['message'] = '&laquo; First';
+      // previous page link
+      $pagination['previous']['number'] = $previous_page;
+      $pagination['previous']['message'] = '&laquo; Previous';
+    }
+    
+    // numbered page links
+    for($i=$current_page; $i<($current_page + $page_range); $i++) {
+      if (($i > 0) && ($i <= $num_pages)) {
+        $pagination[$i]['number'] = $i;
+        $pagination[$i]['message'] = $i;
+      } 
+    }
+    
+    if($current_page < $num_pages) {
+      // next page link
+      $pagination['next']['number'] = $next_page;
+      $pagination['next']['message'] = 'Next &raquo;';
+      // last page link
+      $pagination['last']['number'] = $num_pages - 1;
+      $pagination['last']['message'] = 'Last &raquo;';
+    }
+    
 
 	  $args = array(
-			'num_per_page'  => $num_per_page,
-			'page_range'	  => $page_range,
 			'current_page'	=> $current_page,
-			'product_count'	=> $result->productcount,
+			'product_count'	=> $product_count,
 			'method'	      => $method,
 			'search_terms'	=> $search_terms,
 			'subcategory'	  => $subcategory,
-			'start_index'   => $start_index,
-			'end_index'     => $end_index
+			'pagination'    => $pagination
 			);
 
 	  $data = array_merge($args, array('result' => $result));
@@ -86,7 +111,7 @@ class Controller_Admin_Import {
     public function action_save()
     {
       $product_count = count($_POST['import_single']);
-      echo "PRODUCT COUNT: " . $product_count . "<br />";
+
       $keys = array_keys($_POST);
       unset($keys[array_search('import_all', $keys)]);
 
@@ -110,20 +135,6 @@ class Controller_Admin_Import {
         {
         }
       }
-
-
-      // foreach($_POST['products'] as $product) {
-      //
-      //   error_log("IMPORT action_save: SAVING..." . $product['post_title']);
-      //
-      //   $shcproduct = new Model_Products();
-      //   $shcproduct->values($product);
-      //
-      //   if ($shcproduct->check())
-      //   {
-      //       $shcproduct->save();
-      //   }
-      // }
 
       die(); // have to do this in WP otherwise a zero will be appended to all responses
     }

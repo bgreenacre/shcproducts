@@ -26,7 +26,7 @@
  */
 class Helper_Products {
 
-    public static function image($image, array $attrs = NULL)
+    public static function image($image, array $attrs = array())
     {
         $attrs['height'] = SHCP::get($attrs, 'height', 100);
         $attrs['width'] = SHCP::get($attrs, 'width', 100);
@@ -44,10 +44,10 @@ class Helper_Products {
         {
             $attrs_str .= $key . '='
                 .htmlspecialchars( (string) $value, ENT_QUOTES)
-                .'&';
+                .' ';
         }
 
-        $attrs_str = ' ' . rtrim($sttrs_str, '&');
+        $attrs_str = ' ' . rtrim($attrs_str, ' ');
 
         return '<img'.$attrs_str.' />';
     }
