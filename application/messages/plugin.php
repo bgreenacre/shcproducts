@@ -10,7 +10,10 @@ return array(
 			),
 		'cart'	=> array(
 			'title'	=> 'SHC Cart API Settings'
-			)
+			),
+        'widgets'   => array(
+            'title' => 'SHC Product Widgets',
+            ),
 		),
 	'options'	=> array(
 		'title'	=> 'SHC Product/Cart API Settings',
@@ -27,5 +30,8 @@ return array(
 		'auth_id'	=> array(
 			'label'	=> 'Cart Auth ID'
 			),
-		)
+		'widgets'	=> array(
+			'label'	=> 'Available Widgets'
+			),
+		),
 );

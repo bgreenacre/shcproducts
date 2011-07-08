@@ -32,10 +32,14 @@ class Controller_Admin_Related {
      */
     public function __construct()
     {
+        add_action('init', array(&$this, 'init'));
+
+        if ( ! in_array('related', (array) SHCP::get_option('widgets')))
+            return;
+
         add_action('wp_ajax_action_filter_list', array(&$this, 'action_filter_list'));
         add_action('add_meta_boxes', array(&$this, 'metabox'));
         add_action('save_post', array(&$this, 'action_save'));
-        add_action('init', array(&$this, 'init'));
     }
 
     /**
