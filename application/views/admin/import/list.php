@@ -1,31 +1,12 @@
 <div class='products_found'><span class='product_count'><?php echo $data['product_count']; ?></span> products found</div>
-<?php if($data['current_page'] > 1) 
-{ ?>
-<a class="product_page_link" href="#" data-product-count="<?php $data['product_count']; ?>" data-page-number="1">&laquo; First</a>
-<a class="product_page_link" href="#" data-product-count="<?php $data['product_count']; ?>" data-page-number="<?php echo $data['previous_page']; ?> ">&laquo; Previous</a>
 <?php 
-} 
-?>
-<?php 
-  for($i=($data['current_page'] - $data['page_range']); $i<=($data['current_page'] + $data['page_range']); $i++) {
-// if it's a valid page number...
-   if (($i > 0) && ($i <= $data['num_pages'])) {
-      // if we're on current page...
-      if ($i == $data['current_page']) { ?>
-        <span class='current_page'><?php echo $i; ?></span>
-<?php } 
-      else 
-      {  ?>
-        <a class="product_page_link" href="#" data-product-count="<?php echo $data['product_count']; ?>" data-page-number="<?php echo $i; ?>"><?php echo $i; ?></a>
-<?php } 
-   } 
+foreach($data['pagination'] as $page) {
+  if($page['number'] == $data['current_page']) {
+    ?><span class='current_page'><?php echo $page['number']; ?></span><?php
+  } else {
+    ?><a class="product_page_link" href="#" data-product-count="<?php $data['product_count']; ?>" data-page-number="<?php echo $page['number']; ?>"><?php echo $page['message']; ?></a><?    
+  }
 }
-if($data['current_page'] < $data['num_pages']) 
-{ ?>
-  <a class="product_page_link" href="#" data-product-count="<?php echo $data['product_count']; ?>" data-page-number="<?php echo $data['next_page']; ?>">Next &raquo;</a>
-  <a class="product_page_link" href="#" data-product-count="<?php echo $data['product_count']; ?>" data-page-number="<?php echo $data['num_pages']; ?>">Last &raquo;</a>
-<?php 
-} 
 ?>
 
 <form action="" id="shcp_import_form" method="post">

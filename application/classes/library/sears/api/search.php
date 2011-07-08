@@ -42,7 +42,8 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
 
     public function category($category, $sub_category = NULL)
     {
-        $this->param('categoryName', $category);
+        $this->method('productsearch')
+          ->param('categoryName', $category);
 
         if ($sub_category === NULL)
         {
@@ -60,7 +61,7 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
 
     public function vertical($vertical)
     {
-        $this
+        $this->method('productsearch')
             ->param('verticalName', $vertical)
             ->param('searchType', 'vertical');
 
