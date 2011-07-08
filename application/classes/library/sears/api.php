@@ -462,6 +462,8 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             unset($qs);
         }
 
+        error_log("API | URL | " . $url);  
+          
         return $url;
     }
 

@@ -30,14 +30,13 @@ jQuery(document).ready(function($) {
         drop: function(e, ui){
             var $el = $(this),
                 $sender = $(ui.draggable);
-            if ($('li', $el).length <= 2 && $('#post_id_'+$sender.data('post_id'), $el).length == 0)
-                $el.append(
-                    $sender.draggable('disable')
+            if ($('li', $el).length <= 2 && $('#post_id_'+$sender.data('post_id'), $el).length == 0) {
+                $el.append($sender.draggable('disable')
                     .append('<input type="hidden" name="shcp_related_products[]" value="'+$sender.data('post_id')+'" />')
-                    .append('<a href="#" class="shcp_trash"><img src="/wp-content/plugins/shcproducts/assets/images/trash.png" alt="Remove Product" height="22px" width="20px" /></a>')
-                );
-            else
+                    .append('<a href="#" class="shcp_trash"><img src="/wp-content/plugins/shcproducts/assets/images/trash.png" alt="Remove Product" height="22px" width="20px" /></a>'));
+            } else {
                 return false;
+            }
         },
         deactivate: function(e, ui) {
             var $el = $(this),
@@ -52,6 +51,7 @@ jQuery(document).ready(function($) {
         $(this).parent().remove();
         return false;
     });
+    
     $keyword = $('#shcp_keyword');
     $keyword
         .val($keyword.data('label'))
@@ -79,13 +79,14 @@ jQuery(document).ready(function($) {
                     });
             }, 1000);
         });
-    //jQuery(".chooseCategory").change(function() { showSelectedProducts(); });
-    //jQuery("#choosePartNumber").click(function() { showProductDetail(); });
+    
+    // default import form js
     init_import_form();
+    
     // displays products from the api via ajax when form is submitted
     $("#submit").click(function(e) {
         e.preventDefault();
-        import_products();
+        import_products(jQuery(this));
     });
 });
 
@@ -108,13 +109,14 @@ function init_import_form() {
 }
 
 function import_products(el) {
-  console.log('import_products');
 
   var product_count = el.attr('data-product-count');
   var page_number   = el.attr('data-page-number');
   var method        = jQuery("input[name='search_method']").filter(":checked").val();
   var subcategory   = jQuery("#search_term_subcategory").val();
   var terms         = jQuery("#search_terms").val();
+
+  console.log("import products - " + method);
 
   subcategory = subcategory != "Enter Subcategory" ? subcategory : null;
   terms = terms != "Enter Search Term(s)" ? terms : '';
@@ -135,39 +137,16 @@ function import_products(el) {
     }
   );
 }
-//
-//
-// function showSelectedProducts() {
-//
-//  var category = jQuery(".chooseCategory").val();
-//  var product_count = jQuery(".product_count").text();
-//
-//   jQuery.post(
-//     SHCP_ajax.ajaxurl,
-//     {
-//       action      : "show_import_product_list",
-//       'category'  : category,
-//       'page_number'   : 1,
-//       'product_count' : product_count
-//     },
-//      function(response) {
-//       jQuery('#load_product_list').html(response);
-//       import_callback();
-//     }
-//   );
-//
-// }
-//
-function import_callback() {
 
-  console.log("import_callback");
+function import_callback() {
 
   // check all to import
   jQuery("#import_all").change(function() {
     var status = jQuery(this).is(":checked") ? true : false;
-    jQuery("input[name='import_single[]']").each(function() {
+    jQuery('input[name="import_single[]"]').each(function() {
       jQuery(this).attr('checked', status);
     });
+  });  
 
   // activate save_products button
   jQuery("#save_products").click(function(e) {
@@ -175,19 +154,14 @@ function import_callback() {
     save_products();
   });
   
-//   jQuery("#addProductSubmit").click(function() { submitProductDetail(); });
-  
   // activate pagination links
   jQuery(".product_page_link").click(function(e) {
-    console.log("import_callback - product_page_link");
     e.preventDefault(); 
     import_products(jQuery(this)); 
   });
 }
 
 function save_products() {
-  
-  console.log("save_products");
 
  var import_table = jQuery("#shcp_import_table");
  var items = [];
@@ -219,4 +193,3 @@ function save_products() {
     }
   });
 }
-
