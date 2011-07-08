@@ -58,6 +58,14 @@ class Controller_Admin_Options {
 	public $auth_id_field_name;
 
 	/**
+	 * Name of the widgets checkbox array field.
+	 *
+	 * @access	public
+	 * @var		string
+	 */
+	public $widgets_field_name;
+
+	/**
 	 * Initialize the class. Add menu and admin wordpress init.
 	 *
 	 * @access	public
@@ -70,6 +78,7 @@ class Controller_Admin_Options {
 		$this->store_field_name = SHCP::config('plugin.options.store.name');
 		$this->app_id_field_name = SHCP::config('plugin.options.app_id.name');
 		$this->auth_id_field_name = SHCP::config('plugin.options.auth_id.name');
+		$this->widgets_field_name = SHCP::config('plugin.options.widgets.name');
 		add_action('admin_menu', array(&$this, 'menu'));
 		add_action('admin_init', array(&$this, 'init'));
 	}
@@ -87,10 +96,12 @@ class Controller_Admin_Options {
 		// Display the options.
 		add_settings_section('action_product_section', SHCP::lang('plugin', 'form.product.title'), array(&$this, 'action_product_section'), __CLASS__);
 		add_settings_section('action_cart_section', SHCP::lang('plugin', 'form.cart.title'), array(&$this, 'action_cart_section') , __CLASS__);
+		add_settings_section('action_widgets_section', SHCP::lang('plugin', 'form.widgets.title'), array(&$this, 'action_widgets_section') , __CLASS__);
 		add_settings_field($this->api_key_field_name, '', array(&$this, 'action_api_key_field'), __CLASS__, 'action_product_section');
 		add_settings_field($this->store_field_name, '', array(&$this, 'action_store_field'), __CLASS__, 'action_product_section');
 		add_settings_field($this->app_id_field_name, '', array(&$this, 'action_app_id_field'), __CLASS__, 'action_cart_section');
 		add_settings_field($this->auth_id_field_name, '', array(&$this, 'action_auth_id_field'), __CLASS__, 'action_cart_section');
+		add_settings_field($this->widgets_field_name, '', array(&$this, 'action_widgets_field'), __CLASS__, 'action_widgets_section');
 	}
 
 	/**
@@ -143,6 +154,17 @@ class Controller_Admin_Options {
 	public function action_cart_section()
 	{
 		echo SHCP::view('admin/options/cart');
+	}
+
+    /**
+     * action_widgets_section - Widgets section of the options form.
+     *
+     * @access  public
+     * @return  void
+     */
+	public function action_widgets_section()
+	{
+	    echo SHCP::view('admin/options/widgets');
 	}
 
 	/**
@@ -215,6 +237,22 @@ class Controller_Admin_Options {
 			);
 
 		echo SHCP::view('admin/options/fields/auth_id', $data);
+	}
+
+	public function action_widgets_field()
+	{
+		$data = array(
+			'id'        => $this->widgets_field_name,
+			'name'      => SHCP::prefix('options['.$this->widgets_field_name.'][]'),
+			'values'	=> (array) SHCP::get_option($this->widgets_field_name, SHCP::config('plugin.options.widgets.default')),
+			'options'   => array(
+			    'products'  => __('Products'),
+			    'related'   => __('Related Products'),
+			    ),
+			'lang'	=> SHCP::lang('plugin', 'options.'.$this->widgets_field_name)
+			);
+
+		echo SHCP::view('admin/options/fields/widgets', $data);
 	}
 
 }

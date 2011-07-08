@@ -2,7 +2,7 @@
 
 return array(
 	'stores'	=> array(
-		'sears'		=> 'Sears', 
+		'sears'		=> 'Sears',
 		'kmart'	=> 'Kmart',
 		'mygofer'	=> 'MyGofer'
 		),
@@ -22,6 +22,13 @@ return array(
 		'auth_id'	=> array(
 			'name'		=> 'auth_id',
 			'default'	=> 'auth_id_default_value'
-			)
+			),
+        'widgets'   => array(
+            'name'      => 'widgets',
+            'default'   => array(
+                'products',
+                'related',
+                ),
+            ),
 		)
 );
