@@ -1,3 +1,14 @@
+<div class='products_found'><span class='product_count'><?php echo $data['product_count']; ?></span> products found</div>
+<?php 
+foreach($data['pagination'] as $page) {
+  if($page['number'] == $data['current_page']) {
+    ?><span class='current_page'><?php echo $page['number']; ?></span><?php
+  } else {
+    ?><a class="product_page_link" href="#" data-product-count="<?php $data['product_count']; ?>" data-page-number="<?php echo $page['number']; ?>"><?php echo $page['message']; ?></a><?    
+  }
+}
+?>
+
 <form action="" id="shcp_import_form" method="post">
 <table class="widefat" id="shcp_import_table">
   <thead>
@@ -38,10 +49,10 @@
           <input type="hidden" name="partnumber[]" value="<?php echo $result->partnumber; ?>" />
           <input type="hidden" name="cutprice[]" value="<?php echo $result->cutprice; ?>" />
           <input type="hidden" name="displayprice[]" value="<?php echo $result->displayprice; ?>" />
+          <input type="hidden" name="longdescription[]" value="<?php echo $result->detail()->longdescription; ?>" />
+          <input type="hidden" name="shortdescription[]" value="<?php echo $result->detail()->shortdescription; ?>" />          
         </td>
-        <td class="image">
-          <img src="http://s.shld.net/is/image/Sears/<?php echo $result->current()->image; ?>?hei=100&amp;wid=100" style="width: 100px;" alt="<?php echo $result->current()->image; ?>" />
-        </td>
+        <td class="image"><?php echo Helper_Products::image($result->image); ?></td>
         <td class="name"><?php echo $result->name; ?></td>     
         <td class="partnumber"><?php echo $result->partnumber; ?></td>
         <td class="cutprice"><?php echo $result->cutprice; ?></td>

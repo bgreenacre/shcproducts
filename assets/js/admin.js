@@ -30,14 +30,13 @@ jQuery(document).ready(function($) {
         drop: function(e, ui){
             var $el = $(this),
                 $sender = $(ui.draggable);
-            if ($('li', $el).length <= 2 && $('#post_id_'+$sender.data('post_id'), $el).length == 0)
-                $el.append(
-                    $sender.draggable('disable')
+            if ($('li', $el).length <= 2 && $('#post_id_'+$sender.data('post_id'), $el).length == 0) {
+                $el.append($sender.draggable('disable')
                     .append('<input type="hidden" name="shcp_related_products[]" value="'+$sender.data('post_id')+'" />')
-                    .append('<a href="#" class="shcp_trash"><img src="/wp-content/plugins/shcproducts/assets/images/trash.png" alt="Remove Product" height="22px" width="20px" /></a>')
-                );
-            else
+                    .append('<a href="#" class="shcp_trash"><img src="/wp-content/plugins/shcproducts/assets/images/trash.png" alt="Remove Product" height="22px" width="20px" /></a>'));
+            } else {
                 return false;
+            }
         },
         deactivate: function(e, ui) {
             var $el = $(this),
@@ -52,6 +51,7 @@ jQuery(document).ready(function($) {
         $(this).parent().remove();
         return false;
     });
+    
     $keyword = $('#shcp_keyword');
     $keyword
         .val($keyword.data('label'))
@@ -79,23 +79,25 @@ jQuery(document).ready(function($) {
                     });
             }, 1000);
         });
-    //jQuery(".chooseCategory").change(function() { showSelectedProducts(); });
-    //jQuery("#choosePartNumber").click(function() { showProductDetail(); });
+    
+    // default import form js
     init_import_form();
+    
     // displays products from the api via ajax when form is submitted
     $("#submit").click(function(e) {
         e.preventDefault();
-        import_products();
+        import_products(jQuery(this));
     });
 });
+
 
 function init_import_form() {
 
   // toggles the subcategory textbox to show or hide when category search method is selected or deselected
   jQuery('input[name="search_method"]').change(function() {
 
-    var selected_method = jQuery("input[name='search_method']").filter(":checked").val();
-    var subcategory_option = jQuery('.subcategory_option');
+    var selected_method     = jQuery("input[name='search_method']").filter(":checked").val();
+    var subcategory_option  = jQuery('.subcategory_option');
 
     if(selected_method == 'category' || selected_method == 'subcategory') {
       subcategory_option.show();
@@ -108,12 +110,13 @@ function init_import_form() {
 
 function import_products(el) {
 
-  // var product_count = el.attr('data-product-count');
-  // var page_number = el.attr('data-page-number');
-  // var category = jQuery(".chooseCategory").val();
-  var method      = jQuery("input[name='search_method']").filter(":checked").val();
-  var subcategory = jQuery("#search_term_subcategory").val();
-  var terms       = jQuery("#search_terms").val();
+  var product_count = el.attr('data-product-count');
+  var page_number   = el.attr('data-page-number');
+  var method        = jQuery("input[name='search_method']").filter(":checked").val();
+  var subcategory   = jQuery("#search_term_subcategory").val();
+  var terms         = jQuery("#search_terms").val();
+
+  console.log("import products - " + method);
 
   subcategory = subcategory != "Enter Subcategory" ? subcategory : null;
   terms = terms != "Enter Search Term(s)" ? terms : '';
@@ -124,10 +127,9 @@ function import_products(el) {
       action        : "action_list",
       method        : method,
       subcategory   : subcategory,
-      search_terms  : terms
-      //'category'      : category,
-      // 'page_number'   : page_number,
-      // 'product_count' : product_count
+      search_terms  : terms,
+      page_number   : page_number,
+      product_count : product_count
     },
      function(response) {
       jQuery('#shcp_import_list').html(response);
@@ -135,90 +137,36 @@ function import_products(el) {
     }
   );
 }
-//
-//
-// function showSelectedProducts() {
-//
-//  var category = jQuery(".chooseCategory").val();
-//  var product_count = jQuery(".product_count").text();
-//
-//   jQuery.post(
-//     SHCP_ajax.ajaxurl,
-//     {
-//       action      : "show_import_product_list",
-//       'category'  : category,
-//       'page_number'   : 1,
-//       'product_count' : product_count
-//     },
-//      function(response) {
-//       jQuery('#load_product_list').html(response);
-//       import_callback();
-//     }
-//   );
-//
-// }
-//
+
 function import_callback() {
 
-  console.log("import_callback");
-
-    // check all to import
-    jQuery("#import_all").change(function() {
-      var status = jQuery(this).is(":checked") ? true : false;
-      jQuery("input[name='import_single[]']").each(function() {
-        jQuery(this).attr('checked', status);
-      });
+  // check all to import
+  jQuery("#import_all").change(function() {
+    var status = jQuery(this).is(":checked") ? true : false;
+    jQuery('input[name="import_single[]"]').each(function() {
+      jQuery(this).attr('checked', status);
     });
+  });  
 
-//
-//   // event handlers for response html
-//   jQuery(".catSelect").change(function() {
-//    rowColor = jQuery(this).attr('value') != "-1" ? "#d6f0d6" : "transparent";
-//     jQuery(this).parents("tr").css({ background : rowColor });
-//   });
-//
-//   // assign all categories with a single dropdown (still neccessary to save at the bottom)
-//   jQuery(".selectAllCategories").change(function() {
-//     var category = jQuery(this).val();
-//     jQuery(".catSelect").each(function() {
-//       jQuery(this).val(category);
-//       rowColor = jQuery(this).attr('value') != "-1" ? "#d6f0d6" : "transparent";
-//       jQuery(this).parents("tr").css({ background : rowColor });
-//     });
-//   });
-//
-//   // check all featured
-//   jQuery("#selectAllFeatured").change(function() {
-//     var status = jQuery(this).is(":checked") ? true : false;
-//     jQuery("input[name='isFeatured']").each(function() {
-//       jQuery(this).attr('checked', status);
-//     });
-//   });
-//
-//   // check all hidden
-//   jQuery("#selectAllHidden").change(function() {
-//     var status = jQuery(el).is(":checked") ? true : false;
-//     jQuery("input[name='isHidden']").each(function() {
-//       jQuery(this).attr('checked', status);
-//     });
-//   });
-//
+  // activate save_products button
   jQuery("#save_products").click(function(e) {
     e.preventDefault();
     save_products();
   });
-//   jQuery("#addProductSubmit").click(function() { submitProductDetail(); });
-//   jQuery(".product_page_link").click(function() { loadProductPage(jQuery(this)); });
+  
+  // activate pagination links
+  jQuery(".product_page_link").click(function(e) {
+    e.preventDefault(); 
+    import_products(jQuery(this)); 
+  });
 }
 
-function save_products(){
-  console.log("save_products");
+function save_products() {
 
  var import_table = jQuery("#shcp_import_table");
  var items = [];
 
  import_table.find('tbody tr').each(function(index) {
-
     if(jQuery(this).find("input[name='import_single[]']").is(":checked")) {
       items.push(index);
     }
@@ -245,51 +193,3 @@ function save_products(){
     }
   });
 }
-//
-// function showProductDetail(){
-//
-//  /* Get the data from the recent questions form */
-//  var partNumber = jQuery("#partNumber").val();
-//
-//   jQuery.post(
-//     SearsAjax.ajaxurl,
-//     {
-//       action        : "show_import_product_detail",
-//       'partNumber'  : partNumber
-//     },
-//      function(response) {
-//       jQuery('#load_product_detail').html(response);
-//       jQuery("#addProductSubmit").click(function() { submitProductDetail(); });
-//     }
-//   );
-// }
-//
-// function submitProductDetail() {
-//
-//  var items = [];
-//
-//  items.push({
-//    "title"         : jQuery('#title').val(),
-//    "imageId"       : jQuery('#imageId').val(),
-//    "partNumber"    : jQuery('#partNumber').val(),
-//    "category"      : jQuery('.chooseSingleCategory').val(),
-//    "isFeatured"    : jQuery('#isFeatured').is(':checked'),
-//    "isHidden"      : jQuery('#isHidden').is(':checked'),
-//    "numReview"     : jQuery('#numReview').val(),
-//    "rating"        : jQuery('#rating').val(),
-//    "cutPrice"      : jQuery('#cutPrice').val(),
-//    "displayPrice"  : jQuery('#displayPrice').val()
-//  });
-//
-//   jQuery.post(
-//     SearsAjax.ajaxurl,
-//     {
-//       action      : "add_product_content",
-//       'cookie'    : encodeURIComponent(document.cookie),
-//       'products'  : items
-//     },
-//      function() {
-//        jQuery('#message').addClass('updated').html("<p>Product Imported</p>");
-//     }
-//   );
-// }
