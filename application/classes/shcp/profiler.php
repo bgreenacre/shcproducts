@@ -20,6 +20,7 @@
  * @package shcproducts
  * @subpackage  utility
  * @category    utility
+ * @since       0.1
  */
 class SHCP_Profiler {
 

@@ -17,6 +17,10 @@
 /**
  * Model_SHCP
  *
+ * @package		shcproducts
+ * @subpackage	Model
+ * @since		0.1
+ * @author		Brian Greenacre
  */
 class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, Serializable {
 

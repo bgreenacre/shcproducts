@@ -18,6 +18,10 @@
  * SHCP - Main class for shcproducts plugin. Provides a number of static methods
  * to accomplish tasks like cacheing, views, class autoloading.
  *
+ * @package		shcproducts
+ * @subpackage	Core
+ * @since		0.1
+ * @author		Brian Greenacre
  */
 class SHCP {
 

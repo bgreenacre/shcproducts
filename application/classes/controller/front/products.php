@@ -27,10 +27,9 @@
  *
  * @package		shcproducts
  * @subpackage	Controller
- * @version		0.1
+ * @since		0.1
  * @author		Brian Greenacre
  */
-
 class Controller_Front_Products {
 
     public function __construct()

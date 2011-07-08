@@ -14,6 +14,16 @@
 
 // -----------------------------------------------------------------------------
 
+/**
+ * Sears and Kmart product plugin.
+ *
+ * Helper for product API work.
+ *
+ * @package		shcproducts
+ * @subpackage	Helper
+ * @since		0.1
+ * @author		Brian Greenacre
+ */
 class Helper_Products {
 
     public static function image($image, array $attrs = NULL)

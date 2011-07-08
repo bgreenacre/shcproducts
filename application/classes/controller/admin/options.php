@@ -19,10 +19,9 @@
  *
  * @package		shcproducts
  * @subpackage	Controller
- * @version		0.1
+ * @since		0.1
  * @author		Kyla Klein
  */
-
 class Controller_Admin_Options {
 
 	/**

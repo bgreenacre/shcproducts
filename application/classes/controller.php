@@ -14,6 +14,15 @@
 
 // -----------------------------------------------------------------------------
 
+/**
+ * Controller - Provides a factory to instantiate controller objects.
+ *
+ * @package shcproducts
+ * @subpackage  Controller
+ * @category    Controller
+ * @since		0.1
+ * @auther      Brian Greenacre
+ */
 class Controller {
 
     public static function factory($class)

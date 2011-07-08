@@ -20,16 +20,23 @@
  *
  * @package		shcproducts
  * @subpackage	Controller
- * @version		0.1
+ * @since		0.1
  * @author		Kyla Klein
  */
-
 class Controller_App {
 
 	public function __construct(array $params = NULL)
 	{
 	    add_action('wp_print_scripts', array(&$this, 'load_js'));
 	    add_action('admin_print_styles', array(&$this, 'load_css'));
+
+	    if ($widgets = (array) SHCP::get_option('widgets', SHCP::config('plugin.options.widgets.default')))
+	    {
+	        foreach ($widgets as $widget)
+	        {
+	            Controller::factory('Widget_'.ucfirst($widget));
+	        }
+	    }
 	}
 
 	public function load_js()
