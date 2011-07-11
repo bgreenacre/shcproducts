@@ -4,7 +4,7 @@ foreach($data['pagination'] as $page) {
   if($page['number'] == $data['current_page']) {
     ?><span class='current_page'><?php echo $page['number']; ?></span><?php
   } else {
-    ?><a class="product_page_link" href="#" data-product-count="<?php $data['product_count']; ?>" data-page-number="<?php echo $page['number']; ?>"><?php echo $page['message']; ?></a><?    
+    ?><a class="product_page_link" href="#" data-product-count="<?php echo $data['product_count']; ?>" data-page-number="<?php echo $page['number']; ?>" data-method="<?php echo $data['method']?>"><?php echo $page['message']; ?></a><?    
   }
 }
 ?>

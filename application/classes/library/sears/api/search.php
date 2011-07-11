@@ -29,6 +29,11 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
             $this->_total_rows = (int) count($this->_object->mercadoresult->products->product[1]);
             $this->_data =& $this->_object->mercadoresult->products->product[1];
         }
+        elseif (isset($this->_object->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1]))
+        {
+          $this->_total_rows = (int) count($this->_object->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1]);
+          $this->_data =& $this->_object->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1];
+        }
     }
 
     public function keyword($q)
@@ -40,9 +45,10 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
         return $this;
     }
 
-    public function category($category, $sub_category = NULL)
+    public function category($vertical, $category, $sub_category = NULL)
     {
         $this->method('productsearch')
+          ->param('verticalName', $vertical)
           ->param('categoryName', $category);
 
         if ($sub_category === NULL)
