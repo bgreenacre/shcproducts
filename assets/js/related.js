@@ -33,7 +33,7 @@ jQuery(document).ready(function($) {
         $(this).parent().sortable('destroy').remove();
         return false;
     });
-
+    // Add listeners for the keyword search.
     $keyword = $('#shcp_keyword');
     $keyword
         .val($keyword.data('label'))

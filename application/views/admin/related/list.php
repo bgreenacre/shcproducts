@@ -1,7 +1,7 @@
 <?php wp_nonce_field('shcproducts_related', 'shcproducts_noncename'); ?>
 <div id="shcp_products">
 <div id="shcp_filter_products">
-<input type="text" value="" name="shcp_keyword" id="shcp_keyword" data-label="<?php echo __('Type in keywords to filter products'); ?>" />
+<input type="text" value="" name="shcp_keyword" id="shcp_keyword" autocomplete="off" data-label="<?php echo __('Type in keywords to filter products'); ?>" />
 <img src="<?php echo SHCP_IMAGES.'/ajax-loader.gif'; ?>" id="shcp_loader" height="16px" width="16px" />
 </div>
 <hr />
