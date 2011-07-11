@@ -11,7 +11,6 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         import_products(jQuery(this), 'vertical', null);
     });
-<<<<<<< Updated upstream
 
     // displays a list of subcategories when a category is selected
     $("#search_categories").change(function(e) {
@@ -90,87 +89,6 @@ function import_products(el, method, page_data) {
     );  
   }  
 
-=======
-
-    // displays a list of subcategories when a category is selected
-    $("#search_categories").change(function(e) {
-        e.preventDefault();
-        import_products(jQuery(this), 'category', null);
-    });
-    
-    // displays a list of products when a subcategory is selected
-    $("#search_subcategories").change(function(e) {
-        e.preventDefault();
-        import_products(jQuery(this), 'subcategory', null);
-    });
-    
-});
-
-function import_products(el, method, page_data) {
-
-  var product_count     = page_data != null ? page_data.attr('data-product-count') : 0;
-  var page_number       = page_data != null ? page_data.attr('data-page-number') : 1;
-  var keyword_terms     = jQuery("#search_terms_keyword").val();
-  var vertical_terms    = jQuery("#search_terms_vertical").val();
-  var category_terms    = jQuery("#search_categories option:selected").val();
-  var subcategory_terms = jQuery("#search_subcategories option:selected").val();
-
-  keyword_terms         = keyword_terms != "Enter keywords" ? keyword_terms : '';
-  vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
-  category_terms        = category_terms != "Choose Category" ? category_terms : '';
-  subcategory_terms     = subcategory_terms != "Choose Subategory" ? subcategory_terms : '';
-  
-  if(method == 'keyword') {
-
-    jQuery.post(
-      shcp_ajax.ajaxurl,
-      {
-        action        : "action_list",
-        method        : method,
-        search_terms  : keyword_terms,
-        page_number   : page_number,
-        product_count : product_count
-      },
-       function(response) {
-        jQuery('#shcp_import_list').html(response);
-        import_callback(this);
-      }
-    );
-  }
-  
-  if(method == 'vertical') {
-    jQuery.post(
-      shcp_ajax.ajaxurl,
-      {
-        action        : "action_categories",
-        method        : method,
-        search_terms  : vertical_terms
-      },
-      function(response) {
-        jQuery('#shcp_categories').html(response);
-        import_callback(this);
-      }    
-    );  
-  }  
-  
-  if(method == 'category') {    
-    jQuery.post(
-      shcp_ajax.ajaxurl,
-      {
-        action          : "action_subcategories",
-        method          : method,
-        vertical_terms  : vertical_terms,
-        search_terms    : category_terms
-      },
-      function(response) {
-        jQuery('#shcp_subcategories').html(response);
-        import_callback(this);
-      }    
-    );  
-  }  
-
->>>>>>> Stashed changes
-  
   if(method == 'subcategory') {    
     jQuery.post(
       shcp_ajax.ajaxurl,
