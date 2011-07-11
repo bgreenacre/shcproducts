@@ -53,6 +53,13 @@ class Controller_Admin_Related {
             wp_enqueue_script('jquery-ui-draggable');
             wp_enqueue_script('jquery-ui-droppable');
             wp_enqueue_script('jquery-ui-sortable');
+            wp_enqueue_script('shcproducts-related-scripts', SHCP_JS.'/related.js', array(
+                'jquery',
+                'jquery-ui-draggable',
+                'jquery-ui-droppable',
+                'jquery-ui-sortable',
+                )
+            );
         }
     }
 
@@ -119,11 +126,10 @@ class Controller_Admin_Related {
     public function action_save($post_id = NULL)
     {
         $response = SHCP::config('json', 'response');
+        $related = array();
 
         if ($products = (array) SHCP::get($_POST, 'shcp_related_products'))
         {
-            $related = array();
-
             foreach ($products as $product)
             {
                 $product = new Model_Products($product);
@@ -133,17 +139,16 @@ class Controller_Admin_Related {
                     $related[] = $product->ID;
                 }
             }
-
-            if ($related)
-            {
-                update_post_meta($post_id, 'shcp_related_products', $related);
-            }
         }
         else
         {
             $respones['success'] = FALSE;
             $response['messages']['notices'][] = __('No products were set to import.');
         }
+
+        $related = array_unique($related);
+        update_post_meta($post_id, 'shcp_related_products', $related);
+        unset($related);
 
         /*
         if (SHCP::$is_ajax)
