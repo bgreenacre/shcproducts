@@ -17,6 +17,10 @@
 /**
  * Controller_Widget
  *
+ * @package		shcproducts
+ * @subpackage	Controller
+ * @since		0.1
+ * @author	    Brian Greenacre
  */
 class Controller_Widget extends WP_Widget {
 
@@ -64,7 +68,7 @@ class Controller_Widget extends WP_Widget {
         }
 
     	$data = $args + $instance;
-    	$data['title'] = apply_filters('widget_title', SHCP::get($instance, 'title', $this->name));
+    	$data['title'] = apply_filters($this->id_base . '_widget_title', SHCP::get($instance, 'title', $this->name));
     	$data['content'] = $this->content;
 
     	$content = SHCP::view($this->widget_template, $data);

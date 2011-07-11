@@ -20,6 +20,15 @@ class Controller_Widget_Products extends Controller_Widget {
      * @access  protected
      * @var string
      */
-    protected $content = 'widget/protected';
+    protected $content = 'widget/products/list';
+
+    public function form($values = NULL)
+    {
+        $data = array(
+            'values'    => $values,
+        );
+
+        echo SHCP::view('widget/products/form', $data);
+    }
 
 }

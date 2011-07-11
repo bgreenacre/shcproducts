@@ -24,6 +24,15 @@ class Controller_Widget_Related extends Controller_Widget {
      * @access  protected
      * @var string
      */
-    protected $content = 'widget/related';
+    protected $content = 'widget/related/list';
+
+    public function form($values = NULL)
+    {
+        $data = array(
+            'values'    => $values,
+        );
+
+        echo SHCP::view('widget/related/form', $data);
+    }
 
 }
