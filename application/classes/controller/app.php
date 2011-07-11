@@ -46,7 +46,7 @@ class Controller_App {
             wp_enqueue_script('sears-products-admin-scripts', SHCP_JS.'/admin.js', array('jquery'));
 
 		    // declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
-            wp_localize_script('sears-products-admin-scripts', 'shcp_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+            wp_localize_script('sears-products-admin-scripts', 'shcp_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'imageurl' => SHCP_IMAGES));
         }
 	}
 

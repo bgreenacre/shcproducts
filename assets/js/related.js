@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
             else
                 $sender
                     .append('<input type="hidden" name="shcp_related_products[]" value="'+$sender.data('post_id')+'" />')
-                    .append('<a href="#" class="shcp_trash"><img src="/wp-content/plugins/shcproducts/assets/images/trash.png" alt="Remove Product" height="22px" width="20px" /></a>');
+                    .append('<a href="#" class="shcp_trash"><img src="'+shcp_ajax.imageurl+'/trash.png" alt="Remove Product" height="22px" width="20px" /></a>');
         }
     });
     // Click of the trash icon should remove the related product.
