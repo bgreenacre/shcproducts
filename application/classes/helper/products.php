@@ -31,11 +31,17 @@ class Helper_Products {
         $attrs['height'] = SHCP::get($attrs, 'height', 100);
         $attrs['width'] = SHCP::get($attrs, 'width', 100);
         $attrs_str = '';
+        
+        $image = urldecode($image);
 
-        if (strpos($image, '://') === FALSE)
+        if (strpos($image, 'http//') === FALSE)
         {
             $image = 'http://s.shld.net/is/image/Sears/'.$image
                 .'?hei='.$attrs['height'].'&wid='.$attrs['width'];
+        }
+        else 
+        { 
+          $image = substr($image, (strpos($image, 'src=') + 4));
         }
 
         $attrs['src'] = $image;

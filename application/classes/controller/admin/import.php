@@ -29,6 +29,8 @@ class Controller_Admin_Import {
 	{
 		add_action('wp_ajax_action_save', array(&$this, 'action_save'));
 		add_action('wp_ajax_action_list', array(&$this, 'action_list'));
+		add_action('wp_ajax_action_categories', array(&$this, 'action_categories'));
+		add_action('wp_ajax_action_subcategories', array(&$this, 'action_subcategories'));
 		add_action('admin_menu', array(&$this, 'admin_init'));
 	}
 
@@ -40,27 +42,39 @@ class Controller_Admin_Import {
 	 */
   public function action_list()
   {
-		$num_per_page   = 20;
-		$page_range     = 3;
-		$method         = isset($_POST['method'])         ? $_POST['method']        : 'keyword';
-		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']  : '';
-		$subcategory    = isset($_POST['subcategory'])    ? $_POST['subcategory']   : NULL;
-		$current_page   = isset($_POST['page_number'])    ? $_POST['page_number']   : 1;
-		$product_count  = isset($_POST['product_count'])  ? $_POST['product_count'] : 0;
+		$num_per_page       = 20;
+		$page_range         = 3;
+		$method             = isset($_POST['method'])             ? $_POST['method']            : 'keyword';
+		$search_terms       = isset($_POST['search_terms'])       ? $_POST['search_terms']      : '';
+		$vertical_terms     = isset($_POST['vertical_terms'])     ? $_POST['vertical_terms']    : '';
+		$category_terms     = isset($_POST['category_terms'])     ? $_POST['category_terms']    : '';
+		$subcategory_terms  = isset($_POST['subcategory_terms'])  ? $_POST['subcategory_terms'] : '';
+		$current_page       = isset($_POST['page_number'])        ? $_POST['page_number']       : 1;
+		$product_count      = isset($_POST['product_count'])      ? $_POST['product_count']     : 0;
     
-    $next_page      = $current_page + 1;
-    $previous_page  = $current_page - 1;
+    $next_page          = $current_page + 1;
+    $previous_page      = $current_page - 1;
+	  $start_index        = ($current_page - 1) * $num_per_page + 1;
+	  $end_index          = ($start_index + $num_per_page > $product_count && $product_count > 0) ? $product_count : $start_index + $num_per_page;
 
-    // $selected_category      = get_term($selected_category_id, 'product_category');
-    // $selected_category_name = isset($selected_category->name) ? $selected_category->name : '';
-    
-	  $start_index    = ($current_page - 1) * $num_per_page + 1;
-	  $end_index      = ($start_index + $num_per_page > $product_count && $product_count > 0) ? $product_count : $start_index + $num_per_page;
-
-    $result = Library_Sears_Api::factory('search')
-      ->$method($search_terms, $subcategory)
-      ->limit($start_index, $end_index)
-      ->load();
+    if($method == 'keyword')
+    {
+      $result = Library_Sears_Api::factory('search')
+        ->$method($search_terms, $subcategory)
+        ->limit($start_index, $end_index)
+        ->load();
+    }
+    else
+    {
+      // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+  		$category_terms     = trim(substr($category_terms, 0, strpos($category_terms, '(')));
+  		$subcategory_terms  = trim(substr($subcategory_terms, 0, strpos($subcategory_terms, '(')));
+      
+      $result = Library_Sears_Api::factory('search')
+        ->category(ucwords($vertical_terms), ucwords($category_terms), ucwords($subcategory_terms))
+        ->limit($start_index, $end_index)
+        ->load();      
+    }
     
     $product_count  = $result->mercadoresult->productcount;
     $num_pages      = ceil($product_count / $num_per_page);  
@@ -97,7 +111,6 @@ class Controller_Admin_Import {
 			'product_count'	=> $product_count,
 			'method'	      => $method,
 			'search_terms'	=> $search_terms,
-			'subcategory'	  => $subcategory,
 			'pagination'    => $pagination
 			);
 
@@ -106,6 +119,62 @@ class Controller_Admin_Import {
     echo SHCP::view('admin/import/list', $data);
 
     die(); // have to do this in WP otherwise a zero will be appended to all responses
+  }
+
+	/**
+	 * action_categories - Displays a list of categories related to the selected vertical
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+  public function action_categories() {
+		$method         = isset($_POST['method'])         ? $_POST['method']        : 'keyword';
+		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']  : '';
+		 
+    $result = Library_Sears_Api::factory('search')
+      ->vertical(ucwords($search_terms))
+      ->load();   
+
+	  $args = array(
+			'method'	      => $method,
+			'search_terms'	=> $search_terms
+			);
+    
+    $data = array_merge($args, array('result' => $result));
+    
+    echo SHCP::view('admin/import/categories', $data);
+
+    die(); // have to do this in WP otherwise a zero will be appended to all responses    
+  }
+  
+	/**
+	 * action_subcategories - Displays a list of subcategories related to the selected category
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+  public function action_subcategories() {
+		$method         = isset($_POST['method'])         ? $_POST['method']          : 'keyword';
+		$vertical_terms = isset($_POST['vertical_terms']) ? $_POST['vertical_terms']  : '';
+		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']    : '';
+		 
+		// remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+		$search_terms = trim(substr($search_terms, 0, strpos($search_terms, '(')));  
+		
+    $result = Library_Sears_Api::factory('search')
+      ->category(ucwords($vertical_terms), ucwords($search_terms))
+      ->load();   
+
+	  $args = array(
+			'method'	      => $method,
+			'search_terms'	=> $search_terms
+			);
+    
+    $data = array_merge($args, array('result' => $result));
+    
+    echo SHCP::view('admin/import/subcategories', $data);
+
+    die(); // have to do this in WP otherwise a zero will be appended to all responses  
   }
 
     public function action_save()
