@@ -87,6 +87,7 @@ class Controller_Admin_Related {
     public function action_list($post = NULL)
     {
         $products = new Model_Products();
+        $products->limit(20);
         $related = new Model_Products();
 
         $related->related($post->ID);
@@ -94,6 +95,11 @@ class Controller_Admin_Related {
         $data = array(
             'products'  => $products,
             'related'   => $related,
+            'pager'     => array(
+                'total'     => $products->total_pages(),
+                'current'   => $products->current_page(),
+                'show_all'  => TRUE,
+            ),
         );
 
         echo SHCP::view('admin/related/list', $data);
@@ -112,7 +118,10 @@ class Controller_Admin_Related {
         // Add in the search query to filter results.
         $products->param('s', SHCP::get($_GET, 's', SHCP::get($_POST, 's', '')));
 
-        $data = array('products' => $products);
+        $data = array(
+            'products' => $products,
+            'pager'     => array(),
+        );
 
         echo SHCP::view('admin/related/grid', $data);
         exit;

@@ -98,6 +98,9 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 */
 	protected $_total_display;
 
+	protected $_posts_per_page;
+	protected $_max_num_pages;
+
 	/**
 	 * Array of indexed new values to set to the current post.
 	 *
@@ -238,6 +241,9 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		$this->_data = array();
 		$this->_position = 0;
 		$this->_total_rows = 0;
+		$this->_total_display = 0;
+		$this->_posts_per_page = 0;
+		$this->_max_num_pages = 0;
 		$this->_params = array();
 		$this->_values = array();
         $this->_errors = array();
@@ -262,6 +268,8 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		    $this->_position = 0;
 		    $this->_total_rows = count($this->_data);
 		    $this->_total_display = $query->post_count;
+		    $this->_posts_per_page = $query->posts_per_page;
+		    $this->_max_num_pages = $query->max_num_pages;
 
 		    // Destroy the query object.
 		    unset($query);
@@ -735,6 +743,20 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         $this->param(array('orderby' => $orderby, 'order' => $order));
 
         return $this;
+    }
+
+    public function total_pages()
+    {
+        $this->load();
+
+        return $this->_max_num_pages;
+    }
+
+    public function current_page()
+    {
+        $this->load();
+
+        return $this->_posts_per_page;
     }
 
     /**
