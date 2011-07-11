@@ -16,7 +16,7 @@
 
 /**
  * Sears and Kmart product plugin.
- * Application controller.
+ * Application controller. Loads javascript and controlls the widgets.
  *
  * @package		shcproducts
  * @subpackage	Controller
@@ -25,7 +25,13 @@
  */
 class Controller_App {
 
-	public function __construct(array $params = NULL)
+    /**
+     * __construct - Add the actions and enabled widgets.
+     *
+     * @access  public
+     * @return  void
+     */
+	public function __construct()
 	{
 	    add_action('wp_print_scripts', array(&$this, 'load_js'));
 	    add_action('admin_print_styles', array(&$this, 'load_css'));
@@ -39,6 +45,12 @@ class Controller_App {
 	    }
 	}
 
+    /**
+     * load_js - Load javascript files that are global.
+     *
+     * @access  public
+     * @return  void
+     */
 	public function load_js()
 	{
 	    if (is_admin())
@@ -50,6 +62,12 @@ class Controller_App {
         }
 	}
 
+    /**
+     * load_css - Load style files that are global.
+     *
+     * @access  public
+     * @return  void
+     */
 	public function load_css()
 	{
 	    wp_enqueue_style('shcp-admin-style', SHCP_CSS.'/admin_style.css');
