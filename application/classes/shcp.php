@@ -639,10 +639,19 @@ class SHCP {
 
 		if ( ! isset($config[$group]))
 		{
+		    $config[$group] = array();
+
+		    $themeconfig = get_stylesheet_directory() . '/application/config/' . $group . '.php';
+
+		    if (is_file($themeconfig))
+		    {
+		        $config[$group] = self::load($themeconfig);
+		    }
+
 		    $file = SHCP_CONFIG . '/' . $group . '.php';
 
 			// Load the config group into the cache
-			$config[$group] = self::load($file);
+			$config[$group] = array_merge_recursive(self::load($file), $config[$group]);
 		}
 
 		if (isset($path))

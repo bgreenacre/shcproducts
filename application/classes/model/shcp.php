@@ -127,8 +127,21 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
         if ($id !== NULL)
         {
-            $this->_id = (int) $id;
-            $this->param('p', $this->_id);
+            if (is_numeric($id))
+            {
+                $this->_id = (int) $id;
+                $this->param('p', $this->_id);
+            }
+            elseif (is_object($id))
+            {
+                $this->_data = array($id);
+                $this->_total_rows = 1;
+                $this->_position = 0;
+		        $this->_total_display = 1;
+		        $this->_posts_per_page = 1;
+		        $this->_max_num_pages = 1;
+		        $this->_executed = TRUE;
+            }
         }
     }
 
