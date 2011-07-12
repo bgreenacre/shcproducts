@@ -34,6 +34,7 @@ class Controller_App {
 	public function __construct()
 	{
 	    add_action('wp_print_scripts', array(&$this, 'load_js'));
+	    add_action('wp_print_styles', array(&$this, 'load_front_css'));
 	    add_action('admin_print_styles', array(&$this, 'load_css'));
 
 	    if ($widgets = (array) SHCP::get_option('widgets', SHCP::config('plugin.options.widgets.default')))
@@ -71,6 +72,11 @@ class Controller_App {
 	public function load_css()
 	{
 	    wp_enqueue_style('shcp-admin-style', SHCP_CSS.'/admin_style.css');
+	}
+
+	public function load_front_css()
+	{
+	    wp_enqueue_style('shcp-admin-style', SHCP_CSS.'/front.css');
 	}
 
 }

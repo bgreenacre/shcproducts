@@ -1,0 +1,21 @@
+#shcp_items {
+list-style: none;
+}
+#shcp_items li {
+float: left;
+width: 230px;
+height: 200px;
+border: 1px solid #ccc;
+margin: 3px;
+padding: 5px;
+}
+#shcp_items li:hover{
+border: 1px solid #555;
+}
+#shcp_items li a {
+display: block;
+height: 100%;
+width: 100%;
+text-decoration: none;
+}
+

@@ -15,7 +15,7 @@ return array(
             'not_found_in_trash'  => __('No Products found in Trash'),
             'parent_item_colon'   => '',
         ),
-        'public'      => true,
+        'public'      => TRUE,
         'supports'    => array('title', 'custom-fields'),
         'taxonomies'  => array('category'),  // this is IMPORTANT
         'capabilities'  => array(
@@ -24,7 +24,7 @@ return array(
         ),
         'rewrite' => array(
             'slug' => 'product',
-            'with_front' => true,
+            'with_front' => TRUE,
         ),
         'has_archive' => 'products',
     ),
