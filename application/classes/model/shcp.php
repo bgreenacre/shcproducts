@@ -258,6 +258,8 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 */
 	protected function _load()
 	{
+	    global $wp_query;
+
 		if ($this->_executed !== TRUE)
 		{
 		    // Instantiate the query object to get posts.

@@ -34,31 +34,58 @@ class Controller_Front_Products {
 
     public function __construct()
     {
+        add_action('init', array(&$this, 'init'));
+    }
+
+    public function init()
+    {
         add_shortcode('shcp_products', array(&$this, 'action_grid'));
         add_shortcode('shcp_product', array(&$this, 'action_detail'));
         add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
     }
 
-    public function action_grid()
+    public function action_grid($attrs = NULL)
     {
+        $this->products = new Model_Products();
+
+        $this->parse_attrs($attrs);
+
         $data = array(
+            'products'  => $this->products
         );
 
         echo SHCP::view('front/product/grid', $data);
     }
 
-    public function action_detail()
+    public function action_detail($attrs = NULL)
     {
-        $data = array();
+        $this->products = new Model_Products();
+
+        $this->parse_attrs($attrs);
+
+        $data = array(
+            'products'  => $this->products
+        );
 
         echo SHCP::view('front/product/detail', $data);
     }
 
-    public function action_quickview()
+    public function action_quickview($attrs = NULL)
     {
-        $data = array();
+        $this->products = new Model_Products();
+
+        $this->parse_attrs($attrs);
+
+        $data = array(
+            'products'  => $this->products
+        );
 
         echo SHCP::view('front/product/quickview', $data);
+    }
+
+    public function parse_attrs($attrs = NULL)
+    {
+        $this->products->param($attrs);
     }
 
 }
