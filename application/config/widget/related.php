@@ -3,4 +3,7 @@
 return array(
     'id'    => 'related',
     'name'  => 'Related Products',
+    'options'   => array(
+        'title'     => 'Related Products',
+    ),
 );

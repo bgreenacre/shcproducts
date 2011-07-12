@@ -3,4 +3,9 @@
 return array(
     'id'    => 'products',
     'name'  => 'Products',
+    'options'   => array(
+        'title'     => 'Products',
+        'keyword'   => NULL,
+        'limit'     => 3,
+    ),
 );
