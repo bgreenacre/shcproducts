@@ -11,7 +11,7 @@
 // ----------------------------------------------------------------------------
 
 /**
- * Controller_Widget_Related
+ * Controller_Widget_Products
  *
  */
 class Controller_Widget_Products extends Controller_Widget {
@@ -25,10 +25,45 @@ class Controller_Widget_Products extends Controller_Widget {
     public function form($values = NULL)
     {
         $data = array(
-            'values'    => $values,
+            'ids'       => array(
+                'title'     => $this->get_field_id('title'),
+                'keyword'   => $this->get_field_id('keyword'),
+                'limit'     => $this->get_field_id('limit'),
+            ),
+            'values'    => array_merge(SHCP::config('widget/products.options'), $values),
         );
 
         echo SHCP::view('widget/products/form', $data);
+    }
+
+    public function update($old, $new)
+    {
+        $data = array_merge($old, $new);
+        $data['title'] = strip_tags($data['title']);
+
+        $search = Library_Sears_Api::factory('search')
+            ->keyword(SHCP::get($data, 'keyword'));
+
+        if (count($search) > 0)
+        {
+            $search->reset();
+
+            while ($search->valid())
+            {
+                $product = new Model_Product();
+
+                $product->param('partnumber', $search->partNumber);
+
+                if ( ! $product->loaded())
+                {
+
+                }
+
+                $search->next();
+            }
+        }
+
+        return $data;
     }
 
 }
