@@ -90,7 +90,7 @@ min-height: 50px;
   text-decoration: none;
   padding: 0 2px;
   height: 20px;
-  margin: 2px;
+  margin: 2px 0;
   display: inline-block;
   text-align: center;
   color: #21759B;
@@ -113,7 +113,7 @@ span.current_page {
   text-decoration: none;
   padding: 0 2px;
   height: 20px;
-  margin: 2px;
+  margin: 2px 0;
   display: inline-block;
   text-align: center;
   background: #21759B;
