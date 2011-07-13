@@ -1,4 +1,4 @@
-<?php echo paginate_links($pager); ?>
+<div id="shcp_pager"><?php echo paginate_links($pager); ?></div>
 <ul<?php echo (isset($id)) ? ' id="'.$id.'"' : NULL; ?>>
 <?php foreach ($products as $product): ?>
 <li class="shcp_product" data-post_id="<?php echo $product->ID; ?>" id="post_id_<?php echo $product->ID; ?>">
@@ -19,3 +19,4 @@ $<?php echo $products->displayprice; ?>
 </li>
 <?php endforeach; ?>
 </ul>
+<div style="clear:both;">&nbsp;</div>
