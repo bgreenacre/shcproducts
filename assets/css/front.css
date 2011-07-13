@@ -1,21 +1,23 @@
 #shcp_items {
 list-style: none;
+clear: both;
+height: 100%;
 }
 #shcp_items li {
 float: left;
-width: 230px;
-height: 200px;
+width: 185px;
+min-height: 200px;
 border: 0px;
-margin: 3px;
-padding: 5px;
+margin: 0 0 10px 4px;
+padding: 0px;
+overflow: hidden;
+border: 1px solid #fff;
 }
 #shcp_items li:hover{
 border: 1px solid #555;
 }
-#shcp_items li a {
-display: block;
-height: 100%;
-width: 100%;
-text-decoration: none;
+#shcp_items li div {
+position: relative;
+margin: 10px;
 }
 

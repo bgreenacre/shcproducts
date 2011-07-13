@@ -24,10 +24,38 @@
  */
 class Model_Products extends Model_SHCP {
 
+    protected $_detail;
+
     public function __construct($id = NULL)
     {
         parent::__construct($id);
         $this->param('post_type', 'shcproduct');
+    }
+
+    /**
+     * __get - Magic method to make accessing custom post fields easier.
+     *
+     *  //Example of getting a custom field "partNumber"
+     *  $post = new Model_Product()->param('p', 22)->load();
+     *  $post->ID; // the post id.
+     *  $post->partNumber; // look up the custom field value for the post.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        $value = parent::__get($key);
+
+        if ($key === 'detail')
+        {
+            if ( ! $this->_detail)
+                $this->_detail = $value = unserialize($value);
+            else
+                $value = $this->_detail;
+        }
+
+        return $value;
     }
 
     public function related($id)
