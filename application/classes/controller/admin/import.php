@@ -24,7 +24,7 @@
  * @author		Kyla Klein
  */
 class Controller_Admin_Import {
-  
+
 	public function __construct(array $params = NULL)
 	{
 		add_action('wp_ajax_action_save', array(&$this, 'action_save'));
@@ -51,7 +51,7 @@ class Controller_Admin_Import {
 		$subcategory_terms  = isset($_POST['subcategory_terms'])  ? $_POST['subcategory_terms'] : '';
 		$current_page       = isset($_POST['page_number'])        ? $_POST['page_number']       : 1;
 		$product_count      = isset($_POST['product_count'])      ? $_POST['product_count']     : 0;
-    
+
     $next_page          = $current_page + 1;
     $previous_page      = $current_page - 1;
 	  $start_index        = ($current_page - 1) * $num_per_page + 1;
@@ -69,15 +69,15 @@ class Controller_Admin_Import {
       // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
   		$category_terms     = trim(substr($category_terms, 0, strpos($category_terms, '(')));
   		$subcategory_terms  = trim(substr($subcategory_terms, 0, strpos($subcategory_terms, '(')));
-      
+
       $result = Library_Sears_Api::factory('search')
         ->category(ucwords($vertical_terms), ucwords($category_terms), ucwords($subcategory_terms))
         ->limit($start_index, $end_index)
-        ->load();      
+        ->load();
     }
-    
+
     $product_count  = $result->mercadoresult->productcount;
-    $num_pages      = ceil($product_count / $num_per_page);  
+    $num_pages      = ceil($product_count / $num_per_page);
 
     if($current_page > 1) {
       // first page link
@@ -87,15 +87,15 @@ class Controller_Admin_Import {
       $pagination['previous']['number'] = $previous_page;
       $pagination['previous']['message'] = '&laquo; Previous';
     }
-    
+
     // numbered page links
     for($i=$current_page; $i<($current_page + $page_range); $i++) {
       if (($i > 0) && ($i <= $num_pages)) {
         $pagination[$i]['number'] = $i;
         $pagination[$i]['message'] = $i;
-      } 
+      }
     }
-    
+
     if($current_page < $num_pages) {
       // next page link
       $pagination['next']['number'] = $next_page;
@@ -104,7 +104,7 @@ class Controller_Admin_Import {
       $pagination['last']['number'] = $num_pages - 1;
       $pagination['last']['message'] = 'Last &raquo;';
     }
-    
+
 
 	  $args = array(
 			'current_page'	=> $current_page,
@@ -130,23 +130,23 @@ class Controller_Admin_Import {
   public function action_categories() {
 		$method         = isset($_POST['method'])         ? $_POST['method']        : 'keyword';
 		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']  : '';
-		 
+
     $result = Library_Sears_Api::factory('search')
       ->vertical(ucwords($search_terms))
-      ->load();   
+      ->load();
 
 	  $args = array(
 			'method'	      => $method,
 			'search_terms'	=> $search_terms
 			);
-    
+
     $data = array_merge($args, array('result' => $result));
-    
+
     echo SHCP::view('admin/import/categories', $data);
 
-    die(); // have to do this in WP otherwise a zero will be appended to all responses    
+    die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
-  
+
 	/**
 	 * action_subcategories - Displays a list of subcategories related to the selected category
 	 *
@@ -157,24 +157,24 @@ class Controller_Admin_Import {
 		$method         = isset($_POST['method'])         ? $_POST['method']          : 'keyword';
 		$vertical_terms = isset($_POST['vertical_terms']) ? $_POST['vertical_terms']  : '';
 		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']    : '';
-		 
+
 		// remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
-		$search_terms = trim(substr($search_terms, 0, strpos($search_terms, '(')));  
-		
+		$search_terms = trim(substr($search_terms, 0, strpos($search_terms, '(')));
+
     $result = Library_Sears_Api::factory('search')
       ->category(ucwords($vertical_terms), ucwords($search_terms))
-      ->load();   
+      ->load();
 
 	  $args = array(
 			'method'	      => $method,
 			'search_terms'	=> $search_terms
 			);
-    
+
     $data = array_merge($args, array('result' => $result));
-    
+
     echo SHCP::view('admin/import/subcategories', $data);
 
-    die(); // have to do this in WP otherwise a zero will be appended to all responses  
+    die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
     public function action_save()
