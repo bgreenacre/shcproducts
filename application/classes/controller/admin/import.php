@@ -52,10 +52,10 @@ class Controller_Admin_Import {
 		$current_page       = isset($_POST['page_number'])        ? $_POST['page_number']       : 1;
 		$product_count      = isset($_POST['product_count'])      ? $_POST['product_count']     : 0;
 
-    $next_page          = $current_page + 1;
-    $previous_page      = $current_page - 1;
-	  $start_index        = ($current_page - 1) * $num_per_page + 1;
-	  $end_index          = ($start_index + $num_per_page > $product_count && $product_count > 0) ? $product_count : $start_index + $num_per_page;
+    $next_page      = $current_page + 1;
+    $previous_page  = $current_page - 1;
+	  $start_index    = ($current_page - 1) * $num_per_page + 1;
+	  $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page;
 
     if($method == 'keyword')
     {
@@ -89,7 +89,7 @@ class Controller_Admin_Import {
     }
 
     // numbered page links
-    for($i=$current_page; $i<($current_page + $page_range); $i++) {
+    for($i=($current_page-$page_range); $i<($current_page + $page_range); $i++) {
       if (($i > 0) && ($i <= $num_pages)) {
         $pagination[$i]['number'] = $i;
         $pagination[$i]['message'] = $i;
@@ -101,10 +101,9 @@ class Controller_Admin_Import {
       $pagination['next']['number'] = $next_page;
       $pagination['next']['message'] = 'Next &raquo;';
       // last page link
-      $pagination['last']['number'] = $num_pages - 1;
+      $pagination['last']['number'] = $num_pages;
       $pagination['last']['message'] = 'Last &raquo;';
     }
-
 
 	  $args = array(
 			'current_page'	=> $current_page,
@@ -193,6 +192,10 @@ class Controller_Admin_Import {
         {
           $data[$field_name] = SHCP::get($_POST[$field_name], $i);
         }
+
+        $data['detail'] = Library_Sears_Api::factory('product')
+          ->get($data['partnumber'])
+          ->load();
 
         $shcproduct->values($data);
 
