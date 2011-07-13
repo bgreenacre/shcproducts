@@ -3,6 +3,8 @@ jQuery(document).ready(function($) {
     // displays products from the api via ajax when form is submitted
     $("#submit_keyword").click(function(e) {
         e.preventDefault();
+        $('#shcp_categories').html('');
+        $('#shcp_subcategories').html('');
         import_products(jQuery(this), 'keyword', null);
     });
     
@@ -22,6 +24,14 @@ jQuery(document).ready(function($) {
     $("#search_subcategories").change(function(e) {
         e.preventDefault();
         import_products(jQuery(this), 'subcategory', null);
+    });
+    
+    // attach loading div functionality 
+    $("#ajax_loading").bind("ajaxSend", function(){
+      $(this).show();
+    })
+    .bind("ajaxComplete", function(){
+      $(this).hide();
     });
     
 });

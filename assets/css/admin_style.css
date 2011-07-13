@@ -79,6 +79,59 @@ min-height: 50px;
   padding: 20px 0;
 }
 
+.product_pagination {
+  float: right;
+}
+
+.product_pagination a {
+  border: solid 1px #999;
+  background: #f1f1f1;
+  text-decoration: none;
+  padding: 0 2px;
+  height: 20px;
+  margin: 2px;
+  display: inline-block;
+  text-align: center;
+  color: #21759B;
+}
+
+.product_pagination a:hover {
+  color: #fff;
+  background-color: #999;
+}
+
+div.products_found {
+  text-align: right;
+  font-size: 11px;
+  color: #999;
+}
+
+span.current_page {
+  border: solid 1px #999;
+  color: #f1f1f1;
+  text-decoration: none;
+  padding: 0 2px;
+  height: 20px;
+  margin: 2px;
+  display: inline-block;
+  text-align: center;
+  background: #21759B;
+}
+
+.shcp_wrap {
+  position: relative;
+}
+
+.shcp_wrap #ajax_loading {
+  background-image: url("/wp-content/plugins/shcproducts/assets/images/ajax-loader.gif");
+  height: 16px;
+  width: 16px;
+  display: none;
+  position: absolute;
+  top: 25px;
+  left: 200px;
+}
+
 /*-------------------------------*/
 #shcp_related_tank li .shcp_trash {
 position: absolute;
