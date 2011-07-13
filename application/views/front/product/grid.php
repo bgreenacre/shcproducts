@@ -6,14 +6,17 @@
 <?php echo Helper_Products::image($products->imageid); ?>
 <p>
 <?php echo $products->post_title; ?>
-<span class="shcp-item-price">
+</p>
+<p>
+<?php var_dump($products); ?>
+</p>
+<p class="shcp-item-price">
 <?php if ($product->cutprice): ?>
 <del>$<?php echo $products->cutprice; ?></del>
 <b>$<?php echo $products->displayprice; ?></b>
 <?php else: ?>
 $<?php echo $products->displayprice; ?>
 <?php endif; ?>
-</span>
 </p>
 </a>
 </li>
