@@ -1,5 +1,5 @@
-<div class="wrap">
-  <h2>Import Products</h2>
+<div class="wrap shcp_wrap">
+  <h2>Import Products</h2> 
   <p>To see products select a search method, enter the search terms and click the Search button.</p>
   <form action="" id="keyword_form" method="post">
     <div class="shcp_form_labels">
@@ -24,4 +24,5 @@
     </div>  
   </form>  
   <div id="shcp_import_list"></div>  
+  <div id="ajax_loading"></div>
 </div>
