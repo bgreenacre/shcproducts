@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-  
+
     // displays products from the api via ajax when form is submitted
     $("#submit_keyword").click(function(e) {
         e.preventDefault();
@@ -7,7 +7,7 @@ jQuery(document).ready(function($) {
         $('#shcp_subcategories').html('');
         import_products(jQuery(this), 'keyword', null);
     });
-    
+
     // displays a list of categories when a vertical is selected
     $("#submit_vertical").click(function(e) {
         e.preventDefault();
@@ -19,21 +19,21 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         import_products(jQuery(this), 'category', null);
     });
-    
+
     // displays a list of products when a subcategory is selected
     $("#search_subcategories").change(function(e) {
         e.preventDefault();
         import_products(jQuery(this), 'subcategory', null);
     });
-    
-    // attach loading div functionality 
+
+    // attach loading div functionality
     $("#ajax_loading").bind("ajaxSend", function(){
       $(this).show();
     })
     .bind("ajaxComplete", function(){
       $(this).hide();
     });
-    
+
 });
 
 function import_products(el, method, page_data) {
@@ -49,7 +49,7 @@ function import_products(el, method, page_data) {
   vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
   category_terms        = category_terms != "Choose Category" ? category_terms : '';
   subcategory_terms     = subcategory_terms != "Choose Subategory" ? subcategory_terms : '';
-  
+
   if(method == 'keyword') {
 
     jQuery.post(
@@ -67,7 +67,7 @@ function import_products(el, method, page_data) {
       }
     );
   }
-  
+
   if(method == 'vertical') {
     jQuery.post(
       shcp_ajax.ajaxurl,
@@ -79,11 +79,11 @@ function import_products(el, method, page_data) {
       function(response) {
         jQuery('#shcp_categories').html(response);
         import_callback(this);
-      }    
-    );  
-  }  
-  
-  if(method == 'category') {    
+      }
+    );
+  }
+
+  if(method == 'category') {
     jQuery.post(
       shcp_ajax.ajaxurl,
       {
@@ -95,11 +95,11 @@ function import_products(el, method, page_data) {
       function(response) {
         jQuery('#shcp_subcategories').html(response);
         import_callback(this);
-      }    
-    );  
-  }  
+      }
+    );
+  }
 
-  if(method == 'subcategory') {    
+  if(method == 'subcategory') {
     jQuery.post(
       shcp_ajax.ajaxurl,
       {
@@ -114,8 +114,8 @@ function import_products(el, method, page_data) {
       function(response) {
         jQuery('#shcp_import_list').html(response);
         import_callback(this);
-      }    
-    );  
+      }
+    );
   }
 }
 
@@ -137,11 +137,11 @@ function import_callback() {
 
   // activate pagination links
   jQuery(".product_page_link").click(function(e) {
-    
-    e.preventDefault(); 
-    
+
+    e.preventDefault();
+
     var method = jQuery(this).attr('data-method');
-    
+
     if(method == 'keyword') {
       submit_form = jQuery('#keyword_form');
     } else {
@@ -149,18 +149,18 @@ function import_callback() {
     }
     import_products(submit_form, method, jQuery(this));
   });
-  
+
   // displays a list of subcategories when a category is selected
   jQuery("#search_categories").change(function(e) {
       e.preventDefault();
       import_products(jQuery(this), 'category', null);
-  });  
-  
+  });
+
   // displays a list of products when a subcategory is selected
   jQuery("#search_subcategories").change(function(e) {
       e.preventDefault();
       import_products(jQuery(this), 'subcategory', null);
-  });  
+  });
 }
 
 function save_products() {

@@ -19,8 +19,8 @@ return array(
         'supports'    => array('title', 'custom-fields'),
         'taxonomies'  => array('category'),  // this is IMPORTANT
         'capabilities'  => array(
-            'delete_post'   => FALSE,
-            'edit_post'     => FALSE,
+            'delete_post'   => TRUE,
+            'edit_post'     => TRUE,
         ),
         'rewrite' => array(
             'slug' => 'product',

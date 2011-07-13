@@ -280,7 +280,7 @@ class SHCP {
 
 	    if (($pos = strrpos($name, '/')) !== FALSE)
 	    {
-	        $dir .= substr($name, 0, $pos);
+	        $dir .= substr($name, 0, $pos+1);
 
 	        // Cache file is a hash of the name
 	        $file = sha1(substr($name, $pos+1)) . '.txt';
