@@ -41,6 +41,12 @@ class Controller_Front_Cart {
 
     public function __construct()
     {
+		add_action('wp_ajax_cart_action_mini', array(&$this, 'action_mini'));
+		add_action('wp_ajax_cart_action_view', array(&$this, 'action_view'));
+		add_action('wp_ajax_cart_action_add', array(&$this, 'action_add'));
+		add_action('wp_ajax_cart_action_remove', array(&$this, 'action_remove'));
+		add_action('wp_ajax_cart_action_update', array(&$this, 'action_update'));
+		add_action('wp_ajax_cart_action_empty', array(&$this, 'action_empty'));
         add_shortcode('shcp_cart', array(&$this, 'action_view'));
         add_shortcode('shcp_minicart', array(&$this, 'action_mini'));
 
