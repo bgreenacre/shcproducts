@@ -37,6 +37,7 @@ class Controller_Admin_Related {
             return;
 
         add_action('wp_ajax_action_filter_list', array(&$this, 'action_filter_list'));
+        add_action('wp_ajax_action_page_list', array(&$this, 'action_filter_list'));
         add_action('add_meta_boxes', array(&$this, 'metabox'));
         add_action('save_post', array(&$this, 'action_save'));
     }
@@ -86,6 +87,13 @@ class Controller_Admin_Related {
      */
     public function action_list($post = NULL)
     {
+        $page_format = '?action=action_filter_list&paged=%#%';
+
+        if ($s = SHCP::get($_GET, 's', SHCP::get($_POST, 's', '')))
+        {
+            $page_format .= '&s='.$s;
+        }
+
         $products = new Model_Products();
         $products->limit(20);
         $related = new Model_Products();
@@ -96,6 +104,8 @@ class Controller_Admin_Related {
             'products'  => $products,
             'related'   => $related,
             'pager'     => array(
+                'base'      => admin_url('admin-ajax.php%_%'),
+                'format'    => $page_format,
                 'total'     => $products->total_pages(),
                 'current'   => $products->current_page(),
                 'show_all'  => TRUE,
@@ -113,14 +123,32 @@ class Controller_Admin_Related {
      */
     public function action_filter_list()
     {
+        $page_format = '?action=action_filter_list&paged=%#%';
+
+        if ($s = SHCP::get($_GET, 's', SHCP::get($_POST, 's', '')))
+        {
+            $page_format .= '&s='.$s;
+        }
+
         $products = new Model_Products();
 
         // Add in the search query to filter results.
         $products->param('s', SHCP::get($_GET, 's', SHCP::get($_POST, 's', '')));
 
+        if ($page = (int) SHCP::get($_GET, 'paged', SHCP::get($_POST, 'paged', 0)))
+        {
+            $products->param('paged', $page);
+        }
+
         $data = array(
             'products' => $products,
-            'pager'     => array(),
+            'pager'     => array(
+                'base'      => admin_url('admin-ajax.php%_%'),
+                'format'    => $page_format,
+                'total'     => $products->total_pages(),
+                'current'   => $products->current_page(),
+                'show_all'  => TRUE,
+            ),
         );
 
         echo SHCP::view('admin/related/grid', $data);

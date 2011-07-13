@@ -33,6 +33,11 @@ jQuery(document).ready(function($) {
         $(this).parent().sortable('destroy').remove();
         return false;
     });
+    $('#shcp_pager a').live('click', function() {
+        console.log($(this).attr('href'));
+        $('#shcp_products_tank').load($(this).attr('href'));
+        return false;
+    });
     // Add listeners for the keyword search.
     $keyword = $('#shcp_keyword');
     $keyword
