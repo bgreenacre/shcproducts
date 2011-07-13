@@ -325,7 +325,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 	 */
 	public function reload($refresh = FALSE)
 	{
-		if ($refresh !== FALSE OR ( ! $this->_result AND ! $this->_object))
+		if ($refresh !== FALSE OR ! $this->_request_made)
 		{
 			$this->_request();
 		}
