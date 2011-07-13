@@ -116,16 +116,17 @@ class Controller_Admin_Import {
 	  $data = array_merge($args, array('result' => $result));
 
     $response = SHCP::view('admin/import/list', $data);
-            // Send headers to not cache this result.
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+    
+    // Send headers to not cache this result.
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 
-            // Send header for json mimetpye and length of the response json string.
-            header('Content-Type: text/html');
-            header('Content-Length: '.strlen($response)+1);
+    // Send header for json mimetype and length of the response json string.
+    header('Content-Type: text/html');
+    header('Content-Length: '.strlen($response)+1);
 
-            echo $response;
-            exit;
+    echo $response;
+    exit;
 
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
