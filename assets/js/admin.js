@@ -122,7 +122,7 @@ function import_products(el, method, page_data) {
 function import_callback() {
 
   // check all to import
-  jQuery("#import_all").change(function() {
+  jQuery("#import_all").unbind('change').change(function() {
     var status = jQuery(this).is(":checked") ? true : false;
     jQuery('input[name="import_single[]"]').each(function() {
       jQuery(this).attr('checked', status);
@@ -130,13 +130,13 @@ function import_callback() {
   });
 
   // activate save_products button
-  jQuery("#save_products").click(function(e) {
+  jQuery("#save_products").unbind('click').click(function(e) {
     e.preventDefault();
     save_products();
   });
 
   // activate pagination links
-  jQuery(".product_page_link").click(function(e) {
+  jQuery(".product_page_link").unbind('click').click(function(e) {
 
     e.preventDefault();
 
@@ -151,13 +151,13 @@ function import_callback() {
   });
 
   // displays a list of subcategories when a category is selected
-  jQuery("#search_categories").change(function(e) {
+  jQuery("#search_categories").unbind('change').change(function(e) {
       e.preventDefault();
       import_products(jQuery(this), 'category', null);
   });
 
   // displays a list of products when a subcategory is selected
-  jQuery("#search_subcategories").change(function(e) {
+  jQuery("#search_subcategories").unbind('change').change(function(e) {
       e.preventDefault();
       import_products(jQuery(this), 'subcategory', null);
   });
