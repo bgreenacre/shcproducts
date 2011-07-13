@@ -30,13 +30,18 @@ class Controller_Widget_Products extends Controller_Widget {
                 'keyword'   => $this->get_field_id('keyword'),
                 'limit'     => $this->get_field_id('limit'),
             ),
+            'names'       => array(
+                'title'     => $this->get_field_name('title'),
+                'keyword'   => $this->get_field_name('keyword'),
+                'limit'     => $this->get_field_name('limit'),
+            ),
             'values'    => array_merge(SHCP::config('widget/products.options'), $values),
         );
 
         echo SHCP::view('widget/products/form', $data);
     }
 
-    public function update($old, $new)
+    public function update($new, $old)
     {
         $data = array_merge($old, $new);
         $data['title'] = strip_tags($data['title']);

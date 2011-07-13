@@ -32,13 +32,16 @@ class Controller_Widget_Related extends Controller_Widget {
             'ids'       => array(
                 'title'     => $this->get_field_id('title'),
             ),
+            'names'       => array(
+                'title'     => $this->get_field_name('title'),
+            ),
             'values'    => array_merge(SHCP::config('widget/related.options'), $values),
         );
 
         echo SHCP::view('widget/related/form', $data);
     }
 
-    public function update($old, $new)
+    public function update($new, $old)
     {
         $data = array_merge($old, $new);
         $data['title'] = strip_tags($data['title']);
