@@ -85,6 +85,10 @@ class Controller_Front_Products {
 
     public function parse_attrs($attrs = NULL)
     {
+        $attrs = array_merge_recursive(array(
+            'posts_per_page'   => get_option('posts_per_page', 10),
+        ), (array) $attrs);
+
         $this->products->param($attrs);
     }
 

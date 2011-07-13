@@ -9,7 +9,7 @@
 <?php echo $products->post_title; ?>
 </p>
 <p class="shcp-rating">
-<span class="shcp-rating-<?php echo $products->detail->rating; ?>"><?php echo $products->detail->rating; ?></span>
+<span class="shcp-rating-<?php echo $products->numreview; ?>"><?php echo $products->numreview; ?></span>
 </p>
 <p class="shcp-item-price">
 <?php if ($product->cutprice): ?>
@@ -19,15 +19,7 @@
 $<?php echo $products->displayprice; ?>
 <?php endif; ?>
 </p>
-<p><a href="<?php echo get_permalink($products->ID); ?>">Product Detail</a></p>
-<p>
-<?php if ($products->detail->webstatus): ?>
-Buy Online
-<?php endif; ?>
-<?php if ($products->detail->storepickupeligible): ?>
-- Pickup in Store Eligible
-<?php endif; ?>
-</p>
+<p><a href="<?php echo bloginfo('url').'/cart/add?partnumber='.$products->partnumber; ?>">Add To Cart</a></p>
 </div>
 </li>
 <?php $products->next(); endwhile; ?>
