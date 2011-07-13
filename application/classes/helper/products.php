@@ -41,7 +41,16 @@ class Helper_Products {
         }
         else 
         { 
-          $image = substr($image, (strpos($image, 'src=') + 4));
+          // for marketplace products, which are not available at the above url
+          // these appear to be normally in the form of the following quite long string: 
+          //
+          //    http//c.shld.net/rpx/i/s/pi/mp/8241/2385011303p?src=            --> this part gets removed
+          //    http://www.pokkadots.com/media/catalog/product/f/l/fl-bp_1.jpg  --> this is the real image
+          //    &d=787672ad510db48c19b0fcf012e4717c163efa20                     --> this part gets removed
+          
+          $image = substr($image, (strpos($image, 'src=') + 4));  // remove everything up to and including the "src="
+          $image = substr($image, 0, strpos($image, '&d='));      // remove everything after and including the "&d="
+            
         }
 
         $attrs['src'] = $image;
