@@ -19,7 +19,7 @@
 $<?php echo $products->displayprice; ?>
 <?php endif; ?>
 </p>
-<p><a href="<?php echo bloginfo('url').'/cart/add?partnumber='.$products->partnumber; ?>">Add To Cart</a></p>
+<p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$products->catentryid; ?>" class="addtocart">Add To Cart</a></p>
 </div>
 </li>
 <?php $products->next(); endwhile; ?>

@@ -61,6 +61,11 @@ class Controller_App {
 		    // declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
             wp_localize_script('sears-products-admin-scripts', 'shcp_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'imageurl' => SHCP_IMAGES));
         }
+        else
+        {
+            wp_enqueue_script('sears-products-cart-script', SHCP_JS.'/cart.js', array('jquery'));
+            wp_enqueue_script('sears-products-front-scripts', SHCP_JS.'/front.js', array('jquery', 'sears-products-cart-script'));
+        }
 	}
 
     /**

@@ -41,16 +41,22 @@ class Controller_Front_Cart {
 
     public function __construct()
     {
-		add_action('wp_ajax_cart_action_mini', array(&$this, 'action_mini'));
-		add_action('wp_ajax_cart_action_view', array(&$this, 'action_view'));
-		add_action('wp_ajax_cart_action_add', array(&$this, 'action_add'));
-		add_action('wp_ajax_cart_action_remove', array(&$this, 'action_remove'));
-		add_action('wp_ajax_cart_action_update', array(&$this, 'action_update'));
-		add_action('wp_ajax_cart_action_empty', array(&$this, 'action_empty'));
+		add_action('wp_ajax_cartaction_mini', array(&$this, 'action_mini'));
+		add_action('wp_ajax_nopriv_cartaction_mini', array(&$this, 'action_mini'));
+		add_action('wp_ajax_cartaction_view', array(&$this, 'action_view'));
+		add_action('wp_ajax_nopriv_cartaction_view', array(&$this, 'action_view'));
+		add_action('wp_ajax_cartaction_add', array(&$this, 'action_add'));
+		add_action('wp_ajax_nopriv_cartaction_add', array(&$this, 'action_add'));
+		add_action('wp_ajax_cartaction_remove', array(&$this, 'action_remove'));
+		add_action('wp_ajax_nopriv_cartaction_remove', array(&$this, 'action_remove'));
+		add_action('wp_ajax_cartaction_update', array(&$this, 'action_update'));
+		add_action('wp_ajax_nopriv_cartaction_update', array(&$this, 'action_update'));
+		add_action('wp_ajax_cartaction_empty', array(&$this, 'action_empty'));
+		add_action('wp_ajax_nopriv_cartaction_empty', array(&$this, 'action_empty'));
         add_shortcode('shcp_cart', array(&$this, 'action_view'));
         add_shortcode('shcp_minicart', array(&$this, 'action_mini'));
 
-        $this->cart = Library_Sears_Api::factory('cart');
+        $this->cart = new Model_Cart();
         SHCP::bind_global('cart', $this->cart);
     }
 
@@ -66,6 +72,28 @@ class Controller_Front_Cart {
 
     public function action_add()
     {
+        if ($catentryid = (array) SHCP::get($_GET, 'catentryid'))
+        {
+            $quantity = (array) SHCP::get($_GET, 'quantity');
+            $catalog_id = (array) SHCP::get($_GET, 'catalog_id');
+
+            foreach ($catentryid as $key => $cid)
+            {
+                $this->cart->add(
+                    (int) SHCP::get($quantity, $key, 1),
+                    SHCP::get($catalog_id, $key, 12605),
+                    $cid
+                    );
+            }
+        }
+
+        try {
+            $this->cart->load();
+        }
+        catch(Exception $e)
+        {
+            throw new Exception($e);
+        }
     }
 
     public function action_remove()

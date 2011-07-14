@@ -34,11 +34,6 @@ class Controller_Front_Products {
 
     public function __construct()
     {
-        add_action('init', array(&$this, 'init'));
-    }
-
-    public function init()
-    {
         add_shortcode('shcp_products', array(&$this, 'action_grid'));
         add_shortcode('shcp_product', array(&$this, 'action_detail'));
         add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
