@@ -5,7 +5,7 @@
       <span class='current_page'><?php echo $page['number']; ?></span>
     <?php else: ?>
       <a class="product_page_link" href="#" data-product-count="<?php echo $product_count; ?>" data-page-number="<?php echo $page['number']; ?>" data-method="<?php echo $method; ?>"><?php echo $page['message']; ?></a>
-<?php   endif; 
+<?php   endif;
       endforeach; ?>
 </div>
 

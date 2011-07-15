@@ -66,8 +66,7 @@ class Controller_Front_Cart {
 
     public function action_view()
     {
-        $data = array(
-        );
+        echo SHCP::view('front/cart/view', array('simple_cart' => $this->cart->cart));
     }
 
     public function action_add()
@@ -87,8 +86,9 @@ class Controller_Front_Cart {
             }
         }
 
-        try {
-            $this->cart->load();
+        try
+        {
+            $this->cart->load()->view()->load();
         }
         catch(Exception $e)
         {
@@ -106,6 +106,11 @@ class Controller_Front_Cart {
 
     public function action_empty()
     {
+        $this->cart
+            ->clear($this->cart->cart->order_id, $this->cart->cart->catalog_id)
+            ->load()
+            ->view()
+            ->load();
     }
 
 }

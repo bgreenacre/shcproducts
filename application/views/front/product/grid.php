@@ -3,7 +3,6 @@
 <?php while ($products->valid()): ?>
 <li class="shcp-item">
 <div>
-<?php /*var_dump($products->detail->current());*/ ?>
 <?php echo Helper_Products::image($products->imageid); ?>
 <p>
 <?php echo $products->post_title; ?>
