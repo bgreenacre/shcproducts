@@ -28,9 +28,10 @@ class Helper_Products {
 
     public static function image($image, array $attrs = array(), $disable_url_dimensions = FALSE)
     {
-        $attrs['height'] = SHCP::get($attrs, 'height', 100);
-        $attrs['width'] = SHCP::get($attrs, 'width', 100);
-        $attrs_str = '';
+        $attrs['height']  = SHCP::get($attrs, 'height', 140);
+        $attrs['width']   = SHCP::get($attrs, 'width', 140);
+        $attrs['alt']     = SHCP::get($attrs, 'alt', '');
+        $attrs_str        = '';
         
         $image = urldecode($image);
 
@@ -67,9 +68,9 @@ class Helper_Products {
 
         foreach ($attrs as $key => $value)
         {
-            $attrs_str .= $key . '='
+            $attrs_str .= $key . '="'
                 .htmlspecialchars( (string) $value, ENT_QUOTES)
-                .' ';
+                .'" ';
         }
 
         $attrs_str = ' ' . rtrim($attrs_str, ' ');

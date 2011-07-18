@@ -11,4 +11,12 @@ jQuery(document).ready(function($) {
             .attr('src', $('img', this).attr('src'));
         return false;
     });
+    $('.shcp-item').hover(
+      function() {
+        $(this).find('.shcp-quickview').show();
+      },
+      function() {
+        $(this).find('.shcp-quickview').hide();
+      }
+    );
 });
