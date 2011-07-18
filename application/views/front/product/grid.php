@@ -18,7 +18,9 @@
 $<?php echo $products->displayprice; ?>
 <?php endif; ?>
 </p>
-<p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$products->catentryid; ?>" class="addtocart">Add To Cart</a></p>
+<p>
+<a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$products->catentryid; ?>" class="addtocart">Add To Cart</a><br />
+<a href="<?php echo get_permalink($products->ID); ?>">Product Detail</a></p>
 </div>
 </li>
 <?php $products->next(); endwhile; ?>
