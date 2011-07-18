@@ -54,12 +54,14 @@ class Controller_Front_Products {
 
     public function action_detail($attrs = NULL)
     {
+        $attrs = (array) $attrs;
+        $attrs['name'] = get_query_var('shcproduct');
         $this->products = new Model_Products();
 
         $this->parse_attrs($attrs);
 
         $data = array(
-            'products'  => $this->products
+            'product'  => $this->products
         );
 
         echo SHCP::view('front/product/detail', $data);

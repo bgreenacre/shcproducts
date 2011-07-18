@@ -1,3 +1,15 @@
+/**
+ * Sears Holding Company Cart jQuery plugin.
+ *
+ * Handle cart events and product addtocarts.
+ *
+ * @author Brian Greenacre
+ * @package shcproducts
+ * @email bgreenacre42@gmail.com
+ * @version $Id$
+ * @since Thur 14 Jul 2011 07:32:09 PM
+ * @license http://www.opensource.org/licenses/gpl-license.php
+ */
 (function($) {
 var globalMethods = ['add', 'remove', 'update'],
     qsReg = /([^?=&]+)(=([^&]*))?/g,
@@ -18,7 +30,6 @@ $.shcCart = {
     },
     add: function() {
         var products = $.shcCart._productData(arguments);
-        console.log(products);
         if (products.length)
             $.shcCart._call('add', products);
         return arguments;
@@ -45,8 +56,9 @@ $.shcCart = {
             url: $.shcCart.options.endpoint,
             data: $.param(data),
             dataType: 'jsonp',
-            success: function(data, status) {
-                $.event.trigger('cart.'+action, [$.shcCart.json]);
+            success: function(response, status) {
+                
+                $.event.trigger('shcCart.'+action, [response]);
             },
             type: 'GET',
         }, opts || {}));
