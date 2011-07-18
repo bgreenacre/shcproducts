@@ -74,7 +74,7 @@ class Controller_Front_Products {
         $this->parse_attrs($attrs);
 
         $data = array(
-            'products'  => $this->products
+            'product'  => $this->products
         );
 
         echo SHCP::view('front/product/quickview', $data);
