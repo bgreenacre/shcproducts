@@ -409,7 +409,7 @@ class SHCP {
      * @return mixed
      */
     public static function get(array $data, $index = NULL, $default = NULL)
-    {
+    { 
         return (isset($data[$index]) === TRUE) ? $data[$index] : $default;
     }
 
