@@ -11,11 +11,13 @@
  * @license http://www.opensource.org/licenses/gpl-license.php
  */
 (function($) {
-var globalMethods = ['add', 'remove', 'update'],
-    qsReg = /([^?=&]+)(=([^&]*))?/g,
+var qsReg = /([^?=&]+)(=([^&]*))?/g,
     fieldNameReplaceReg = /(\[\])?$/,
     privateMethodReg = /^_/;
 
+/**
+ * Global shcCart class with jQuery.
+ */
 $.shcCart = {
     eventNames: [],
     options: {
@@ -24,30 +26,42 @@ $.shcCart = {
     json: {},
     init: function(el, args) {
         var $el = $(el);
-        $el.data('cart:options', $.extend({}, $.shcCart.options, $el.data('cart:options'), args));
+        $el.data('cart:options', $.extend({}, $.shcCart.options, $el.data('cart:options'), args))
+            .bind('shcCartUpdate', function() {
+                $(this).shcCart('view');
+            });
+        $('.shcp-empty-cart', $el).live('click', function() {
+            $el.shcCart('empty');
+            return false;
+        });
+        $('.shcp-remove-item'. $el).live('click', function() {
+            $.shcCart.remove(this);
+            return false;
+        });
+        $(':input', $el).live('change blur', function() {
+            $el.shcCart('update');
+        })
     },
     view: function(el, args) {
     },
-    add: function() {
-        var products = $.shcCart._productData(arguments);
+    add: function(prods) {
+        var products = $.shcCart._productData(prods);
         if (products.length)
             $.shcCart._call('add', products);
-        return arguments;
+        return prods;
     },
     empty: function(el) {
         $.shcCart._call('empty');
     },
-    update: function() {
-        var products = $.shcCart._productData(arguments);
-        if (products.length)
-            $.shcCart._call('update', products);
-        return arguments;
+    update: function(el) {
+        var $el = $(el);
+        $.shcCart._call('update', $el.serializeArray());
     },
-    remove: function() {
-        var products = $.shcCart._productData(arguments);
+    remove: function(prods) {
+        var products = $.shcCart._productData(prods);
         if (products.length)
             $.shcCart._call('remove', products);
-        return arguments;
+        return prods;
     },
     _call: function(action, data, opts) {
         data = data || [];
@@ -58,7 +72,7 @@ $.shcCart = {
             dataType: 'jsonp',
             success: function(response, status) {
                 
-                $.event.trigger('shcCart.'+action, [response]);
+                $.event.trigger('shcCartUpdate', [action, response]);
             },
             type: 'GET',
         }, opts || {}));
@@ -97,21 +111,32 @@ $.shcCart = {
         return products;
     }
 };
+
+/**
+ * shcCart element function.
+ */
 $.fn.shcCart = function(method, options) {
     return this.each(function() {
         if (typeof method === 'string' && method) {
             if (method.match(privateMethodReg))
                 $.error('Method '+method+' is a private method which cannot be called from public scope.');
-            else if ($.inArray(method, globalMethods))
-                $.error('Method '+method+' is a global method which cannot be called within element context.');
             else if ($.shcCart[method])
                 $.shcCart[method].apply(this, Array.prototype.slice.call(arguments, 1));
+            else
+                $.error('Method '+method+' does not exist on jQuery.shcCart');
         }
         else if (typeof method === 'object' || ! method)
             $.shcCart.init.apply(this, arguments);
-        else
-            $.error('Method '+method+' does not exist on jQuery.shcCart');
     });
+};
+
+$.fn.shcProduct = function(method, options) {
+    if (method == 'add')
+        return $.shcCart.add(this);
+    else if (method == 'remove')
+        return $.shcCart.remove(this);
+    else
+        $.error('Method '+method+' does not exist on jQuery.shcProduct');
 };
 
 })(jQuery);

@@ -26,7 +26,7 @@
  */
 class Helper_Products {
 
-    public static function image($image, array $attrs = array())
+    public static function image($image, array $attrs = array(), $disable_url_dimensions = FALSE)
     {
         $attrs['height'] = SHCP::get($attrs, 'height', 100);
         $attrs['width'] = SHCP::get($attrs, 'width', 100);
@@ -34,23 +34,33 @@ class Helper_Products {
         
         $image = urldecode($image);
 
-        if (strpos($image, 'http//') === FALSE)
+        if (strpos($image, 'http//') !== FALSE)
         {
-            $image = 'http://s.shld.net/is/image/Sears/'.$image
-                .'?hei='.$attrs['height'].'&wid='.$attrs['width'];
-        }
-        else 
-        { 
-          // for marketplace products, which are not available at the above url
-          // these appear to be normally in the form of the following quite long string: 
-          //
-          //    http//c.shld.net/rpx/i/s/pi/mp/8241/2385011303p?src=            --> this part gets removed
-          //    http://www.pokkadots.com/media/catalog/product/f/l/fl-bp_1.jpg  --> this is the real image
-          //    &d=787672ad510db48c19b0fcf012e4717c163efa20                     --> this part gets removed
-          
-          $image = substr($image, (strpos($image, 'src=') + 4));  // remove everything up to and including the "src="
-          $image = substr($image, 0, strpos($image, '&d='));      // remove everything after and including the "&d="
+            $parts = parse_url($image);
             
+            if ($qs = SHCP::get($parts, 'query'))
+            {
+                // for marketplace products, which are not available at the above url
+                // these appear to be normally in the form of the following quite long string: 
+                //
+                //    http//c.shld.net/rpx/i/s/pi/mp/8241/2385011303p?src=            --> this part gets removed
+                //    http://www.pokkadots.com/media/catalog/product/f/l/fl-bp_1.jpg  --> this is the real image
+                //    &d=787672ad510db48c19b0fcf012e4717c163efa20                     --> this part gets removed
+                $image = substr($image, (strpos($image, 'src=') + 4));
+                $image = substr($image, 0, strpos($image, '&d='));
+            }
+            else
+            {
+                $image = preg_replace('/[^0-9_-]+/', '', $image);
+            }
+        }
+        
+        if (strpos($image, 'http://') === FALSE)
+        {
+            $image = 'http://s.shld.net/is/image/Sears/'.$image;
+            
+            if ($disable_url_dimensions === FALSE)
+                $image .= '?hei='.$attrs['height'].'&wid='.$attrs['width'];
         }
 
         $attrs['src'] = $image;
