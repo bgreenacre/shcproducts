@@ -12,4 +12,3 @@ $<?php echo $product->displayprice; ?>
 <p><?php echo $product->detail->longdescription; ?></p>
 <p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->catentryid; ?>" class="addtocart">Add To Cart</a></p>
 </div>
-<?php var_dump($product->detail->current()); ?>
