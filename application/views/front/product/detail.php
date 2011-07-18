@@ -9,6 +9,7 @@
 $<?php echo $product->displayprice; ?>
 <?php endif; ?>
 </p>
+<p><?php echo $product->detail->shortdescription; ?></p>
 <p><?php echo $product->detail->longdescription; ?></p>
 <p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->catentryid; ?>" class="addtocart">Add To Cart</a></p>
 </div>
