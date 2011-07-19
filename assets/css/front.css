@@ -90,4 +90,29 @@
   text-transform: capitalize;
   overflow: hidden;
 }
-
+/* the overlayed element */
+#shcp_quickview_modal {
+	
+	/* must be initially hidden */
+	display:none;
+	
+	/* place overlay on top of other elements */
+	z-index:10000;
+	
+	/* styling */
+	background-color:#fff;
+	
+	width:675px;	
+	min-height:200px;
+	border:1px solid #666;
+	
+    padding:15px;
+	text-align:left;
+	border:2px solid #333;
+	
+	opacity:0.8;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	-moz-box-shadow: 0 0 50px #ccc;
+	-webkit-box-shadow: 0 0 50px #ccc;
+}

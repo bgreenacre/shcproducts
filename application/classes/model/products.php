@@ -49,10 +49,7 @@ class Model_Products extends Model_SHCP {
 
         if ($key === 'detail')
         {
-            if ( ! $this->_detail)
-                $this->_detail = $value = unserialize($value);
-            else
-                $value = $this->_detail;
+            $value = unserialize($value);
         }
 
         return $value;

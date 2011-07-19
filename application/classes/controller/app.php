@@ -64,7 +64,9 @@ class Controller_App {
         else
         {
             wp_enqueue_script('sears-products-cart-script', SHCP_JS.'/cart.js', array('jquery'));
-            wp_enqueue_script('sears-products-front-scripts', SHCP_JS.'/front.js', array('jquery', 'sears-products-cart-script'));
+            wp_enqueue_script('sears-products-overlay-scripts', SHCP_JS.'/jquery.overlay.js');
+            wp_enqueue_script('sears-products-front-scripts', SHCP_JS.'/front.js', array('jquery', 'sears-products-overlay-scripts', 'sears-products-cart-script'));
+            wp_localize_script('sears-products-front-scripts', 'shcp_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'imageurl' => SHCP_IMAGES));
         }
 	}
 
