@@ -124,6 +124,7 @@ class Controller_Front_Cart {
     public function action_empty()
     {
         $this->cart
+            ->update_cart()
             ->clear($this->cart->cart->order_id, $this->cart->cart->catalog_id)
             ->load()
             ->view()

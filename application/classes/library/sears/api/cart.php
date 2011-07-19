@@ -182,7 +182,6 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
             }
             else
             {
-                throw new Exception('No cart is loaded to remove items from');
                 return $this;
             }
         }
