@@ -24,8 +24,8 @@ $.shcCart = {
         endpoint: '/wp-admin/admin-ajax.php'
     },
     json: {},
-    init: function(el, args) {
-        var $el = $(el);
+    init: function(args) {
+        var $el = $(this);
         $el.data('cart:options', $.extend({}, $.shcCart.options, $el.data('cart:options'), args))
             .bind('shcCartUpdate', function() {
                 $(this).shcCart('view');
@@ -50,11 +50,11 @@ $.shcCart = {
             $.shcCart._call('add', products);
         return prods;
     },
-    empty: function(el) {
+    empty: function(args) {
         $.shcCart._call('empty');
     },
-    update: function(el) {
-        var $el = $(el);
+    update: function(args) {
+        var $el = $(this);
         $.shcCart._call('update', $el.serializeArray());
     },
     remove: function(prods) {
@@ -125,8 +125,9 @@ $.fn.shcCart = function(method, options) {
             else
                 $.error('Method '+method+' does not exist on jQuery.shcCart');
         }
-        else if (typeof method === 'object' || ! method)
-            $.shcCart.init.apply(this, arguments);
+        else if (typeof method === 'object' || ! method) {
+            $.shcCart.init.apply(this, [method]);
+        }
     });
 };
 

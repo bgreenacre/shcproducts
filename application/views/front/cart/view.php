@@ -1,3 +1,4 @@
+<form action="<?php echo bloginfo('url').'/cart/update'; ?>" method="GET" class="cart">
 <?php if ($simple_cart->messages->information): ?>
 <div class="success"><?php echo implode('<br />', $simple_cart->messages->information); ?></div>
 <?php elseif ($simple_cart->messages->notices): ?>
@@ -5,7 +6,7 @@
 <?php elseif ($simple_cart->messages->errors): ?>
 <div class="errors"><?php echo implode('<br />', $simple_cart->messages->errors); ?></div>
 <?php endif; ?>
-<a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $simple_cart->session; ?>">Empty Cart</a>
+<a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $simple_cart->session; ?>" class="shcp-empty-cart">Empty Cart</a>
 <table width="99%">
 <tr>
 <th style="width: 50%;">Item</th>
@@ -38,3 +39,4 @@
 <td>$<?php echo $simple_cart->total_price; ?></td>
 </tr>
 </table>
+</form>

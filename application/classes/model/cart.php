@@ -71,14 +71,21 @@ class Model_Cart extends Library_Sears_Api_Cart {
         $this->cart->total_price = (double) preg_replace('/[^0-9\.]+/', '', (string) $this->Summary->EstimatedPreTaxTotal);
         $this->cart->total_discounts = (double) preg_replace('/[^0-9\.]+/', '', (string) $this->Summary->TotalSavings);
 
-        if ( ! is_array($this->OrderItems->OrderItem))
-            $items = array($this->OrderItems->OrderItem);
+        if ($this->OrderItems->OrderItem)
+        {
+            if ( ! is_array($this->OrderItems->OrderItem))
+                $items = array($this->OrderItems->OrderItem);
+            else
+                $items = $this->OrderItems->OrderItem;
+        }
         else
-            $items = $this->OrderItems->OrderItem;
+        {
+            $items = array();
+        }
 
         $this->cart->item_count = 0;
         $this->cart->items = array();
-
+        
         foreach ($items as $item)
         {
             $product = new Model_Products();

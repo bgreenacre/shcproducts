@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
     var winH = jQuery(window).height(),
         winW = jQuery(window).width();
     
-    $('.cart').shcCart();
+    $('.cart').shcCart({});
     $('.addtocart').bind('click', function() {
         $(this).shcProduct('add');
         return false;

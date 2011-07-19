@@ -65,6 +65,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      * @var bool
      */
     protected $success = FALSE;
+    protected $errors = array();
 
     /**
      * Content type to get from API.
@@ -276,6 +277,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 		$this->_url = NULL;
 		$this->_method = NULL;
 		$this->success = FALSE;
+		$this->errors = array();
 	}
 
 	public function with($with)
@@ -552,11 +554,11 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
             if (isset($fault[0]) === TRUE)
             {
-                throw new Exception('Invalid API request made.');
+                $this->success = FALSE;
             }
             elseif (isset($fault['faultstring']) === TRUE)
             {
-                throw new Exception($fault['faultstring']);
+                $this->success = FALSE;
             }
 
             return FALSE;
@@ -635,7 +637,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
                 if ($this->_object->StatusData->ResponseCode > 0)
                 {
                     $this->success = FALSE;
-                    throw new Exception('Error in API call ' . $this->method() . ' [code ' . $this->_object->StatusData->ResponseCode . '] ' . $this->_object->StatusData->RespMessage);
+                    $this->errors[] = 'Error in API call ' . $this->method() . ' [code ' . $this->_object->StatusData->ResponseCode . '] ' . $this->_object->StatusData->RespMessage;
                 }
                 else
                 {
