@@ -5,7 +5,7 @@
 <?php // var_dump($products->current()); ?>      
 <?php // var_dump($products->detail->current()); ?>
     <div class="shcp-quickview">
-      <a href="/link-to-quickview-page">Quick View</a>
+      <a href="/link-to-quickview-page" data-post_id="<?php echo $products->ID; ?>" rel="#shcp_quickview_modal">Quick View</a>
     </div>
     <p class="shcp-image">
       <a href="/link-to-detail-page"><?php echo Helper_Products::image($products->imageid, array('alt' => $products->post_title)); ?></a>
@@ -27,3 +27,4 @@
 <?php $products->next(); endwhile; ?>
 <?php endif; ?>
 </ul>
+<div id="shcp_quickview_modal">adsfhafdiuhafdiuahfliuaflih</div>

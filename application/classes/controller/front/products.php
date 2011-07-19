@@ -37,6 +37,8 @@ class Controller_Front_Products {
         add_shortcode('shcp_products', array(&$this, 'action_grid'));
         add_shortcode('shcp_product', array(&$this, 'action_detail'));
         add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
+		add_action('wp_ajax_product_action_quickview', array(&$this, 'action_quickview'));
+		add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
     }
 
     public function action_grid($attrs = NULL)
@@ -78,6 +80,9 @@ class Controller_Front_Products {
         );
 
         echo SHCP::view('front/product/quickview', $data);
+        
+        if (SHCP::$is_ajax)
+            die;
     }
 
     public function parse_attrs($attrs = NULL)
