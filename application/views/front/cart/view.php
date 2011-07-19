@@ -5,7 +5,7 @@
 <?php elseif ($simple_cart->messages->errors): ?>
 <div class="errors"><?php echo implode('<br />', $simple_cart->messages->errors); ?></div>
 <?php endif; ?>
-<a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $cart->session; ?>">Empty Cart</a>
+<a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $simple_cart->session; ?>">Empty Cart</a>
 <table width="99%">
 <tr>
 <th style="width: 50%;">Item</th>
