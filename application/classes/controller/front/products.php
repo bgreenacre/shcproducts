@@ -71,8 +71,11 @@ class Controller_Front_Products {
 
     public function action_quickview($attrs = NULL)
     {
+        global $wp_query;
         $this->products = new Model_Products();
 
+        $attrs = (array) $attrs;
+        $attrs['p'] = SHCP::get($_POST, 'p');
         $this->parse_attrs($attrs);
 
         $data = array(
@@ -80,7 +83,7 @@ class Controller_Front_Products {
         );
 
         echo SHCP::view('front/product/quickview', $data);
-        
+
         if (SHCP::$is_ajax)
             die;
     }

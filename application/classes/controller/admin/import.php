@@ -203,11 +203,18 @@ class Controller_Admin_Import {
         {
           $data[$field_name] = SHCP::get($_POST[$field_name], $i);
         }
-
-        $data['detail'] = Library_Sears_Api::factory('product')
-          ->get($data['partnumber'])
-          ->load();
-
+        
+        try
+        {
+            $data['detail'] = Library_Sears_Api::factory('product')
+              ->get($data['partnumber'])
+              ->load();
+        }
+        catch(Exception $e)
+        {
+            return;
+        }
+        
         $shcproduct->values($data);
 
         if ($shcproduct->check())
