@@ -115,7 +115,7 @@ class Controller_Front_Cart {
     {
         $this
             ->cart
-            ->clear();
+            ->clear()
             ->load();
         
         $this->ajax_response();
