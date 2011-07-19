@@ -5,7 +5,7 @@
 <?php elseif ($simple_cart->messages->errors): ?>
 <div class="errors"><?php echo implode('<br />', $simple_cart->messages->errors); ?></div>
 <?php endif; ?>
-<a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $cart->session_id; ?>">Empty Cart</a>
+<a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $cart->session; ?>">Empty Cart</a>
 <table width="99%">
 <tr>
 <th style="width: 50%;">Item</th>
@@ -17,11 +17,12 @@
 <?php else: ?>
 <?php foreach ($simple_cart->items as $item): ?>
 <tr>
-<td></td>
+<td><?php echo $item->name; ?></td>
 <td><?php echo $item->quantity; ?></td>
-<td><?php echo $item->total_price; ?></td>
+<td>$<?php echo $item->price; ?></td>
 </tr>
-<?php endforeach; endif; ?>
+<?php endforeach; ?>
+<?php endif; ?>
 <tr>
 <td colspan="2">Sub Total</td>
 <td>$<?php echo $simple_cart->total_item_price; ?></td>

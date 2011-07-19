@@ -20,7 +20,7 @@
 <?php endif; ?>
     </p>
     <p class="shcp-add-to-cart">
-      <a href="<?php echo bloginfo('url') . '/cart/add?catentryid=' . $products->catentryid; ?>" class="addtocart">Add To Cart</a><br />
+      <a href="<?php echo bloginfo('url') . '/cart/add?catentryid=' . (($products->catentryid) ? $products->catentryid : $products->detail->catentryid); ?>" class="addtocart">Add To Cart</a><br />
       <a href="<?php echo get_permalink($products->ID); ?>">Product Detail</a>
     </p>
   </li>
