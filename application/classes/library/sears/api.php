@@ -561,23 +561,36 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
             return FALSE;
         }
-
-        // parse out the body.
-        if ($this->content_type == 'json')
+        elseif ( ! $body)
         {
-            $this->_object = json_decode($body);
+            throw new Exception('No response body returned by API call');
         }
-        elseif ($this->content_type == 'xml')
-        {
-            /**
-             * This, this right here! This is completely ridiculous that this
-             * regex has to be performed on the response xml to strip out, in
-             * some cases, whitespace that is up to 100 characters in length.
-             */
-            $body = preg_replace('~\s*(<([^>]*)>[^<\s]*</\2>|<[^>]*>)\s*~', '$1', $body);
 
-            // Load the xml into a simplexml object
-            $this->_object = simplexml_load_string($body);
+        try
+        {
+            // parse out the body.
+            if ($this->content_type == 'json')
+            {
+                $this->_object = json_decode($body);
+            }
+            elseif ($this->content_type == 'xml')
+            {
+                /**
+                 * This, this right here! This is completely ridiculous that this
+                 * regex has to be performed on the response xml to strip out, in
+                 * some cases, whitespace that is up to 100 characters in length.
+                 */
+                $body = preg_replace('~\s*(<([^>]*)>[^<\s]*</\2>|<[^>]*>)\s*~', '$1', $body);
+
+                // Load the xml into a simplexml object
+                $this->_object = simplexml_load_string($body);
+            }
+        }
+        catch(Exception $e)
+        {
+            $this->_request_made = TRUE;
+            throw new Exception($e);
+            return;
         }
 
         // Make sure the flag to state the request has been made is set.
