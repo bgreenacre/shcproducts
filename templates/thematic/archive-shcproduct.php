@@ -1,4 +1,12 @@
 <?php
+/**
+ * Template Name: Full Width
+ *
+ * This Full Width template removes the primary and secondary asides so that content
+ * can be displayed the entire width of the #content area.
+ *
+ */
+
 
     // calling the header.php
     get_header();
@@ -9,50 +17,49 @@
 ?>
 
 		<div id="container">
-
+		
 			<?php thematic_abovecontent(); ?>
-
+		
 			<div id="content">
-
-				<?php
-
-            	// create the navigation above the content
-            	thematic_navigation_above();
-
-            	// calling the widget area 'index-top'
-            	get_sidebar('index-top');
-
-            	// action hook for placing content above the index loop
-            	thematic_above_indexloop();
-
-            	// action hook creating the index loop
-            	Controller::factory('front_products')->action_grid();
-
-            	// action hook for placing content below the index loop
-            	thematic_below_indexloop();
-
-            	// calling the widget area 'index-bottom'
-            	get_sidebar('index-bottom');
-
-            	// create the navigation below the content
-            	thematic_navigation_below();
-
-            	?>
-
+	
+	            <?php
+	        
+	            // calling the widget area 'page-top'
+	            get_sidebar('page-top');
+	
+	            the_post();
+	            
+	            thematic_abovepost();
+	        
+	            ?>
+	            
+				<div class="entry-content">
+				<?php Controller::factory('front_products')->action_grid(); ?>
+				</div>
+	
+	        <?php
+	        
+	        thematic_belowpost();
+	        
+	        // calling the comments template
+	        thematic_comments_template();
+	        
+	        // calling the widget area 'page-bottom'
+	        get_sidebar('page-bottom');
+	        
+	        ?>
+	
 			</div><!-- #content -->
-
-			<?php thematic_belowcontent(); ?>
-
+			
+			<?php thematic_belowcontent(); ?> 
+			
 		</div><!-- #container -->
 
-<?php
+<?php 
 
     // action hook for placing content below #container
     thematic_belowcontainer();
-
-    // calling the standard sidebar
-    thematic_sidebar();
-
+    
     // calling footer.php
     get_footer();
 

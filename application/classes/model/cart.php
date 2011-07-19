@@ -60,32 +60,9 @@ class Model_Cart extends Library_Sears_Api_Cart {
 
         $this->update_cart();
     }
-/*
-    public function add($quantity = 1, $catalog_id = NULL, $catentry_id = NULL)
-    {
-        parent::add($quantity, $catalog_id, $catentry_id);
-        return $this;
-    }
-
-    public function update($line_id, $quantity, $order_id = NULL, $catalog_id = NULL)
-    {
-    }
-
-    public function clear($order_id = NULL, $catalog_id = NULL)
-    {
-        parent::clear($order_id, $catalog_id);
-        return $this;
-    }
-
-    public function remove($line_id, $order_id = NULL, $catalog_id = NULL)
-    {
-    }
-*/
+    
     public function update_cart()
     {
-        if ( $this->_method != 'ViewCart')
-            return;
-
         $this->cart = (object) $this->cart;
         $this->cart->order_id = (string) $this->OrderId;
         $this->cart->session = self::session();
@@ -104,17 +81,17 @@ class Model_Cart extends Library_Sears_Api_Cart {
 
         foreach ($items as $item)
         {
-            //$product = new Model_Products();
-            //$product->meta('partnumber', '=', $item->PartNo)->load();
+            $product = new Model_Products();
+            $product->meta('partnumber', '=', $item->PartNo)->load();
             
-#            if ($product->loaded())
-#            {
-#                $name = $product->post_title;
-#            }
-#            else
-#            {
-#                $name = NULL;
-#            }
+            if ($product->loaded())
+            {
+                $name = $product->post_title;
+            }
+            else
+            {
+                $name = NULL;
+            }
             
             $this->cart->items[] = (object) array(
                 'id'            => (string) $item->OrderItemID,

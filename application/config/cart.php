@@ -10,6 +10,7 @@ return array(
         'total_weight'  => 0.00,
         'total_price'   => 0.00,
         'session'       => NULL,
+        'catalog_id'    => 12605,
         'order_id'      => NULL,
         'coupons'       => array(),
         'custom_fiels'  => array(),

@@ -58,15 +58,17 @@ class Controller_Front_Cart {
 
         $this->cart = new Model_Cart();
         SHCP::bind_global('cart', $this->cart);
-        $this->cart->load();
     }
 
     public function action_mini()
     {
+        $this->cart->view()->load();
+        echo SHCP::view('front/cart/mini', array('simple_cart' => $this->cart->cart));
     }
 
     public function action_view()
     {
+        $this->cart->view()->load();
         echo SHCP::view('front/cart/view', array('simple_cart' => $this->cart->cart));
     }
 
@@ -86,7 +88,7 @@ class Controller_Front_Cart {
                     );
             }
         }
-
+        
         try
         {
             $this->cart->load()->view()->load();
@@ -95,14 +97,28 @@ class Controller_Front_Cart {
         {
             throw new Exception($e);
         }
+        
+        $this->ajax_response();
     }
 
     public function action_remove()
     {
+        $this
+            ->cart
+            ->remove($id, $this->cart->cart->order_id, $this->cart->cart->catalog_id)
+            ->load();
+        
+        $this->ajax_response();
     }
 
     public function action_update()
     {
+        $this
+            ->cart
+            ->clear();
+            ->load();
+        
+        $this->ajax_response();
     }
 
     public function action_empty()
@@ -112,6 +128,27 @@ class Controller_Front_Cart {
             ->load()
             ->view()
             ->load();
+        
+        $this->ajax_response();
+    }
+    
+    public function ajax_response()
+    {
+        if ( ! SHCP::$is_ajax)
+            return;
+        
+        $reponse = json_encode($this->cart->cart);
+        
+        // Send headers to not cache this result.
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+
+        // Send header for json mimetpye and length of the response json string.
+        header('Content-Type: text/plain');
+        header('Content-Length: '.strlen($response)+1);
+
+        echo $response;
+        exit;
     }
 
 }
