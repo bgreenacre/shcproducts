@@ -47,7 +47,7 @@ class Model_Products extends Model_SHCP {
     {
         $value = parent::__get($key);
 
-        if ($key === 'detail')
+        if ($key === 'detail' && is_string($value))
         {
             $value = unserialize($value);
         }

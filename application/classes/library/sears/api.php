@@ -563,10 +563,6 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
             return FALSE;
         }
-        elseif ( ! $body)
-        {
-            throw new Exception('No response body returned by API call');
-        }
 
         try
         {

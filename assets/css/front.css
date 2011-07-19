@@ -1,3 +1,5 @@
+/* ----------- Product Grid ----------- */
+
 #shcp_items {
   list-style: none;
   margin: 0;
@@ -114,4 +116,63 @@
 	-webkit-border-radius:6px;
 	-moz-box-shadow: 0 0 50px #ccc;
 	-webkit-box-shadow: 0 0 50px #ccc;
+}
+
+/* ----------- Product Detail ----------- */
+
+#shcp_product-detail {
+  font-family: arial, helvetica, sans-serif;    
+}
+
+#shcp_product-detail img {
+  float: left;
+}
+
+#shcp_product-detail h1 {
+  clear: none;
+  margin-left: 268px;
+  padding-top: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 20px;
+}
+
+#shcp_product-detail p.shcp-item-shortdesc {
+  margin-left: 268px;  
+  font-size: 15px;
+  line-height: 18px;
+}
+
+#shcp_product-detail p.shcp-item-price {
+  margin-left: 268px;
+}
+
+#shcp_product-detail p.shcp-item-price span {
+  color: #8DA351;
+  font-size: 30px;
+}
+
+#shcp_product-detail p.shcp-item-price span.price-savings {
+  display: block;
+  margin: 20px 0 0 0;
+  color: #333;  
+  font-size: 15px;
+  line-height: 18px;  
+}
+
+#shcp_product-detail a.addtocart {
+  margin-left: 268px;  
+  background: url('../images/product-sprite.gif') no-repeat scroll -295px -47px;
+  cursor: pointer;
+  display: block;
+  height: 22px;
+  width: 80px;
+  text-indent: -5000px;
+  text-transform: capitalize;
+  overflow: hidden;  
+}
+
+#shcp_product-detail div.shcp-item-longdesc {
+  padding: 20px 0 0 0;
+  clear: both;
 }

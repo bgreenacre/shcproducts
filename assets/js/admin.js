@@ -178,20 +178,41 @@ function save_products() {
 
   jQuery.ajax({
     type: 'post',
+    dataType: 'json',
     url: '/wp-admin/admin-ajax.php?action=action_save',
     data: data,
-    success: function() {
+    success: function(response) {
+      
       for(var i in items) {
         row = jQuery("#row_" + items[i]);
-
-        row.css({ background : '#f1f1f1' }).addClass('disable');
+        
+        var show_error = false;
+        var show_error_text = '';
+        
+        var partnumber = row.find('input[name="partnumber[]"]').val();
+        
+        jQuery(response.errors).each(function() {
+          if(typeof(this.detail) != 'undefined' && this.detail.partnumber == partnumber) {
+            show_error_text = this.detail.empty;
+            show_error = true;
+          }
+        });
+        
+        if(show_error == true) {
+          row.css({ background : '#FCCFD4' }).addClass('disable');
+          row.find('.partnumber').text(show_error_text);
+        } else {
+          row.css({ background : '#f1f1f1' }).addClass('disable');
+          row.find('.partnumber').text("imported");
+        }
         row.find('input[name="is_featured"]').remove();
         row.find('input[name="is_hidden"]').remove();
-        row.find('input[name="import_single"]').remove();
-        row.find('.partnumber').text("imported");
+        row.find('input[name="import_single[]"]').remove();
         row.find('.cutprice').text("");
         row.find('.displayprice').text("");
       }
+      
+      import_callback(this);
     }
   });
 }
