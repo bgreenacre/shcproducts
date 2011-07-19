@@ -48,6 +48,9 @@ class Model_Cart extends Library_Sears_Api_Cart {
 
     protected function _load()
     {
+        if ( ! $this->method())
+            $this->view();
+        
         parent::_load();
 
         if (self::session() != SHCP::get($_COOKIE, 'shcp_cart_session_key'))
@@ -101,18 +104,33 @@ class Model_Cart extends Library_Sears_Api_Cart {
 
         foreach ($items as $item)
         {
-            $this->cart->items[] = array(
+            //$product = new Model_Products();
+            //$product->meta('partnumber', '=', $item->PartNo)->load();
+            
+#            if ($product->loaded())
+#            {
+#                $name = $product->post_title;
+#            }
+#            else
+#            {
+#                $name = NULL;
+#            }
+            
+            $this->cart->items[] = (object) array(
                 'id'            => (string) $item->OrderItemID,
-                'name'          => NULL,
+                'name'          => $name,
                 'image'         => (string) $item->ImageURL,
                 'partnumber'    => (string) $item->PartNo,
+                'display_partnumber'    => (string) $item->DisplayPartNumber,
                 'catentryid'    => (string) $item->CatEntryId,
                 'quantity'      => (int) $item->Qty,
                 'price_each'    => (double) (($item->SalePrice) ? $item->SalePrice : $item->RegularPrice),
                 'price'         => (double) preg_replace('/[^0-9\.]/', '', (string) $item->ItemTotal),
                 'options'       => array(),
             );
-
+            
+            unset($product);
+            
             ++$this->cart->item_count;
         }
 

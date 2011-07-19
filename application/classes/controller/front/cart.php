@@ -58,6 +58,7 @@ class Controller_Front_Cart {
 
         $this->cart = new Model_Cart();
         SHCP::bind_global('cart', $this->cart);
+        $this->cart->load();
     }
 
     public function action_mini()

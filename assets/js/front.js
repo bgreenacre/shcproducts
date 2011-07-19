@@ -18,11 +18,12 @@ jQuery(document).ready(function($) {
     $('div.shcp-quickview a').overlay({
         top: 'center',
         left: 'center',
+        closeOnClick: true,
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
                 wrap = this.getOverlay();
-            wrap.load(shcp_ajax.ajaxurl, {action: 'product_action_quickview', p: id});
-        },
+            wrap.empty().load(shcp_ajax.ajaxurl, {action: 'product_action_quickview', p: id});
+        }
     });
     $('.shcp-item').hover(
       function() {

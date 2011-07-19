@@ -19,4 +19,16 @@ return array(
             'errors'        => array(),
         ),
     ),
+    'item_arr'  => array(
+        'id'            => NULL,
+        'name'          => NULL,
+        'image'         => NULL,
+        'partnumber'    => NULL,
+        'display_partnumber'    => NULL,
+        'catentryid'    => NULL,
+        'quantity'      => NULL,
+        'price_each'    => NULL,
+        'price'         => NULL,
+        'options'       => array(),
+    ),
 );
