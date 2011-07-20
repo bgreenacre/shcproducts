@@ -71,51 +71,42 @@ class Model_Cart extends Library_Sears_Api_Cart {
         $this->cart->total_price = (double) preg_replace('/[^0-9\.]+/', '', (string) $this->Summary->EstimatedPreTaxTotal);
         $this->cart->total_discounts = (double) preg_replace('/[^0-9\.]+/', '', (string) $this->Summary->TotalSavings);
 
-        if ($this->OrderItems->OrderItem)
-        {
-            if ( ! is_array($this->OrderItems->OrderItem))
-                $items = $this->OrderItems->OrderItem;
-            else
-                $items = $this->OrderItems->OrderItem;
-        }
-        else
-        {
-            $items = array();
-        }
-
         $this->cart->item_count = 0;
         $this->cart->items = array();
         
-        foreach ($this->OrderItems->OrderItem as $item)
+        if ( ! empty($this->OrderItems->OrderItem))
         {
-            $product = new Model_Products();
-            $product->meta('partnumber', '=', $item->PartNo)->load();
-            
-            if ($product->loaded())
+            foreach ($this->OrderItems->OrderItem as $item)
             {
-                $name = $product->post_title;
+                $product = new Model_Products();
+                $product->meta('partnumber', '=', $item->PartNo)->load();
+                
+                if ($product->loaded())
+                {
+                    $name = $product->post_title;
+                }
+                else
+                {
+                    $name = NULL;
+                }
+                
+                $this->cart->items[] = (object) array(
+                    'id'            => (string) $item->OrderItemID,
+                    'name'          => $name,
+                    'image'         => (string) $item->ImageURL,
+                    'partnumber'    => (string) $item->PartNo,
+                    'display_partnumber'    => (string) $item->DisplayPartNumber,
+                    'catentryid'    => (string) $item->CatEntryId,
+                    'quantity'      => (int) $item->Qty,
+                    'price_each'    => (double) (($item->SalePrice) ? $item->SalePrice : $item->RegularPrice),
+                    'price'         => (double) preg_replace('/[^0-9\.]/', '', (string) $item->ItemTotal),
+                    'options'       => array(),
+                );
+                
+                unset($product);
+                
+                ++$this->cart->item_count;
             }
-            else
-            {
-                $name = NULL;
-            }
-            
-            $this->cart->items[] = (object) array(
-                'id'            => (string) $item->OrderItemID,
-                'name'          => $name,
-                'image'         => (string) $item->ImageURL,
-                'partnumber'    => (string) $item->PartNo,
-                'display_partnumber'    => (string) $item->DisplayPartNumber,
-                'catentryid'    => (string) $item->CatEntryId,
-                'quantity'      => (int) $item->Qty,
-                'price_each'    => (double) (($item->SalePrice) ? $item->SalePrice : $item->RegularPrice),
-                'price'         => (double) preg_replace('/[^0-9\.]/', '', (string) $item->ItemTotal),
-                'options'       => array(),
-            );
-            
-            unset($product);
-            
-            ++$this->cart->item_count;
         }
 
         update_option('cart_'.md5(self::session()), $this->cart);

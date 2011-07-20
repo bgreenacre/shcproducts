@@ -123,17 +123,13 @@ class Controller_Front_Cart {
 
     public function action_empty()
     {
-        var_dump($this->cart);
         $this->cart
             ->update_cart()
             ->clear($this->cart->cart->order_id, $this->cart->cart->catalog_id)
-            ->load();
-        var_dump($this->cart);        
-        $this->cart
+            ->load()
             ->view()
             ->load();
         
-        var_dump($this->cart);
         $this->ajax_response();
     }
     
