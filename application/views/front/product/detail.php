@@ -20,7 +20,7 @@
         <?php endif; ?>
 <?php endif; ?>
   </p>
-  <p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->catentryid; ?>" class="addtocart">Add To Cart</a></p>  
+  <p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart">Add To Cart</a></p>  
   <div class="shcp-item-longdesc"><?php echo $product->detail->longdescription; ?></div>
 
 </div>

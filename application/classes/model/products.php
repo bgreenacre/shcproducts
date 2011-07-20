@@ -82,5 +82,24 @@ class Model_Products extends Model_SHCP {
 
         return parent::save();
     }
+    
+    public function get_catentryid()
+    {
+        if (is_object($this->detail))
+        {
+            if (isset($this->detail->skulist) === TRUE AND $cid = SHCP::get($this->detail->skulist[1], 0))
+            {
+                return $cid;
+            }
+            else
+            {
+                return $this->detail->catentryid;
+            }
+        }
+        else
+        {
+            return $this->catentryid;
+        }
+    }
 
 }
