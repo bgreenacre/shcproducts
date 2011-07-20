@@ -51,6 +51,10 @@ class Model_Products extends Model_SHCP {
         {
             $value = unserialize($value);
         }
+        elseif (isset($this->detail->current()->{$key}) === TRUE)
+        {
+            $value = $this->detail->current()->{$key};
+        }
 
         return $value;
     }

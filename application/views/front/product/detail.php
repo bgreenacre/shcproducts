@@ -1,6 +1,14 @@
 <div id="shcp_product-detail">
-  <?php // var_dump($product->detail->current()); ?>
-  <?php echo Helper_Products::image($product->imageid, array('height' => '248', 'width' => '248')); ?>
+  <?php //var_dump($product->detail->current()); ?>
+<div class="shcp-image-tank">
+<div class="shcp-current-image"><?php echo Helper_Products::image($product->imageid, array('height' => '248', 'width' => '248')); ?></div>
+<?php if ($product->detail->imageurls): ?>
+<?php foreach ($product->detail->imageurls->imageurl[1] as $image): ?>
+<a href="#" class="shcp-image-thumbnail"><?php echo Helper_Products::image($image, array('height' => 30, 'width' => 30), TRUE); ?></a>
+<?php endforeach; ?>
+<?php endif; ?>
+</div>
+
   <h1><?php echo $product->post_title; ?></h1>
   <p class="shcp-item-shortdesc"><?php echo $product->detail->shortdescription; ?></p>
   <p class="shcp-item-price">

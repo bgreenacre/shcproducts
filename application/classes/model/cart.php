@@ -119,6 +119,8 @@ class Model_Cart extends Library_Sears_Api_Cart {
         }
 
         update_option('cart_'.md5(self::session()), $this->cart);
+        
+        return $this;
     }
 
 }

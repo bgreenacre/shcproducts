@@ -22,7 +22,16 @@ jQuery(document).ready(function($) {
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
                 wrap = this.getOverlay();
-            wrap.empty().load(shcp_ajax.ajaxurl, {action: 'product_action_quickview', p: id});
+            wrap.find('form').remove();
+            $.ajax({
+                url: shcp_ajax.ajaxurl,
+                data: {action: 'product_action_quickview', p: id},
+                dataType: 'html',
+                type: 'POST',
+                success: function(data) {
+                    wrap.append(data);
+                }
+            });
         }
     });
     $('.shcp-item').hover(
