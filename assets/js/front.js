@@ -4,6 +4,25 @@ jQuery(document).ready(function($) {
         winW = jQuery(window).width();
     
     $('.cart').shcCart({});
+    $('.addtocart').overlay({
+      top: 'center',
+      left: 'center',
+      closeOnClick: true,
+      onBeforeLoad: function(e) {
+          var id = this.getTrigger().data('post_id'),
+              wrap = this.getOverlay();
+          wrap.find('#shcp-modal-container').remove();
+          $.ajax({
+              url: shcp_ajax.ajaxurl,
+              data: {action: 'product_action_cartconfirm', p: id},
+              dataType: 'html',
+              type: 'POST',
+              success: function(data) {
+                  wrap.append(data);
+              }
+          });
+      }
+    });  
     $('.addtocart').bind('click', function() {
         $(this).shcProduct('add');
         return false;
@@ -34,6 +53,7 @@ jQuery(document).ready(function($) {
             });
         }
     });
+    // show quickview button on product hover
     $('.shcp-item').hover(
       function() {
         $(this).find('.shcp-quickview').show();
