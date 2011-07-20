@@ -179,3 +179,17 @@ right: 30px;
   padding: 20px 0 0 0;
   clear: both;
 }
+/** Cart **/
+.cart input.shcp-quantity {
+width: 25px;
+}
+.cart td {
+vertical-align: top;
+}
+.cart .shcp-item-description img {
+float: left;
+}
+.cart .shcp-item-description p {
+margin-left: 160px;
+clear: none;
+}

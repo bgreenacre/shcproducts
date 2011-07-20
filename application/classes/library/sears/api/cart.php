@@ -31,6 +31,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         parent::__construct($group, $parent);
 
         $this->content_type = 'xml';
+        $this->cache(FALSE);
     }
 
     protected function _load()
@@ -58,10 +59,13 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         }
     }
 
-    public function view()
+    public function view($catalog_id = NULL)
     {
-        $this->method('ViewCart');
+        $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
 
+        $this->method('ViewCart')
+            ->param('catalogId', $catalog_id);
+        
         return $this;
     }
 
@@ -150,6 +154,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         }
         else
         {
+            $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
             $this->products_to_add['catalogId'][] = $catalog_id;
             $this->products_to_add['catentry_id'][] = $catentry_id;
             $this->products_to_add['quantity'][] = $quantity;
@@ -185,7 +190,8 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
                 return $this;
             }
         }
-
+        
+        $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
         $this->method('EmptyCart')
             ->param('orderId', $order_id)
             ->param('catalogId', $catalog_id);
@@ -220,6 +226,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
             }
         }
 
+        $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
         $this->method('DeleteFrmCart')
             ->param('orderId', $order_id)
             ->param('catalogId', $catalog_id)
@@ -266,6 +273,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
             }
         }
 
+        $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
         $this->method('UpdateCart')
             ->param('orderId', $order_id)
             ->param('catalogId', $catalog_id)
