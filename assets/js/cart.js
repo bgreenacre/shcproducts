@@ -25,7 +25,7 @@ $.shcCart = {
     },
     json: {},
     init: function(args) {
-        var $el = $(this);
+        var $el = $(this);console.log($('.shcp-remove-item'. $el).length);
         $el.data('cart:options', $.extend({}, $.shcCart.options, $el.data('cart:options'), args))
             .bind('shcCartUpdate', function() {
                 $(this).shcCart('view');
@@ -34,8 +34,9 @@ $.shcCart = {
             $el.shcCart('empty');
             return false;
         });
+        console.log($('.shcp-remove-item'. $el).length);
         $('.shcp-remove-item'. $el).live('click', function() {
-            $.shcCart.remove(this);
+            //$.shcCart.remove([this]);
             return false;
         });
         $(':input', $el).live('change blur', function() {
