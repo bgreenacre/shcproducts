@@ -41,18 +41,18 @@ class Controller_Front_Cart {
 
     public function __construct()
     {
-		add_action('wp_ajax_cartaction_mini', array(&$this, 'action_mini'));
-		add_action('wp_ajax_nopriv_cartaction_mini', array(&$this, 'action_mini'));
-		add_action('wp_ajax_cartaction_view', array(&$this, 'action_view'));
-		add_action('wp_ajax_nopriv_cartaction_view', array(&$this, 'action_view'));
-		add_action('wp_ajax_cartaction_add', array(&$this, 'action_add'));
-		add_action('wp_ajax_nopriv_cartaction_add', array(&$this, 'action_add'));
-		add_action('wp_ajax_cartaction_remove', array(&$this, 'action_remove'));
-		add_action('wp_ajax_nopriv_cartaction_remove', array(&$this, 'action_remove'));
-		add_action('wp_ajax_cartaction_update', array(&$this, 'action_update'));
-		add_action('wp_ajax_nopriv_cartaction_update', array(&$this, 'action_update'));
-		add_action('wp_ajax_cartaction_empty', array(&$this, 'action_empty'));
-		add_action('wp_ajax_nopriv_cartaction_empty', array(&$this, 'action_empty'));
+    		add_action('wp_ajax_cartaction_mini', array(&$this, 'action_mini'));
+    		add_action('wp_ajax_nopriv_cartaction_mini', array(&$this, 'action_mini'));
+    		add_action('wp_ajax_cartaction_view', array(&$this, 'action_view'));
+    		add_action('wp_ajax_nopriv_cartaction_view', array(&$this, 'action_view'));
+    		add_action('wp_ajax_cartaction_add', array(&$this, 'action_add'));
+    		add_action('wp_ajax_nopriv_cartaction_add', array(&$this, 'action_add'));
+    		add_action('wp_ajax_cartaction_remove', array(&$this, 'action_remove'));
+    		add_action('wp_ajax_nopriv_cartaction_remove', array(&$this, 'action_remove'));
+    		add_action('wp_ajax_cartaction_update', array(&$this, 'action_update'));
+    		add_action('wp_ajax_nopriv_cartaction_update', array(&$this, 'action_update'));
+    		add_action('wp_ajax_cartaction_empty', array(&$this, 'action_empty'));
+    		add_action('wp_ajax_nopriv_cartaction_empty', array(&$this, 'action_empty'));
         add_shortcode('shcp_cart', array(&$this, 'action_view'));
         add_shortcode('shcp_minicart', array(&$this, 'action_mini'));
 

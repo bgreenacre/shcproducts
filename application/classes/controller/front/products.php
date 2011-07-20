@@ -37,8 +37,10 @@ class Controller_Front_Products {
         add_shortcode('shcp_products', array(&$this, 'action_grid'));
         add_shortcode('shcp_product', array(&$this, 'action_detail'));
         add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
-		add_action('wp_ajax_product_action_quickview', array(&$this, 'action_quickview'));
-		add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
+		    add_action('wp_ajax_product_action_quickview', array(&$this, 'action_quickview'));
+		    add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
+		    add_action('wp_ajax_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
+		    add_action('wp_ajax_nopriv_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
     }
 
     public function action_grid($attrs = NULL)
@@ -86,6 +88,27 @@ class Controller_Front_Products {
 
         if (SHCP::$is_ajax)
             die;
+    }
+
+    public function action_cartconfirm($attrs = NULL)
+    {
+        global $wp_query;
+        $this->products = new Model_Products();
+
+        $attrs = (array) $attrs;
+        $attrs['p'] = SHCP::get($_POST, 'p');
+        $this->parse_attrs($attrs);
+
+        $data = array(
+            'product'  => $this->products
+        );
+
+        echo SHCP::view('front/product/cartconfirm', $data);
+
+        if (SHCP::$is_ajax)
+        {
+            die;
+        }
     }
 
     public function parse_attrs($attrs = NULL)

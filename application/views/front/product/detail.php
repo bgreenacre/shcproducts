@@ -13,8 +13,11 @@
   <p class="shcp-item-shortdesc"><?php echo $product->detail->shortdescription; ?></p>
   <p class="shcp-item-price">
     <span>$<?php echo $product->detail->saleprice; ?></span>
-<?php if ($product->detail->regularprice): ?>
+<?php if ($product->detail->regularprice): 
+        $price_savings = number_format(abs((float)($product->detail->saleprice - $product->detail->regularprice)), 2);
+        if($price_savings != 0.00): ?>
     <span class="price-savings">A savings of $<?php echo number_format(abs((float)($product->detail->saleprice - $product->detail->regularprice)), 2); ?></span>
+        <?php endif; ?>
 <?php endif; ?>
   </p>
   <p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->catentryid; ?>" class="addtocart">Add To Cart</a></p>  
