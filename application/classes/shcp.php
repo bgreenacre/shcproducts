@@ -146,6 +146,12 @@ class SHCP {
             SHCP_Profiler::stop($load_ctl);
             unset($load_ctl);
         }
+        
+        if ( ! SHCP::cache('clear_out_cache'))
+        {
+            SHCP::clear_cache();
+            SHCP::cache('clear_out_cache', TRUE, 3600);
+        }
     }
 
     /**
@@ -356,6 +362,10 @@ class SHCP {
 			// Failed to write cache
 			return FALSE;
 		}
+	}
+	
+	public function clear_cache()
+	{
 	}
 
 	/**

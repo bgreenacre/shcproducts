@@ -8,28 +8,33 @@
 <?php endif; ?>
 <a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $simple_cart->session; ?>" class="shcp-empty-cart">Empty Cart</a>
 <table width="99%">
+<thead>
 <tr>
 <th style="width: 50%;">Item</th>
 <th style="width: 25%;">Quantity</th>
 <th style="width: 25%;">Price</th>
 </tr>
+</thead>
+<tbody>
 <?php if ($simple_cart->item_count == 0): ?>
 <tr><td colspan="3">There are no items currently in your cart.</td></tr>
 <?php else: ?>
 <?php foreach ($simple_cart->items as $item): ?>
 <tr>
-<td>
-<?php echo Helper_Products::image($item->imageid); ?>
-<?php echo $item->name; ?>
+<td class="shcp-item-description">
+<?php echo Helper_Products::image($item->image); ?>
+<p><?php echo $item->name; ?></p>
 </td>
-<td>
-<input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" />
+<td class="shcp-item-quantity">
+<input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" class="shcp-quantity" />
 <a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-remove-item" title="Remove Item">[X]</a>
 </td>
-<td>$<?php echo $item->price; ?></td>
+<td class="shcp-item-price">$<?php echo $item->price; ?></td>
 </tr>
 <?php endforeach; ?>
 <?php endif; ?>
+</tbody>
+<tfoot>
 <tr>
 <td colspan="2">Sub Total</td>
 <td>$<?php echo $simple_cart->total_item_price; ?></td>
@@ -44,5 +49,6 @@
 <td colspan="2">Cart Total</td>
 <td>$<?php echo $simple_cart->total_price; ?></td>
 </tr>
+</tfoot>
 </table>
 </form>
