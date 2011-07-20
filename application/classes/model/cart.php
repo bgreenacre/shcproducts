@@ -74,7 +74,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
         if ($this->OrderItems->OrderItem)
         {
             if ( ! is_array($this->OrderItems->OrderItem))
-                $items = array($this->OrderItems->OrderItem);
+                $items = $this->OrderItems->OrderItem;
             else
                 $items = $this->OrderItems->OrderItem;
         }
@@ -86,7 +86,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
         $this->cart->item_count = 0;
         $this->cart->items = array();
         
-        foreach ($items as $item)
+        foreach ($this->OrderItems->OrderItem as $item)
         {
             $product = new Model_Products();
             $product->meta('partnumber', '=', $item->PartNo)->load();
