@@ -1,4 +1,4 @@
-<form action="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->catentryid; ?>" method="GET" class="shcp-quickview" id="shcp_product-detail">
+<form action="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" method="GET" class="shcp-quickview" id="shcp_product-detail">
 <div class="shcp-image-tank">
 <div class="shcp-current-image"><?php echo Helper_Products::image($product->imageid, array('height' => '248', 'width' => '248')); ?></div>
 <?php if ($product->detail->imageurls): ?>
@@ -16,6 +16,6 @@
 <span class="price-savings">A savings of $<?php echo number_format(abs((float)($product->detail->saleprice - $product->detail->regularprice)), 2); ?></span>
 <?php endif; ?>
 </p>
-<p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->catentryid; ?>" class="addtocart">Add To Cart</a></p>  
+<p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart">Add To Cart</a></p>  
 <div class="shcp-item-longdesc"><?php echo $product->detail->longdescription; ?></div>
 </form>
