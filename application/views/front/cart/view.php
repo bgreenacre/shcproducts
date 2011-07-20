@@ -19,7 +19,10 @@
 <?php foreach ($simple_cart->items as $item): ?>
 <tr>
 <td><?php echo $item->name; ?></td>
-<td><?php echo $item->quantity; ?></td>
+<td>
+<input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" />
+<a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-remove-item" title="Remove Item">[X]</a>
+</td>
 <td>$<?php echo $item->price; ?></td>
 </tr>
 <?php endforeach; ?>
