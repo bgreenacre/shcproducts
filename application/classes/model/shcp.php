@@ -392,6 +392,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	    {
 	        $this->_errors['post_title']['empty'] = 'There is no post title set';
 	    }
+	    
+	    if ($this->detail == NULL || $this->detail->current() == NULL)
+	    {
+	        $this->_errors['detail']['partnumber'] = $this->partnumber;
+	        $this->_errors['detail']['empty'] = 'There is no detail for this product.';
+	    }
 
 	    return ( ! $this->_errors) ? TRUE : FALSE;
 	}

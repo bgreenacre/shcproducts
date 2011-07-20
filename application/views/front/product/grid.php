@@ -8,10 +8,10 @@
       <a href="/link-to-quickview-page" data-post_id="<?php echo $products->ID; ?>" rel="#shcp_quickview_modal">Quick View</a>
     </div>
     <p class="shcp-image">
-      <a href="/link-to-detail-page"><?php echo Helper_Products::image($products->imageid, array('alt' => $products->post_title)); ?></a>
+      <a href="<?php echo get_permalink($products->ID); ?>"><?php echo Helper_Products::image($products->imageid, array('alt' => $products->post_title)); ?></a>
     </p>
     <p class="shcp-title">
-      <a href="/link-to-detail-page"><?php echo $products->post_title; ?></a>
+      <a href="<?php echo get_permalink($products->ID); ?>"><?php echo $products->post_title; ?></a>
     </p>
     <p class="shcp-item-price">
       <span>$<?php echo $products->detail->saleprice; ?></span>

@@ -204,16 +204,9 @@ class Controller_Admin_Import {
           $data[$field_name] = SHCP::get($_POST[$field_name], $i);
         }
         
-        try
-        {
-            $data['detail'] = Library_Sears_Api::factory('product')
-              ->get($data['partnumber'])
-              ->load();
-        }
-        catch(Exception $e)
-        {
-            return;
-        }
+        $data['detail'] = Library_Sears_Api::factory('product')
+          ->get($data['partnumber'])
+          ->load();
         
         $shcproduct->values($data);
 
@@ -222,10 +215,13 @@ class Controller_Admin_Import {
           $shcproduct->save();
         }
         else
-        {
+        { 
         }
+        
+        $errors[] = $shcproduct->errors();
       }
-
+      echo(json_encode(array('errors' => $errors)));
+        
       die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
 
