@@ -46,6 +46,7 @@ class Controller_Front_Products {
     public function action_grid($attrs = NULL)
     {
         $this->products = new Model_Products();
+        $this->products->use_query_posts(TRUE);
 
         $this->parse_attrs($attrs);
 
@@ -87,7 +88,9 @@ class Controller_Front_Products {
         echo SHCP::view('front/product/quickview', $data);
 
         if (SHCP::$is_ajax)
+        {
             die;
+        }
     }
 
     public function action_cartconfirm($attrs = NULL)

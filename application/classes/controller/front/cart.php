@@ -103,10 +103,15 @@ class Controller_Front_Cart {
 
     public function action_remove()
     {
-        $this
-            ->cart
-            ->remove($id, $this->cart->cart->order_id, $this->cart->cart->catalog_id)
-            ->load();
+        if ($ids = (array) SHCP::get($_POST, 'id', SHCP::get($_GET, 'id')))
+        {
+            foreach ($ids as $id)
+            {
+                $this->cart
+                    ->remove($id, $this->cart->cart->order_id, $this->cart->cart->catalog_id)
+                    ->load();
+            }
+        }
         
         $this->ajax_response();
     }

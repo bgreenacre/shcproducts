@@ -25,25 +25,25 @@ $.shcCart = {
     },
     json: {},
     init: function(args) {
-        var $el = $(this);console.log($('.shcp-remove-item'. $el).length);
+        var $el = $(this);
         $el.data('cart:options', $.extend({}, $.shcCart.options, $el.data('cart:options'), args))
             .bind('shcCartUpdate', function() {
                 $(this).shcCart('view');
             });
-        $('.shcp-empty-cart', $el).live('click', function() {
+        $el.find('.shcp-empty-cart').live('click', function() {
             $el.shcCart('empty');
             return false;
         });
-        console.log($('.shcp-remove-item'. $el).length);
-        $('.shcp-remove-item'. $el).live('click', function() {
-            //$.shcCart.remove([this]);
+        $el.find('.shcp-remove-item').live('click', function() {
+            $.shcCart.remove([this]);
             return false;
         });
-        $(':input', $el).live('change blur', function() {
+        $el.find(':input').live('change blur', function() {
             $el.shcCart('update');
         })
     },
     view: function(el, args) {
+        location.reload();
     },
     add: function(prods) {
         var products = $.shcCart._productData(prods);
@@ -70,9 +70,9 @@ $.shcCart = {
         $.ajax($.extend({
             url: $.shcCart.options.endpoint,
             data: $.param(data),
-            dataType: 'jsonp',
+            dataType: 'json',
             success: function(response, status) {
-                
+                console.log('update');
                 $.event.trigger('shcCartUpdate', [action, response]);
             },
             type: 'GET',

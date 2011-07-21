@@ -36,7 +36,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
             {
                 self::session($session);
 
-                $this->cart = get_option('cart_'.md5($session), (object) SHCP::config('cart.defaults'));
+                $this->cart = get_option('cart_'.md5(self::session()), (object) SHCP::config('cart.defaults'));
                 //$this->cart = (object) SHCP::config('cart.defaults');
             }
             else

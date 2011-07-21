@@ -16,6 +16,6 @@
 <span class="price-savings">A savings of $<?php echo number_format(abs((float)($product->detail->saleprice - $product->detail->regularprice)), 2); ?></span>
 <?php endif; ?>
 </p>
-<p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart">Add To Cart</a></p>  
+<a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart">Add To Cart</a>
 <div class="shcp-item-longdesc"><?php echo $product->detail->longdescription; ?></div>
 </form>
