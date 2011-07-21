@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
     var winH = jQuery(window).height(),
         winW = jQuery(window).width();
     
-    $('.cart').shcCart({});
+    $('.cart').shcCart();
     $('.addtocart').overlay({
       top: 'center',
       left: 'center',
@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
           });
       }
     });  
-    $('.addtocart').bind('click', function() {
+    $('.addtocart').live('click', function() {
         $(this).shcProduct('add');
         return false;
     });
@@ -37,7 +37,6 @@ jQuery(document).ready(function($) {
     $('div.shcp-quickview a').overlay({
         top: 'center',
         left: 'center',
-        closeOnClick: true,
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
                 wrap = this.getOverlay();
@@ -52,6 +51,9 @@ jQuery(document).ready(function($) {
                 }
             });
         }
+    });
+    $('.close').live('click', function() {
+        return false;
     });
     // show quickview button on product hover
     $('.shcp-item').hover(

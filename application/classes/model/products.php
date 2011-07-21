@@ -83,6 +83,19 @@ class Model_Products extends Model_SHCP {
         return parent::save();
     }
     
+    /**
+     * get_catentryid - This method tries to use the item vs product level rules
+     * of the Sears API. _rules_ is a loose term as this particular way of
+     * prioritizing entry ids is not well documented. Essentially this method
+     * will first check to see if there are ids within the skulist property (the
+     * item level) and use the first id in that array. If it does not exist then
+     * the catentryid within the detail object is used (product level).
+     * If either of those properties does not exist then use the property saved
+     * for the post.
+     *
+     * @access  public
+     * @return  string
+     */
     public function get_catentryid()
     {
         if (is_object($this->detail))

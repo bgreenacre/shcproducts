@@ -159,7 +159,9 @@
   top: 15px;
   right: 30px;
 }
-
+.shcp-image-tank {
+width: 248px;
+}
 /* ----------- Product Detail ----------- */
 
 #shcp_product-detail {
@@ -169,7 +171,10 @@
 #shcp_product-detail img {
   float: left;
 }
-
+#shcp_product-detail p {
+  clear: none;
+  margin-left: 268px;
+}
 #shcp_product-detail h1 {
   clear: none;
   margin-left: 268px;
