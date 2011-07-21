@@ -433,7 +433,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     {
         if ( ! $this->_url OR $method !== NULL)
         {
-            $this->_method = $method;
+            $this->_method = ($method) ? $method : $this->_method;
             $this->param($params);
             return $this->build_url();
         }

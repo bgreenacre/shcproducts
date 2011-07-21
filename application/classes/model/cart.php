@@ -32,7 +32,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
 
         if ( ! $this->cart)
         {
-            if ($session = SHCP::get($_COOKIE, 'shcp_cart_session_key'))
+            if ($session = SHCP::get($_COOKIE, 'sessionKey'))
             {
                 self::session($session);
 
@@ -50,12 +50,12 @@ class Model_Cart extends Library_Sears_Api_Cart {
     {
         if ( ! $this->method())
             $this->view();
-        
+
         parent::_load();
 
-        if (self::session() != SHCP::get($_COOKIE, 'shcp_cart_session_key'))
+        if (self::session() != SHCP::get($_COOKIE, 'sessionKey'))
         {
-            setcookie('shcp_cart_session_key', self::session(), time()+3600, '/');
+            setcookie('sessionKey', self::session(), time()+3600, '/');
         }
 
         $this->update_cart();
