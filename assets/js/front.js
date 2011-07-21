@@ -5,7 +5,6 @@ jQuery(document).ready(function($) {
     
     $('.cart').shcCart();
     $('.addtocart').overlay({
-      top: 'center',
       left: 'center',
       closeOnClick: true,
       mask: {
@@ -40,7 +39,6 @@ jQuery(document).ready(function($) {
         return false;
     });
     $('div.shcp-quickview a').overlay({
-        top: 'center',
         left: 'center',
         closeOnClick: true,
         mask: {
