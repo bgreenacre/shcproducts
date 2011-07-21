@@ -289,7 +289,6 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		{
 		    if ($this->use_query_posts)
 		    {
-		        unset($this->_params[0]);
 		        $this->_data = query_posts($this->_params);
 		        $this->_position = 0;
 		        $this->_total_rows = $GLOBALS['wp_query']->found_posts;
@@ -305,7 +304,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		        // Dump the posts into this object and set the iterator props.
 		        $this->_data = $query->posts;
 		        $this->_position = 0;
-		        $this->_total_rows = $query->found_posts;
+		        $this->_total_rows = count($this->_data);
 		        $this->_total_display = $query->post_count;
 		        $this->_posts_per_page = $query->posts_per_page;
 		        $this->_max_num_pages = $query->max_num_pages;
