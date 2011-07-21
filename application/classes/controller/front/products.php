@@ -84,7 +84,7 @@ class Controller_Front_Products {
         $data = array(
             'product'  => $this->products
         );
-
+        
         echo SHCP::view('front/product/quickview', $data);
 
         if (SHCP::$is_ajax)
@@ -116,6 +116,9 @@ class Controller_Front_Products {
 
     public function parse_attrs($attrs = NULL)
     {
+        if (isset($attrs[0]))
+            unset($attrs[0]);
+        
         $attrs = array_merge_recursive(array(
             'posts_per_page'   => get_option('posts_per_page', 10),
         ), (array) $attrs);
