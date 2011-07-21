@@ -100,9 +100,9 @@ class Model_Products extends Model_SHCP {
     {
         if (is_object($this->detail))
         {
-            if (isset($this->detail->skulist) === TRUE AND $cid = SHCP::get($this->detail->skulist[1], 0))
+            if ($this->detail->skulist)
             {
-                return $cid;
+                return $this->detail->skulist->sku[1][0]->catentryid;
             }
             else
             {

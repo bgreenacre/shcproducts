@@ -74,10 +74,10 @@ class Controller_Front_Cart {
 
     public function action_add()
     {
-        if ($catentryid = (array) SHCP::get($_GET, 'catentryid'))
+        if ($catentryid = (array) SHCP::get($_POST, 'catentryid', SHCP::get($_GET, 'catentryid')))
         {
-            $quantity = (array) SHCP::get($_GET, 'quantity');
-            $catalog_id = (array) SHCP::get($_GET, 'catalog_id');
+            $quantity = (array) SHCP::get($_POST, 'quantity', SHCP::get($_GET, 'quantity'));
+            $catalog_id = (array) SHCP::get($_POST, 'catalog_id', SHCP::get($_GET, 'catalog_id'));
 
             foreach ($catentryid as $key => $cid)
             {
@@ -91,7 +91,8 @@ class Controller_Front_Cart {
         
         try
         {
-            $this->cart->load()->view()->load();
+            $this->cart->load();var_dump($this->cart);
+            $this->cart->view()->load();
         }
         catch(Exception $e)
         {
