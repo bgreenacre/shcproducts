@@ -8,6 +8,11 @@ jQuery(document).ready(function($) {
       top: 'center',
       left: 'center',
       closeOnClick: true,
+      mask: {
+    		color: '#ebecff',
+    		loadSpeed: 200,
+    		opacity: 0.9
+      },
       onBeforeLoad: function(e) {
           var id = this.getTrigger().data('post_id'),
               wrap = this.getOverlay();
@@ -37,6 +42,12 @@ jQuery(document).ready(function($) {
     $('div.shcp-quickview a').overlay({
         top: 'center',
         left: 'center',
+        closeOnClick: true,
+        mask: {
+      		color: '#ebecff',
+      		loadSpeed: 200,
+      		opacity: 0.9
+        },
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
                 wrap = this.getOverlay();
@@ -64,4 +75,10 @@ jQuery(document).ready(function($) {
         $(this).find('.shcp-quickview').hide();
       }
     );
+    // swap current image out for thumbnail when clicked
+    $('.shcp-image-thumbnail').bind('click', function() {
+      $('.shcp-current-image img').attr('src', $(this).find('img').attr('src'));
+      $('.selected').removeClass('selected');
+      $(this).addClass('selected');
+    });
 });
