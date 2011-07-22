@@ -1,5 +1,4 @@
 <form action="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" method="GET" class="shcp-quickview" id="shcp_product-detail">
-  <div class="close_button"><a href="" id="shcp_quickview_close" class="close">Close</a></div>
   <div class="quickview_wrapper">
     <div class="shcp-image-tank">
       <div class="shcp-current-image"><?php echo Helper_Products::image($product->imageid, array('height' => '248', 'width' => '248')); ?></div>
@@ -24,7 +23,7 @@
           <?php endif; ?>
   <?php endif; ?>
     </p>
-    <p><a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart">Add To Cart</a></p>  
+    <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart">Add To Cart</a>
     <div class="shcp-item-longdesc"><?php echo htmlspecialchars_decode($product->detail->longdescription); ?></div>
   </div>
 </form>

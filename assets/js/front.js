@@ -8,9 +8,9 @@ jQuery(document).ready(function($) {
       left: 'center',
       closeOnClick: true,
       mask: {
-    		color: '#ebecff',
+    		color: '#fff',
     		loadSpeed: 200,
-    		opacity: 0.9
+    		opacity: 0.5
       },
       onBeforeLoad: function(e) {
           var id = this.getTrigger().data('post_id'),
@@ -42,9 +42,9 @@ jQuery(document).ready(function($) {
         left: 'center',
         closeOnClick: true,
         mask: {
-      		color: '#ebecff',
+      		color: '#fff',
       		loadSpeed: 200,
-      		opacity: 0.9
+      		opacity: 0.5
         },
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
@@ -61,8 +61,8 @@ jQuery(document).ready(function($) {
             });
         }
     });
-    $('.close').live('click', function() {
-        return false;
+    $('.close').live('click', function(e) {
+        e.preventDefault();
     });
     // show quickview button on product hover
     $('.shcp-item').hover(
