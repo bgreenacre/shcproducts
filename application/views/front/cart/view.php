@@ -25,14 +25,14 @@
     <?php foreach ($simple_cart->items as $item): ?>
       <tr>
         <td class="shcp-item-description">
-      <?php echo Helper_Products::image($item->image); ?>
+        <?php echo Helper_Products::image($item->image); ?>
           <p><?php echo $item->name; ?></p>
         </td>
         <td class="shcp-item-quantity">
           <input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" class="shcp-quantity" />
           <a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-remove-item" title="Remove Item">[X]</a>
         </td>
-        <td class="shcp-item-price">$<?php echo $item->price; ?></td>
+        <td class="shcp-item-price"><?php echo Helper_Price::currency($item->price); ?></td>
       </tr>
       <?php endforeach; ?>
       <?php endif; ?>
@@ -40,17 +40,17 @@
     <tfoot>
       <tr>
         <td colspan="2">Sub Total</td>
-        <td>$<?php echo $simple_cart->total_item_price; ?></td>
+        <td><?php echo Helper_Price::currency($simple_cart->total_item_price); ?></td>
       </tr>
       <?php if ($simple_cart->total_discounts): ?>
       <tr>
         <td colspan="2">Discount Total</td>
-        <td>$<?php echo $simple_cart->total_discounts; ?></td>
+        <td><?php echo Helper_Price::currency($simple_cart->total_discounts); ?></td>
       </tr>
       <?php endif; ?>
       <tr>
         <td colspan="2">Cart Total</td>
-        <td>$<?php echo $simple_cart->total_price; ?></td>
+        <td><?php echo Helper_Price::currency($simple_cart->total_price); ?></td>
       </tr>
     </tfoot>
   </table>

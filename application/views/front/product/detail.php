@@ -14,11 +14,11 @@
   <h1><?php echo $product->post_title; ?></h1>
   <div class="shcp-item-shortdesc"><?php echo htmlspecialchars_decode($product->detail->shortdescription); ?></div>
   <p class="shcp-item-price">
-    <span>$<?php echo $product->detail->saleprice; ?></span>
+    <span><?php echo Helper_Price::currency($product->detail->saleprice); ?></span>
 <?php if ($product->detail->regularprice): 
-        $price_savings = number_format(abs((float)($product->detail->saleprice - $product->detail->regularprice)), 2);
+        $price_savings = Helper_Price::format(abs((float)($product->detail->saleprice - $product->detail->regularprice)), 2, TRUE);
         if($price_savings != 0.00): ?>
-    <span class="price-savings">A savings of $<?php echo $price_savings; ?></span>
+    <span class="price-savings">A savings of <?php echo Helper_Price::currency($price_savings); ?></span>
         <?php endif; ?>
 <?php endif; ?>
   </p>
