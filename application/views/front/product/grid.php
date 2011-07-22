@@ -14,9 +14,9 @@
       <a href="<?php echo get_permalink($products->ID); ?>"><?php echo $products->post_title; ?></a>
     </p>
     <p class="shcp-item-price">
-      <span>$<?php echo $products->detail->saleprice; ?></span>
+      <span><?php echo Helper_Price::currency($products->detail->saleprice); ?></span>
 <?php if ($products->cutprice): ?>        
-      <del>$<?php echo $products->detail->regularprice; ?></del>
+      <del><?php echo Helper_Price::currency($products->detail->regularprice); ?></del>
 <?php endif; ?>
     </p>
     <p class="shcp-add-to-cart">
