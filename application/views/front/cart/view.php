@@ -6,8 +6,9 @@
   <?php elseif ($simple_cart->messages->errors): ?>
   <div class="errors"><?php echo implode('<br />', $simple_cart->messages->errors); ?></div>
   <?php endif; ?>
-  <a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $simple_cart->session; ?>" class="shcp-empty-cart">Empty Cart</a>
-  <a href="<?php echo Library_Sears_Api::factory('cart')->checkout()->load()->url(); ?>" class="shcp-checkout">Checkout</a>
+  <a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $simple_cart->session; ?>" class="shcp-empty-cart">Empty Cart</a> | 
+  <a href="<?php echo Library_Sears_Api::factory('cart')->checkout()->load()->url(); ?>" class="shcp-checkout">Checkout</a> | 
+  <a href="<?php echo get_bloginfo('url'); ?>/products">Products</a>
   <table width="99%">
     <thead>
       <tr>
