@@ -79,7 +79,6 @@ $.shcCart = {
             data: $.param(data),
             dataType: 'json',
             success: function(response, status) {
-                console.log('update');
                 $.event.trigger('shcCartUpdate', [action, response]);
             },
             type: 'GET',
