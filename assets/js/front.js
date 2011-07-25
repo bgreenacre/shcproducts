@@ -32,10 +32,14 @@ jQuery(document).ready(function($) {
         return false;
     });
     $('.shcp-image-thumbnail').live('click', function() {
-        $(this)
-            .parent()
+        var $tank = $(this).closest('.shcp-image-tank');
+        $tank
             .find('.shcp-current-image img')
-            .attr('src', $('img', this).attr('src'));
+            .attr('src', $(this).data('image'));
+        $tank
+            .find('.shcp-image-thumbnail')
+            .removeClass('selected');
+        $(this).addClass('selected');
         return false;
     });
     $('div.shcp-quickview a').overlay({

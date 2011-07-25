@@ -33,6 +33,22 @@ class Helper_Products {
         $attrs['alt']     = SHCP::get($attrs, 'alt', '');
         $attrs_str        = '';
         
+        $attrs['src'] = self::image_url($image, $attrs['height'], $attrs['width'], $disable_url_dimensions);
+
+        foreach ($attrs as $key => $value)
+        {
+            $attrs_str .= $key . '="'
+                .htmlspecialchars( (string) $value, ENT_QUOTES)
+                .'" ';
+        }
+
+        $attrs_str = ' ' . rtrim($attrs_str, ' ');
+
+        return '<img'.$attrs_str.' />';
+    }
+    
+    public static function image_url($image, $height, $width, $disable_url_dimensions = FALSE)
+    {
         $image = urldecode($image);
 
         if (strpos($image, 'http//') !== FALSE)
@@ -61,21 +77,10 @@ class Helper_Products {
             $image = 'http://s.shld.net/is/image/Sears/'.$image;
             
             if ($disable_url_dimensions === FALSE)
-                $image .= '?hei='.$attrs['height'].'&wid='.$attrs['width'];
+                $image .= '?hei='.$height.'&wid='.$width;
         }
-
-        $attrs['src'] = $image;
-
-        foreach ($attrs as $key => $value)
-        {
-            $attrs_str .= $key . '="'
-                .htmlspecialchars( (string) $value, ENT_QUOTES)
-                .'" ';
-        }
-
-        $attrs_str = ' ' . rtrim($attrs_str, ' ');
-
-        return '<img'.$attrs_str.' />';
+        
+        return $image;
     }
 
 }

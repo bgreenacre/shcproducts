@@ -5,7 +5,7 @@
   <?php if ($product->detail->imageurls): ?>
       <div class="shcp-more-images">
   <?php foreach ($product->detail->imageurls->imageurl[1] as $image): ?>
-        <a href="" class="shcp-image-thumbnail<?php if (substr($image, strrpos($image, '/') + 1) == $product->imageid): echo " selected"; endif; ?>">
+        <a href="" class="shcp-image-thumbnail<?php if (substr($image, strrpos($image, '/') + 1) == $product->imageid): echo " selected"; endif; ?>" data-image="<?php echo Helper_Products::image_url($image, 248, 248); ?>">
           <?php echo Helper_Products::image($image, array('height' => 40, 'width' => 40)); ?>
         </a>
   <?php endforeach; ?>
