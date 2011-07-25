@@ -37,16 +37,30 @@ class Controller_Front_Products {
         add_shortcode('shcp_products', array(&$this, 'action_grid'));
         add_shortcode('shcp_product', array(&$this, 'action_detail'));
         add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
-		    add_action('wp_ajax_product_action_quickview', array(&$this, 'action_quickview'));
-		    add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
-		    add_action('wp_ajax_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
-		    add_action('wp_ajax_nopriv_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
+        add_action('wp_ajax_product_action_quickview', array(&$this, 'action_quickview'));
+		add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
+		add_action('wp_ajax_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
+		add_action('wp_ajax_nopriv_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
+		add_filter('body_class', array(&$this, 'filter_body_class'));
     }
 
+    public function filter_body_class($classes)
+    {
+        if (is_post_type_archive('shcproduct'))
+        {
+            $classes[] = 'page-template';
+            $classes[] = ' page-template-template-page-fullwidth-php';
+        }
+        
+        return $classes;
+    }
+    
     public function action_grid($attrs = NULL)
     {
+        global $wp_query;
+        
         $this->products = new Model_Products();
-        $this->products->use_query_posts(TRUE);
+        $this->products->use_query_posts(TRUE)->merge_wp_query(TRUE);
 
         $this->parse_attrs($attrs);
 

@@ -39,6 +39,10 @@
     </tbody>
     <tfoot>
       <tr>
+        <td colspan="2"></td>
+        <td><input type="submit" name="submit" value="Update Cart" class="shcp-update-cart" /></td>
+      </tr>
+      <tr>
         <td colspan="2">Sub Total</td>
         <td><?php echo Helper_Price::currency($simple_cart->total_item_price); ?></td>
       </tr>

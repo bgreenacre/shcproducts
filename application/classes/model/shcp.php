@@ -45,6 +45,8 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @var     bool
      */
     protected $use_query_posts = FALSE;
+    
+    protected $merge_wp_query = FALSE;
 
     protected $_id;
 
@@ -221,6 +223,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	    $this->use_query_posts = (bool) $use;
 	    return $this;
 	}
+	
+	public function merge_wp_query($use = FALSE)
+	{
+	    $this->merge_wp_query = (bool) $use;
+	    return $this;
+	}
 
     /**
 	 * fields - Get the columns for the current table.
@@ -285,8 +293,15 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	 */
 	protected function _load()
 	{
+	    global $wp_query;
+	    
 		if ($this->_executed !== TRUE)
 		{
+		    if ($this->merge_wp_query)
+		    {
+		        $this->_params = array_merge_recursive($wp_query->query, $this->_params);
+		    }
+		    
 		    if ($this->use_query_posts)
 		    {
 		        $this->_data = query_posts($this->_params);
