@@ -23,7 +23,7 @@
           <?php endif; ?>
   <?php endif; ?>
     </p>
-    <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart">Add To Cart</a>
+    <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart" data-post_id="<?php echo $product->ID; ?>">Add To Cart</a>
     <div class="shcp-item-longdesc"><?php echo htmlspecialchars_decode($product->detail->longdescription); ?></div>
   </div>
 </form>
