@@ -21,7 +21,8 @@ var qsReg = /([^?=&]+)(=([^&]*))?/g,
 $.shcCart = {
     eventNames: [],
     options: {
-        endpoint: '/wp-admin/admin-ajax.php'
+        endpoint: '/wp-admin/admin-ajax.php',
+        autoUpdate: true,
     },
     json: {},
     init: function(args) {
@@ -29,6 +30,10 @@ $.shcCart = {
         $el.data('cart:options', $.extend({}, $.shcCart.options, $el.data('cart:options'), args))
             .bind('shcCartUpdate', function() {
                 $(this).shcCart('view');
+            })
+            .live('submit', function(e) {
+                e.preventDefault();
+                $(this).shcCart('update');
             });
         $el.find('.shcp-empty-cart').live('click', function() {
             $el.shcCart('empty');
@@ -38,8 +43,10 @@ $.shcCart = {
             $.shcCart.remove([this]);
             return false;
         });
-        $el.find(':input').live('change blur', function() {
-            $el.shcCart('update');
+        $el.find(':input:not([type="submit"],[type="button"])').live('change blur', function() {
+            $.event.trigger('shcCartChange', [$.shcCart.json, this])
+            if ($el.data('cart:options').autoUpdate)
+                $el.shcCart('update');
         })
     },
     view: function(el, args) {

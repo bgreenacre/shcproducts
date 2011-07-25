@@ -13,6 +13,9 @@
 
     // action hook for placing content above #container
     thematic_abovecontainer();
+    ob_start();
+	Controller::factory('front_products')->action_grid();
+	$content = ob_get_clean();
 
 ?>
 
@@ -21,34 +24,32 @@
 			<?php thematic_abovecontent(); ?>
 		
 			<div id="content">
-	
-	            <?php
-	        
-	            // calling the widget area 'page-top'
-	            get_sidebar('page-top');
-	
-	            the_post();
+			<?php
+				// create the navigation above the content
+		        thematic_navigation_above();
+		    ?>
+				<div <?php
+					if (!(THEMATIC_COMPATIBLE_POST_CLASS)) {
+						post_class('page type-page status-publish hentry');
+						echo '>';
+					} else {
+						echo 'class="';
+						thematic_post_class();
+						echo '">';
+						echo 'yo MAMAMAMAA';
+					}
+	                ?>
 	            
-	            thematic_abovepost();
-	        
-	            ?>
-	            
-				<div class="entry-content">
-				<?php Controller::factory('front_products')->action_grid(); ?>
-				</div>
+					<div class="entry-content">
 	
-	        <?php
-	        
-	        thematic_belowpost();
-	        
-	        // calling the comments template
-	        thematic_comments_template();
-	        
-	        // calling the widget area 'page-bottom'
-	        get_sidebar('page-bottom');
-	        
-	        ?>
-	
+	                    <?php echo $content; ?>
+	                    
+					</div>
+	            </div>
+			<?php
+				// create the navigation above the content
+		        thematic_navigation_below();
+		    ?>
 			</div><!-- #content -->
 			
 			<?php thematic_belowcontent(); ?> 

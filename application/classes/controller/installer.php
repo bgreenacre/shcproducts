@@ -37,33 +37,6 @@ class Controller_Installer {
     {
         add_option(SHCP::prefix('options'), array());
 
-        $pages = array();
-        $page = new Model_Shcp();
-
-        $page->post_type = 'page';
-        $page->post_title = 'Products';
-        $page->post_status = 'publish';
-        $page->post_content = '[shcp_products]';
-
-        if ($page->check())
-        {
-            $page->save();
-            $pages[] = $page->ID;
-        }
-
-        $page = new Model_Shcp();
-
-        $page->post_type = 'page';
-        $page->post_title = 'Product';
-        $page->post_status = 'publish';
-        $page->post_content = '[shcp_product]';
-
-        if ($page->check())
-        {
-            $page->save();
-            $pages[] = $page->ID;
-        }
-
         $page = new Model_Shcp();
 
         $page->post_type = 'page';
