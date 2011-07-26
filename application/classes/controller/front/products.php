@@ -22,7 +22,7 @@
  *  // Example of template usage
  *  if (defined('SHCP_PATH'))
  *  {
- *      Controller::factory('front_products')->action_grid();
+ *      SHCP_Controller::factory('front_products')->action_grid();
  *  }
  *
  * @package		shcproducts

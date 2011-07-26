@@ -14,7 +14,7 @@
  * Controller_Widget_Products
  *
  */
-class Controller_Widget_Products extends Controller_Widget {
+class Controller_Widget_Products extends SHCP_Controller_Widget {
 
     /**
      * @access  protected

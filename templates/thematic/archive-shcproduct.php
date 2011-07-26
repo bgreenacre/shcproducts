@@ -14,7 +14,7 @@
     // action hook for placing content above #container
     thematic_abovecontainer();
     ob_start();
-	Controller::factory('front_products')->action_grid();
+	SHCP_Controller::factory('front_products')->action_grid();
 	$content = ob_get_clean();
 
 ?>
@@ -36,7 +36,6 @@
 						echo 'class="';
 						thematic_post_class();
 						echo '">';
-						echo 'yo MAMAMAMAA';
 					}
 	                ?>
 	            

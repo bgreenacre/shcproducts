@@ -41,7 +41,7 @@ class Controller_App {
 	    {
 	        foreach ($widgets as $widget)
 	        {
-	            Controller::factory('Widget_'.ucfirst($widget));
+	            SHCP_Controller::factory('Widget_'.ucfirst($widget));
 	        }
 	    }
 	}

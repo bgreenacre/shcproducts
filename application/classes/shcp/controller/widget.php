@@ -22,7 +22,7 @@
  * @since		0.1
  * @author	    Brian Greenacre
  */
-class Controller_Widget extends WP_Widget {
+class SHCP_Controller_Widget extends WP_Widget {
 
 	protected $widget_template = 'widget/template';
 	protected $content;
