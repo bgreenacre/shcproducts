@@ -48,7 +48,8 @@ jQuery(document).ready(function($) {
         mask: {
       		color: '#fff',
       		loadSpeed: 200,
-      		opacity: 0.5
+      		opacity: 0.5,
+      		zIndex: 9000,
         },
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
