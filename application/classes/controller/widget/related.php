@@ -18,7 +18,7 @@
  * Controller_Widget_Related
  *
  */
-class Controller_Widget_Related extends Controller_Widget {
+class Controller_Widget_Related extends SHCP_Controller_Widget {
 
     /**
      * @access  protected

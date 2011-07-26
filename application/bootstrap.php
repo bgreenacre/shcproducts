@@ -36,4 +36,3 @@ setlocale(LC_ALL, 'en_US.utf-8');
 // Register the auloader for SHCP plugin
 spl_autoload_register(array('SHCP', 'autoload'));
 SHCP::init();
-

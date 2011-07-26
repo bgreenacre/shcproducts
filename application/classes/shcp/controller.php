@@ -23,7 +23,7 @@
  * @since		0.1
  * @auther      Brian Greenacre
  */
-class Controller {
+class SHCP_Controller {
 
     public static function factory($class)
     {

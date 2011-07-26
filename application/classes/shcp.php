@@ -133,7 +133,7 @@ class SHCP {
             foreach ($controllers as $ctl)
             {
                 $ctl = "Controller_" . ucfirst($ctl);
-
+                
                 // Merely instantiate the controller.
                 // Any action hooks and filters should be set in the
                 // Controllers constructor.

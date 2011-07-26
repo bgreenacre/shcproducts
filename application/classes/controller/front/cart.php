@@ -22,7 +22,7 @@
  *  // Example of template usage
  *  if (defined('SHCP_PATH'))
  *  {
- *      Controller::factory('front_cart')->action_view();
+ *      SHCP_Controller::factory('front_cart')->action_view();
  *  }
  *
  * @package		shcproducts
@@ -144,7 +144,7 @@ class Controller_Front_Cart {
         if ( ! SHCP::$is_ajax)
             return;
         
-        $reponse = json_encode($this->cart->cart);
+        $response = json_encode($this->cart->cart);
         
         // Send headers to not cache this result.
         header('Cache-Control: no-cache, must-revalidate');

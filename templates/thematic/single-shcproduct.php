@@ -25,7 +25,7 @@
     	        get_sidebar('single-top');
 		
     	        // action hook creating the single post
-    	        Controller::factory('front_products')->action_detail();
+    	        SHCP_Controller::factory('front_products')->action_detail();
 				
     	        // calling the widget area 'single-insert'
     	        get_sidebar('single-insert');
