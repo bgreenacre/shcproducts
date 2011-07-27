@@ -15,6 +15,7 @@
   overflow: hidden;
   border: 1px solid #fff;
   position: relative;
+  text-align: center;
 }
 
 #shcp_items li:hover {
@@ -70,6 +71,10 @@
   height: 36px;
   line-height: 18px;
   margin: 0 0 10px 0;
+}
+
+#shcp_items p.shcp-add-to-cart {
+margin: 0 0 0 40px;
 }
 
 #shcp_items p.shcp-item-price span {
