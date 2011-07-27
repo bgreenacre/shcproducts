@@ -24,7 +24,7 @@
  */
 class SHCP_Controller_Widget extends WP_Widget {
 
-	protected $widget_template = 'widget/template';
+	protected $widget_template = 'widget/shcp_template';
 	protected $content;
 	protected $cache = TRUE;
 
