@@ -51,7 +51,7 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
         $products
             ->param('post__in', $instance['pool'])
             ->orderby((SHCP::get($instance, 'randomize')) ? 'rand': 'none')
-            ->limit((int) SHCP::get($instance, 'limit', 3))
+            ->limit(SHCP::get($instance, 'limit', 3))
             ->load();
         
         $data = array(
@@ -67,7 +67,7 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
     {
         $data = array_merge($old, $new);
         $data['title'] = strip_tags($data['title']);
-        $data['pool'] = (array) SHCP::get($data, 'pool');
+        $data['pool'] = array();
 
         $search = Library_Sears_Api::factory('search')
             ->keyword(SHCP::get($data, 'keyword'));
@@ -92,7 +92,6 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
 
                 if ( ! $product->loaded())
                 {
-                    echo $search->name;
                     $data_to_import = array(
                         'post_title'    => $search->name,
                         'imageid'       => $search->imageid,
@@ -118,6 +117,10 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
                     else
                     {
                     }
+                }
+                else
+                {
+                    $data['pool'][] = $product->ID;
                 }
 
                 $search->next();
