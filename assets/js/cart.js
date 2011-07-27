@@ -35,13 +35,13 @@ $.shcCart = {
                 e.preventDefault();
                 $(this).shcCart('update');
             });
-        $el.find('.shcp-empty-cart').live('click', function() {
+        $el.find('.shcp-empty-cart').live('click', function(e) {
             $el.shcCart('empty');
-            return false;
+            e.preventDefault();
         });
-        $el.find('.shcp-remove-item').live('click', function() {
+        $el.find('.shcp-remove-item').live('click', function(e) {
             $.shcCart.remove([this]);
-            return false;
+            e.preventDefault();
         });
         $el.find(':input:not([type="submit"],[type="button"])').live('change blur', function() {
             $.event.trigger('shcCartChange', [$.shcCart.json, this])

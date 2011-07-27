@@ -7,5 +7,6 @@ return array(
         'title'     => 'Products',
         'keyword'   => NULL,
         'limit'     => 3,
+        'randomize' => TRUE,
     ),
 );

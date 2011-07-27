@@ -154,6 +154,21 @@ class SHCP {
         }
     }
 
+	/**
+	 * Convert special characters to HTML entities. All untrusted content
+	 * should be passed through this method to prevent XSS injections.
+	 *
+	 *     echo SHCP::chars($username);
+	 *
+	 * @param   string   string to convert
+	 * @param   boolean  encode existing entities
+	 * @return  string
+	 */
+	public static function chars($value, $double_encode = TRUE)
+	{
+		return htmlspecialchars( (string) $value, ENT_QUOTES, get_bloginfo('charset'), $double_encode);
+	}
+	
     /**
      * autoload - Method used to autoload class files.
      *

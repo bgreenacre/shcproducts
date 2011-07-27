@@ -196,6 +196,7 @@ class Controller_Admin_Import {
 
       for($i=0; $i<$product_count; $i++)
       {
+        $check = new Model_Products();
         $shcproduct = new Model_Products();
         $data = array();
 
@@ -204,22 +205,26 @@ class Controller_Admin_Import {
           $data[$field_name] = SHCP::get($_POST[$field_name], $i);
         }
         
-        $data['detail'] = Library_Sears_Api::factory('product')
-          ->get($data['partnumber'])
-          ->load();
-        
-        $shcproduct->values($data);
-
-        if ($shcproduct->check())
+        if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
         {
-          $shcproduct->save();
+            $data['detail'] = Library_Sears_Api::factory('product')
+              ->get($data['partnumber'])
+              ->load();
+            
+            $shcproduct->values($data);
+
+            if ($shcproduct->check())
+            {
+              $shcproduct->save();
+            }
+            else
+            { 
+            }
+            
+            $errors[] = $shcproduct->errors();
         }
-        else
-        { 
-        }
-        
-        $errors[] = $shcproduct->errors();
       }
+      
       echo(json_encode(array('errors' => $errors)));
         
       die(); // have to do this in WP otherwise a zero will be appended to all responses
