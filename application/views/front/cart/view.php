@@ -30,6 +30,7 @@
           <p><?php echo $item->name; ?></p>
         </td>
         <td class="shcp-item-quantity">
+          <input type="hidden" value="<?php echo $item->id; ?>" name="item_id[]" />
           <input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" class="shcp-quantity" />
           <a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-remove-item" title="Remove Item">[X]</a>
         </td>
