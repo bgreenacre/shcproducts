@@ -22,9 +22,8 @@
  * @category	Controller
  * @subpackage  Installer
  * @version		0.1
- * @author		Kyla Klein
+ * @author		Brian Greenacre
  */
-
 class Controller_Installer {
 
     public function __construct()

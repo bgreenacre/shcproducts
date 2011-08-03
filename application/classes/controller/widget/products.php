@@ -1,8 +1,12 @@
 <?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
- * shcproducts
+ * Sears Holding Company Products Wordpress plugin.
+ *
+ * Provides the ability to import products via the Sears API and storing in
+ * wordpress as custom post type.
  *
  * @author Brian Greenacre and Kyla Klein
+ * @package shcproducts
  * @email bgreenacre42@gmail.com
  * @version $Id$
  * @since Wed 15 Jun 2011 07:32:09 PM
@@ -11,8 +15,15 @@
 // ----------------------------------------------------------------------------
 
 /**
- * Controller_Widget_Products
+ * Controller_Widget_Products - This widget will provide product relation to the
+ * site installed on. It can randomize displaying of product posts or a set
+ * limit of products.
  *
+ * @package		shcproducts
+ * @category	Controller
+ * @subpackage  Installer
+ * @version		0.1
+ * @author		Brian Greenacre
  */
 class Controller_Widget_Products extends SHCP_Controller_Widget {
 
@@ -21,8 +32,22 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
      * @var string
      */
     protected $content = 'widget/products/list';
+    
+    /**
+     * Cache output on frontend or not.
+     *
+     * @access  protected
+     * @var     bool
+     */
     protected $cache = FALSE;
 
+    /**
+     * form - Display a settings form for the widget.
+     *
+     * @access  public
+     * @param   array   Name value paired array of form field values.
+     * @return  void
+     */
     public function form($values = NULL)
     {
         $data = array(
@@ -44,6 +69,16 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
         echo SHCP::view('widget/products/form', $data);
     }
 
+    /**
+     * widget - Display frontend of the widget. This will only show products
+     * that were pulled in via the settings form keywords field. Optionally can
+     * order the products output by random or none.
+     *
+     * @access  public
+     * @param   array
+     * @param   array
+     * @return  void
+     */
     public function widget($args, $instance)
     {
         $products = new Model_Products();
@@ -63,6 +98,16 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
         parent::widget($args, $instance);
     }
     
+    /**
+     * update - Update the setting for the widget. Based on the keywords entered
+     * in the widget form the product API will search for products with that
+     * keyword and store them as posts.
+     *
+     * @access  public
+     * @param   array   New data from the form.
+     * @param   array   Old data from the widget.
+     * @return  void
+     */
     public function update($new, $old)
     {
         $data = array_merge($old, $new);
@@ -72,6 +117,10 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
         $search = Library_Sears_Api::factory('search')
             ->keyword(SHCP::get($data, 'keyword'));
 
+        // If the widget is set to randomize product output then
+        // the API will be queried for 20 times more then what they have
+        // set as the limit. This is to allow actual random products
+        // display instead of just reordering the 3 products limit.
         if ($randomize = (bool) SHCP::get($data, 'randomize'))
         {
             $limit = ((int) SHCP::get($data, 'limit', 3)) * 20;
