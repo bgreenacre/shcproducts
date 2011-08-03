@@ -22,7 +22,7 @@ $.shcCart = {
     eventNames: [],
     options: {
         endpoint: '/wp-admin/admin-ajax.php',
-        autoUpdate: true,
+        autoUpdate: false,
     },
     json: {},
     init: function(args) {
@@ -31,15 +31,19 @@ $.shcCart = {
             .bind('shcCartUpdate', function() {
                 $(this).shcCart('view');
             })
-            .live('submit', function(e) {
+            .bind('submit', function(e) {
                 e.preventDefault();
+                $('#shcp_loader').show();
                 $(this).shcCart('update');
+                return false;
             });
         $el.find('.shcp-empty-cart').live('click', function(e) {
+            $('#shcp_loader').show();
             $el.shcCart('empty');
             e.preventDefault();
         });
         $el.find('.shcp-remove-item').live('click', function(e) {
+            $('#shcp_loader').show();
             $.shcCart.remove([this]);
             e.preventDefault();
         });
@@ -47,10 +51,10 @@ $.shcCart = {
             $.event.trigger('shcCartChange', [$.shcCart.json, this])
             if ($el.data('cart:options').autoUpdate)
                 $el.shcCart('update');
-        })
+        });
     },
     view: function(el, args) {
-        //location.reload();
+        location.reload();
     },
     add: function(prods) {
         var products = $.shcCart._productData(prods);
