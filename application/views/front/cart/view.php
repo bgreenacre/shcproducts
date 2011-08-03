@@ -7,9 +7,9 @@
   <div class="errors"><?php echo implode('<br />', $simple_cart->messages->errors); ?></div>
   <?php endif; ?>
   <p class="shcp-cart-legalbar">
-  <a href="#help" data-modal="shcp_help_content">Need Help?</a> |
-  <a href="#policy" data-modal="shcp_return_policy_content">Return Policy</a> |
-  <a href="#payment" data-modal="shcp_payment_methods_content">Payment Methods</a>
+  <a href="#help" class="shcp-overlay" rel="#shcp_help_content">Need Help?</a> |
+  <a href="#policy" class="shcp-overlay" rel="#shcp_return_policy_content">Return Policy</a> |
+  <a href="#payment" class="shcp-overlay" rel="#shcp_payment_methods_content">Payment Methods</a>
   </p>
   <div id="shcp_loader"></div>
   <hr style="clear:both;" />
@@ -70,7 +70,9 @@
   <a href="<?php echo get_bloginfo('url'); ?>/products">Products</a>
   </p>
 </form>
-<div id="shcp_help_content" style="display:none;">
+<div id="shcp_help_content" class="shcp_modal" style="display:none;">
+<div class="shcp-modal-content">
+<a class="close"></a>
 <h4>Need Help? > Call Us 1-866-697-3277</h4>
 <p>
 Sears Holdings Corporation - How to Order
@@ -102,7 +104,10 @@ purchased, your shipping and delivery information, and any applicable rebate for
 You can always contact Customer Service at 1-800-349-4358 for any information regarding your order.
 </p>
 </div>
-<div id="shcp_payment_methods_content" style="display:none;">
+</div>
+<div id="shcp_payment_methods_content" class="shcp_modal" style="display:none;">
+<div class="shcp-modal-content">
+<a class="close"></a>
 <h4>Payment Options</h4>
 <p>
 You can purchase from Sears with a gift card, eBillmeTM, PayPal, or credit card.
@@ -128,7 +133,10 @@ If an item is out of stock, a "Ways to Buy" button will display beside the produ
 At that time, you can decide if you want to purchase the item.
 </p>
 </div>
-<div id="shcp_return_policy_content" style="display:none;">
+</div>
+<div id="shcp_return_policy_content" class="shcp_modal" style="display:none;">
+<div class="shcp-modal-content">
+<a class="close"></a>
 <h4>Returns & Cancellations</h4>
 <p>
 Satisfaction Guaranteed or Your Money Back
@@ -199,4 +207,5 @@ Policy for Purchases Made from 11/16/08 through 12/23/08:
 For purchases made from 11/16/08 through 12/23/08, returns will be accepted up to 120 days from the sale date with the following exclusions: Electronics, Software (including CD, DVD,
 Games), and Mattress/Foundations.
 </p>
+</div>
 </div>
