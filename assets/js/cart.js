@@ -54,7 +54,7 @@ $.shcCart = {
         });
     },
     view: function(el, args) {
-        location.reload();
+        //location.reload();
     },
     add: function(prods) {
         var products = $.shcCart._productData(prods);
