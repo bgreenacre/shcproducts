@@ -5,13 +5,13 @@
     <h1><?php echo $product->post_title; ?></h1>
     <dl>
       <dt>Price:</dt>
-      <dd class="price"><?php echo $product->detail->saleprice; ?></dd>
+      <dd class="price"><?php echo Helper_Price::currency($product->detail->saleprice); ?></dd>
       <dt>Quantity:</dt>
       <dd>1</dd>
     </dl>
   </div>  
   <div id="shcp-modal-buttons">
-    <a href="" id="continue_shopping" class="close">Continue Shopping</a>
+    <a href="#" id="continue_shopping" class="close">Continue Shopping</a>
     <a href="<?php echo bloginfo('url').'/cart'; ?>" id="view_cart">View Cart and Checkout</a>
   </div>
 </div>  

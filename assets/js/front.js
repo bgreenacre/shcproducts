@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
     var winH = jQuery(window).height(),
         winW = jQuery(window).width();
     
-    $('.cart').shcCart();
+    $('form.cart').shcCart();
     $('.shcp-image-thumbnail').live('click', function(e) {
         var $tank = $(this).closest('.shcp-image-tank');
         $tank
@@ -18,15 +18,16 @@ jQuery(document).ready(function($) {
     var confirm_modal = $('.addtocart').overlay({
       left: 'center',
       closeOnClick: true,
-      mask: {
-    		color: '#fff',
-    		loadSpeed: 200,
-    		opacity: 0.5
-      },
+//      mask: {
+//    		color: '#fff',
+//    		loadSpeed: 200,
+//    		opacity: 0.5
+//      },
       onBeforeLoad: function(e) {
         var id = this.getTrigger().data('post_id'),
             wrap = this.getOverlay();
         wrap.find('#shcp-modal-container').remove();
+        $('#shcp-cartconfirm').data('active_overlay', this);
         $.ajax({
             url: shcp_ajax.ajaxurl,
             data: {action: 'product_action_cartconfirm', p: id},
@@ -39,18 +40,18 @@ jQuery(document).ready(function($) {
       }
     });  
     $('#continue_shopping').live('click', function(e) {
-        confirm_modal.data('overlay').close();
+        $(this).closest('#shcp-cartconfirm').data('active_overlay').close();
         e.preventDefault();
     });
     var quickview_modal = $('.shcp-quickview a').overlay({
         left: 'center',
         closeOnClick: true,
-        mask: {
-      		color: '#fff',
-      		loadSpeed: 200,
-      		opacity: 0.5,
-      		zIndex: 9000,
-        },
+//        mask: {
+//      		color: '#fff',
+//      		loadSpeed: 200,
+//      		opacity: 0.5,
+//      		zIndex: 9000,
+//        },
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
                 wrap = this.getOverlay();

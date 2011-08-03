@@ -121,9 +121,18 @@ class Controller_Front_Cart {
     {
         $this
             ->cart
-            ->clear()
             ->load();
         
+        $quantity = (array) SHCP::get($_GET, 'quantity');
+        
+        foreach ((array) SHCP::get($_GET, 'item_id') as $key => $item_id)
+        {
+            $this->cart
+                ->update($item_id, (int) SHCP::get($quantity, $key))
+                ->load();
+        }
+        
+        $this->cart->view()->load();
         $this->ajax_response();
     }
 

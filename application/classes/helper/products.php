@@ -68,7 +68,8 @@ class Helper_Products {
             }
             else
             {
-                $image = preg_replace('/[^0-9_-]+/', '', $image);
+                $pos = (int) strrpos($image, '/');
+                $image = substr($image, $pos+1);
             }
         }
         
