@@ -101,7 +101,7 @@ margin: 0 0 0 40px;
 /* ----------- Quickview Modal ----------- */
 
 /* the overlayed element */
-#shcp_quickview_modal {
+.shcp_modal {
 	display: none;
 	z-index: 10000;
 	width: 675px;	
@@ -118,7 +118,7 @@ margin: 0 0 0 40px;
   position: relative;
 }
 
-#shcp_quickview_modal #shcp_product-detail {
+#shcp_quickview_modal #shcp_product-detail, .shcp-modal-content {
 	background-color: #fff;  
 	padding: 15px 15px 30px;
 }
@@ -129,7 +129,7 @@ margin: 0 0 0 40px;
   margin-top: 10px;
 }
 
-#shcp_quickview_modal .close {
+#shcp_quickview_modal .close, .shcp_modal .close {
   background: url('../images/product-sprite.gif') no-repeat scroll 25px -195px;    
   display: block;
   width: 77px;
