@@ -27,5 +27,5 @@
 <?php $products->next(); endwhile; ?>
 <?php endif; ?>
 </ul>
-<div id="shcp_quickview_modal"></div>
-<div id="shcp-cartconfirm"></div>
+<div id="shcp_quickview_modal" class="shcp_modal"></div>
+<div id="shcp-cartconfirm" class="shcp_modal"></div>

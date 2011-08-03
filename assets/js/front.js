@@ -15,6 +15,10 @@ jQuery(document).ready(function($) {
         $(this).addClass('selected');
         e.preventDefault();
     });
+    $('.shcp-overlay').overlay({
+        left: 'center',
+        closeOnClick: true
+    })
     var confirm_modal = $('.addtocart').overlay({
       left: 'center',
       closeOnClick: true,
