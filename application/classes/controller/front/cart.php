@@ -130,8 +130,6 @@ class Controller_Front_Cart {
             $this->cart
                 ->update($item_id, (int) SHCP::get($quantity, $key))
                 ->load();
-            
-            var_dump($this->cart);
         }
         
         $this->cart->view()->load();
