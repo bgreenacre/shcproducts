@@ -76,7 +76,9 @@ jQuery(document).ready(function($) {
         //console.log(confirm_modal);
         $(this).parents("#shcp_quickview_modal").find('.close').click(); 
         e.preventDefault();
-    });    
+    }).live('shcCartUpdate', function(e, action, json) {
+        
+    });
     // show quickview button on product hover
     $('.shcp-item').hover(
       function() {
