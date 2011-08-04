@@ -117,7 +117,7 @@ margin: 0 0 0 40px;
 	border-radius: 8px;
   position: relative;
 }
-
+.shcp-modal-content {overflow: auto;max-height: 400px;}
 #shcp_quickview_modal #shcp_product-detail, .shcp-modal-content {
 	background-color: #fff;  
 	padding: 15px 15px 30px;
