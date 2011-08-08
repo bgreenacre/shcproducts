@@ -83,7 +83,9 @@ class Controller_App {
 
 	public function load_front_css()
 	{
-	    wp_enqueue_style('shcp-admin-style', SHCP_CSS.'/front.css');
+	    $store = strtolower(SHCP::get_option('store', SHCP::config('plugin.options.store.default')));
+	    wp_enqueue_style('shcp-front-style', SHCP_CSS.'/front.css');
+	    wp_enqueue_style('shcp-front-'.$store, SHCP_CSS.'/'.$store.'_front.css');
 	}
 
 }

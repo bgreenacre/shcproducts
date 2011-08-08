@@ -41,7 +41,10 @@ jQuery(document).ready(function($) {
                 wrap.append(data);            
             }
         });       
-      }
+      },
+        onLoad: function(e) {
+            $(this.getOverlay()).find('.close').html('Close');
+        }
     });  
     $('#continue_shopping').live('click', function(e) {
         $(this).closest('#shcp-cartconfirm').data('active_overlay').close();
@@ -69,6 +72,9 @@ jQuery(document).ready(function($) {
                     wrap.append(data);
                 }
             });
+        },
+        onLoad: function(e) {
+            $(this.getOverlay()).find('.close').html('Close');
         }
     });
     $('.addtocart').live('click', function(e) {
@@ -76,8 +82,6 @@ jQuery(document).ready(function($) {
         //console.log(confirm_modal);
         $(this).parents("#shcp_quickview_modal").find('.close').click(); 
         e.preventDefault();
-    }).live('shcCartUpdate', function(e, action, json) {
-        
     });
     // show quickview button on product hover
     $('.shcp-item').hover(
