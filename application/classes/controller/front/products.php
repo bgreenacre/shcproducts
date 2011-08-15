@@ -42,8 +42,52 @@ class Controller_Front_Products {
 		add_action('wp_ajax_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
 		add_action('wp_ajax_nopriv_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
 		add_filter('body_class', array(&$this, 'filter_body_class'));
+		add_action('template_redirect', array($this, 'template_redirect'));
     }
 
+    /**
+     * template_redirect - Used to allowed the category to be within the URI
+     * of the request URL. Includes the template archive-shcproduct.php from
+     * the current theme folder.
+     *
+     * @access  public
+     * @return  void
+     */
+    public function template_redirect()
+    {
+        global $wp_query, $paged;
+        
+        $uri = $_SERVER['REQUEST_URI'];
+        $uri = trim($uri, '/');
+        
+        if (preg_match('/^products(\/category\/([^\/]+))?(\/page\/([0-9]+))?/', $uri, $matches) != FALSE)
+        {
+            $path = str_replace(get_bloginfo('siteurl').'/wp-content/themes', get_theme_root(), get_stylesheet_directory_uri());
+            
+            $wp_query->query_vars['error'] = FALSE;
+            $wp_query->query_vars['category_name'] = SHCP::get($matches, 2);
+            $wp_query->query_vars['post_type'] = 'shcproduct';
+            $wp_query->query_vars['paged'] = $paged = (int) SHCP::get($matches, 4, 1);
+            $wp_query->is_archive = TRUE;
+            $wp_query->is_404 = FALSE;
+            $wp_query->is_post_type_archive = TRUE;
+            $wp_query->query = array(
+                'post_type' => 'shcproduct',
+                'paged'     => $wp_query->query_vars['paged'],
+            );
+            
+            if ($wp_query->query_vars['category_name'])
+            {
+                $wp_query->query['category_name'] = $wp_query->query_vars['category_name'];
+            }
+            
+            include $path.'/archive-shcproduct.php';
+            exit;
+        }
+        
+        return;
+    }
+    
     public function filter_body_class($classes)
     {
         if (is_post_type_archive('shcproduct'))
@@ -61,7 +105,7 @@ class Controller_Front_Products {
         
         $this->products = new Model_Products();
         $this->products->use_query_posts(TRUE)->merge_wp_query(TRUE);
-
+        
         $this->parse_attrs($attrs);
 
         $data = array(
