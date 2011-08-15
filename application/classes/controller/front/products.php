@@ -60,14 +60,23 @@ class Controller_Front_Products {
         $uri = $_SERVER['REQUEST_URI'];
         $uri = trim($uri, '/');
         
-        if (preg_match('/^products(\/category\/([^\/]+))?(\/page\/([0-9]+))?/', $uri, $matches) != FALSE)
+        if (preg_match('/^products(\/(category|tag)\/([^\/]+))?(\/page\/([0-9]+))?/', $uri, $matches) != FALSE)
         {
             $path = str_replace(get_bloginfo('siteurl').'/wp-content/themes', get_theme_root(), get_stylesheet_directory_uri());
             
             $wp_query->query_vars['error'] = FALSE;
-            $wp_query->query_vars['category_name'] = SHCP::get($matches, 2);
+            
+            if (SHCP::get($matches, 2) == 'tag')
+            {
+                $wp_query->query_vars['tag'] = SHCP::get($matches, 3);
+            }
+            else
+            {
+                $wp_query->query_vars['category_name'] = SHCP::get($matches, 3);
+            }
+            
             $wp_query->query_vars['post_type'] = 'shcproduct';
-            $wp_query->query_vars['paged'] = $paged = (int) SHCP::get($matches, 4, 1);
+            $wp_query->query_vars['paged'] = $paged = (int) SHCP::get($matches, 5, 1);
             $wp_query->is_archive = TRUE;
             $wp_query->is_404 = FALSE;
             $wp_query->is_post_type_archive = TRUE;
@@ -80,6 +89,12 @@ class Controller_Front_Products {
             {
                 $wp_query->query['category_name'] = $wp_query->query_vars['category_name'];
             }
+            
+            if ($wp_query->query_vars['tag'])
+            {
+                $wp_query->query['tag'] = $wp_query->query_vars['tag'];
+            }
+
             
             include $path.'/archive-shcproduct.php';
             exit;
