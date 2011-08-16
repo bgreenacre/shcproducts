@@ -94,7 +94,12 @@ class Controller_Front_Products {
             {
                 $wp_query->query['tag'] = $wp_query->query_vars['tag'];
             }
-
+            
+            if ($_GET)
+            {
+                $wp_query->query_vars = array_merge($wp_query->query_vars, $_GET);
+                $wp_query->query = array_merge($wp_query->query, $_GET);
+            }
             
             include $path.'/archive-shcproduct.php';
             exit;
