@@ -630,7 +630,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             }
             else
             {
-                $this->param('cat_name', $slugs[0]);
+                $this->param('category_name', $slugs[0]);
             }
         }
 
