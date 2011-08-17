@@ -299,7 +299,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 		{
 		    if ($this->merge_wp_query)
 		    {
-		        $this->_params = array_merge_recursive($wp_query->query, $this->_params);
+		        $this->_params = array_merge($wp_query->query, $this->_params);
 		    }
 		    
 		    if ($this->use_query_posts)
