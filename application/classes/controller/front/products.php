@@ -140,4 +140,18 @@ class Controller_Front_Products {
         $this->products->param($attrs);
     }
 
+    public function action_myAction() {
+    	global $wp_query;
+        $this->products = new Model_Products();
+
+        $attrs = (array) $attrs;
+        $attrs['p'] = SHCP::get($_POST, 'p');
+        $this->parse_attrs($attrs);
+
+        $data = array(
+            'product'  => $this->products
+        );
+        
+        return $data;
+    }
 }
