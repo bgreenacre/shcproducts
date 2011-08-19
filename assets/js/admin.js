@@ -179,7 +179,7 @@ function save_products() {
   jQuery.ajax({
     type: 'post',
     dataType: 'json',
-    url: '/wp-admin/admin-ajax.php?action=action_save',
+    url: shcp_ajax.ajaxurl+'?action=action_save',
     data: data,
     success: function(response) {
       
