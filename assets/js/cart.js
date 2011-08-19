@@ -21,7 +21,7 @@ var qsReg = /([^?=&]+)(=([^&]*))?/g,
 $.shcCart = {
     eventNames: [],
     options: {
-        endpoint: '/wp-admin/admin-ajax.php',
+        endpoint: shcp_ajax.ajaxurl,
         autoUpdate: false
     },
     json: {},
