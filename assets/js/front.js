@@ -3,7 +3,8 @@ jQuery(document).ready(function($) {
     var winH = jQuery(window).height(),
         winW = jQuery(window).width();
     
-    $('form.cart').shcCart({endpoint: shcp_ajax.ajaxurl});
+    $('form.cart').shcCart();
+    $.shcCart.options.enpoint = shcp_ajax.ajaxurl;
     $('.shcp-image-thumbnail').live('click', function(e) {
         var $tank = $(this).closest('.shcp-image-tank');
         $tank
