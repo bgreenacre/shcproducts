@@ -17,7 +17,7 @@ return array(
         ),
         'public'      => TRUE,
         'supports'    => array('title', 'custom-fields'),
-        'taxonomies'  => array('category'),  // this is IMPORTANT
+        'taxonomies'  => array('category', 'post_tag'),  // this is IMPORTANT
         'capabilities'  => array(
             'delete_post'   => TRUE,
             'edit_post'     => TRUE,
