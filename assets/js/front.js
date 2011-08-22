@@ -4,6 +4,7 @@ jQuery(document).ready(function($) {
         winW = jQuery(window).width();
     
     $('form.cart').shcCart();
+    $.shcCart.options.endpoint = shcp_ajax.ajaxurl;
     $('.shcp-image-thumbnail').live('click', function(e) {
         var $tank = $(this).closest('.shcp-image-tank');
         $tank
