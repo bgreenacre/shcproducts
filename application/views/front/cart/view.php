@@ -35,8 +35,8 @@
         </td>
         <td class="shcp-item-quantity">
           <input type="hidden" value="<?php echo $item->id; ?>" name="item_id[]" />
-          <input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" class="shcp-quantity" />
-          <a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-remove-item" title="Remove Item">[X]</a>
+          <input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" class="shcp-quantity" /><br />
+          <a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-update-cart" title="Remove Item">[X]</a>
         </td>
         <td class="shcp-item-price"><?php echo Helper_Price::currency($item->price); ?></td>
       </tr>
@@ -44,10 +44,6 @@
       <?php endif; ?>
     </tbody>
     <tfoot>
-      <tr>
-        <td colspan="2"></td>
-        <td><input type="submit" name="submit" value="Update Cart" class="shcp-update-cart" /></td>
-      </tr>
       <tr>
         <td colspan="2">Sub Total</td>
         <td><?php echo Helper_Price::currency($simple_cart->total_item_price); ?></td>
@@ -62,11 +58,14 @@
         <td colspan="2">Estimated Cart Total</td>
         <td><?php echo Helper_Price::currency($simple_cart->total_price); ?></td>
       </tr>
+      <tr>
+        <td colspan="2"></td>
+        <td><a href="<?php echo Library_Sears_Api::factory('cart')->checkout()->load()->url(); ?>" class="shcp-checkout">Checkout</a></td>
+      </tr>
     </tfoot>
   </table>
   <p>
   <a href="<?php echo get_bloginfo('url'); ?>/cart/empty?session_id=<?php echo $simple_cart->session; ?>" class="shcp-empty-cart">Empty Cart</a> | 
-  <a href="<?php echo Library_Sears_Api::factory('cart')->checkout()->load()->url(); ?>" class="shcp-checkout">Checkout</a> | 
   <a href="<?php echo get_bloginfo('url'); ?>/products">Products</a>
   </p>
 </form>
