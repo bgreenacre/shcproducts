@@ -89,4 +89,8 @@ jQuery(document).ready(function($) {
         $(this).find('.shcp-quickview').hide();
       }
     );
+    $('.shcp-update-cart').live('click', function(e) {
+        e.preventDefault();
+        $(this).closest('form.cart').trigger('submit');
+    });
 });
