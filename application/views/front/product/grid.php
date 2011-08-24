@@ -13,6 +13,7 @@
     <p class="shcp-title">
       <a href="<?php echo get_permalink($products->ID); ?>"><?php echo $products->post_title; ?></a>
     </p>
+    <?php echo SHCP::view('front/product/rating', array('rating' => $products->detail->rating)); ?>
     <p class="shcp-item-price">
       <span><?php echo Helper_Price::currency($products->detail->saleprice); ?></span>
 <?php if ($products->cutprice): ?>        
