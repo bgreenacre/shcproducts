@@ -114,5 +114,16 @@ class Model_Products extends Model_SHCP {
             return $this->catentryid;
         }
     }
-
+	
+    public function create_shc_url($isSears=false) {
+    	$baseUrl = ($isSears === true) ? 'http://www.sears.com/shc/s/p_' : 'http://www.kmart.com/shc/s/p_';
+    	
+    	$productCatalog = $this->detail->catalogid;
+    	$productId = $this->detail->partnumber;
+    	$productStoreId = $this->storeid;
+    	
+    	$url = $baseUrl.$productStoreId.'_'.$productCatalog.'_'.$productId;
+    	
+    	return $url;
+    }
 }
