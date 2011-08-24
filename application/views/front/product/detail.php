@@ -13,6 +13,7 @@
     </div>
   <h1><?php echo $product->post_title; ?></h1>
   <div class="shcp-item-shortdesc"><?php echo htmlspecialchars_decode($product->detail->shortdescription); ?></div>
+  <?php echo SHCP::view('front/product/rating', array('rating' => $product->detail->rating)); ?>
   <p class="shcp-item-price">
     <span><?php echo Helper_Price::currency($product->detail->saleprice); ?></span>
 <?php if ($product->detail->regularprice): 

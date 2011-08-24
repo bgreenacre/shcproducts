@@ -9,7 +9,7 @@
 #shcp_items li {
   float: left;
   width: 162px;
-  height: 260px;
+  height: 287px;
   margin: 0 0 10px 4px;
   padding: 10px;
   overflow: hidden;
@@ -403,3 +403,55 @@ height: 32px;
   float: right;
 }
 .shcp-cart-legalbar {float: left;}
+.shcp-checkout {font-size: 18px; font-weight: bold;}
+.shcp-rating {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll -85px -72px;
+  height: 17px;
+  width: 85px;
+  margin: 2px 0;
+  position: relative;
+  text-indent: -9999px;
+}
+.shcp-rating span {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll 0px -72px;
+  height: 17px;
+  display: block;
+  left: 0;
+  position: absolute;
+}
+.shcp-rating span.zeroStar {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll 0px -91px;
+  width: 90px;
+}
+.shcp-rating span.halfStar {
+  width: 13.5px;
+}
+.shcp-rating span.oneStar {
+  width: 17px;
+}
+.shcp-rating span.one5Star {
+  width: 20.5px;
+}
+.shcp-rating span.twoStar {
+  width: 34px;
+}
+.shcp-rating span.two5Star {
+  width: 36.5px;
+}
+.shcp-rating span.threeStar {
+  width: 51px;
+}
+.shcp-rating span.three5Star {
+  width: 59.5px;
+}
+.shcp-rating span.fourStar {
+  width: 68px;
+}
+.shcp-rating span.four5Star {
+  width: 76.5px;
+}
+.shcp-rating span.fiveStar {
+  width: 85px;
+}
+li.shcp-item .shcp-rating {margin: 5px 36px;}
+#shcp_product-detail .shcp-rating {margin: 0 0 10px 268px;}
