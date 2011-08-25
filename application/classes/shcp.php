@@ -237,7 +237,7 @@ class SHCP {
 		try
 		{
 		    $themepath = get_stylesheet_directory() . '/application/views/' . $view . '.php';
-
+		    
 		    if (is_file($themepath))
 		    {
 		        include $themepath;
