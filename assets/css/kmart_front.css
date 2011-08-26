@@ -108,7 +108,9 @@ margin: 0 0 0 40px;
 	text-align: left;
     border: 5px solid #7D0707;
     position: relative;
+    background: #fff;
 }
+#shcp-modal-container {margin: 5px;}
 .shcp-modal-content {overflow: auto;max-height: 400px;}
 #shcp_quickview_modal #shcp_product-detail, .shcp-modal-content {
 	background-color: #fff;  

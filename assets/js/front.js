@@ -4,6 +4,7 @@ jQuery(document).ready(function($) {
         winW = jQuery(window).width();
     
     $('form.cart').shcCart();
+    $.shcCart.options.endpoint = shcp_ajax.ajaxurl;
     $('.shcp-image-thumbnail').live('click', function(e) {
         var $tank = $(this).closest('.shcp-image-tank');
         $tank
@@ -15,10 +16,6 @@ jQuery(document).ready(function($) {
         $(this).addClass('selected');
         e.preventDefault();
     });
-    $('.shcp-overlay').overlay({
-        left: 'center',
-        closeOnClick: true
-    })
     var confirm_modal = $('.addtocart').overlay({
       left: 'center',
       closeOnClick: true,
@@ -92,4 +89,8 @@ jQuery(document).ready(function($) {
         $(this).find('.shcp-quickview').hide();
       }
     );
+    $('.shcp-update-cart').live('click', function(e) {
+        e.preventDefault();
+        $(this).closest('form.cart').trigger('submit');
+    });
 });
