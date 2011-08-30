@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
     //Get the window height and width
     var winH = jQuery(window).height(),
         winW = jQuery(window).width();
-    
+
     $('form.cart').shcCart();
     $.shcCart.options.endpoint = shcp_ajax.ajaxurl;
     $('.shcp-image-thumbnail').live('click', function(e) {
