@@ -36,7 +36,7 @@
         <td class="shcp-item-quantity">
           <input type="hidden" value="<?php echo $item->id; ?>" name="item_id[]" />
           <input type="text" value="<?php echo $item->quantity; ?>" name="quantity[]" class="shcp-quantity" /><br />
-          <a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-update-cart" title="Remove Item">[X]</a>
+          <a href="<?php echo bloginfo('url').'/cart/remove?id='.$item->id; ?>" class="shcp-update-cart" title="Remove Item">Update</a>
         </td>
         <td class="shcp-item-price"><?php echo Helper_Price::currency($item->price); ?></td>
       </tr>
