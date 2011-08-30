@@ -25,10 +25,10 @@
  *      SHCP_Controller::factory('front_products')->action_grid();
  *  }
  *
- * @package		shcproducts
- * @subpackage	Controller
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Controller
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Controller_Front_Products {
 
@@ -38,11 +38,11 @@ class Controller_Front_Products {
         add_shortcode('shcp_product', array(&$this, 'action_detail'));
         add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
         add_action('wp_ajax_product_action_quickview', array(&$this, 'action_quickview'));
-		add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
-		add_action('wp_ajax_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
-		add_action('wp_ajax_nopriv_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
-		add_filter('body_class', array(&$this, 'filter_body_class'));
-		add_action('template_redirect', array($this, 'template_redirect'));
+        add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
+        add_action('wp_ajax_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
+        add_action('wp_ajax_nopriv_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
+        add_filter('body_class', array(&$this, 'filter_body_class'));
+        add_action('template_redirect', array($this, 'template_redirect'));
     }
 
     /**
@@ -129,9 +129,15 @@ class Controller_Front_Products {
         $this->parse_attrs($attrs);
 
         $data = array(
-            'products'  => $this->products
+            'products'      => $this->products,
         );
+        
+        $categories = get_categories(array('child_of' => 0));
 
+        echo SHCP::view('front/product/grid_filter', array(
+            'categories'    => $categories,
+            'selected'      => get_query_var('category_name'),
+        ));
         echo SHCP::view('front/product/grid', $data);
     }
 
@@ -195,8 +201,10 @@ class Controller_Front_Products {
     public function parse_attrs($attrs = NULL)
     {
         if (isset($attrs[0]))
+        {
             unset($attrs[0]);
-        
+        }
+
         $attrs = array_merge_recursive(array(
             'posts_per_page'   => get_option('posts_per_page', 10),
         ), (array) $attrs);

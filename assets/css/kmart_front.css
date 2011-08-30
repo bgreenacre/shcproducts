@@ -457,3 +457,5 @@ height: 32px;
 }
 li.shcp-item .shcp-rating {margin: 5px 36px;}
 #shcp_product-detail .shcp-rating {margin: 0 0 10px 268px;}
+#shcp_grid_filter {padding: 10px 0;}
+#shcp_grid_filter label {margin: 0 10px 0 0;}
