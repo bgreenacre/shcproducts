@@ -17,10 +17,10 @@
 /**
  * Model_SHCP
  *
- * @package		shcproducts
- * @subpackage	Model
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Model
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Model_Cart extends Library_Sears_Api_Cart {
 
@@ -60,7 +60,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
 
         $this->update_cart();
     }
-    
+
     public function update_cart()
     {
         $this->cart = (object) $this->cart;
@@ -73,14 +73,14 @@ class Model_Cart extends Library_Sears_Api_Cart {
 
         $this->cart->item_count = 0;
         $this->cart->items = array();
-        
+
         if ( ! empty($this->OrderItems->OrderItem))
         {
             foreach ($this->OrderItems->OrderItem as $item)
             {
                 $product = new Model_Products();
                 $product->meta('partnumber', '=', $item->DisplayPartNumber)->load();
-                
+
                 if ($product->loaded())
                 {
                     $name = $product->post_title;
@@ -89,7 +89,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
                 {
                     $name = NULL;
                 }
-                
+
                 $this->cart->items[] = (object) array(
                     'id'            => (string) $item->OrderItemID,
                     'name'          => $name,
@@ -102,15 +102,15 @@ class Model_Cart extends Library_Sears_Api_Cart {
                     'price'         => (double) preg_replace('/[^0-9\.]/', '', (string) $item->ItemTotal),
                     'options'       => array(),
                 );
-                
+
                 unset($product);
-                
-                ++$this->cart->item_count;
+
+                $this->cart->item_count += (int) $item->Qty;
             }
         }
 
         update_option('cart_'.md5(self::session()), $this->cart);
-        
+
         return $this;
     }
 
