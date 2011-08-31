@@ -13,13 +13,11 @@
     </div>
   <h1><?php echo $product->post_title; ?></h1>
   <div class="shcp-item-shortdesc"><?php echo htmlspecialchars_decode($product->detail->shortdescription); ?></div>
+  <?php echo SHCP::view('front/product/rating', array('rating' => $product->detail->rating)); ?>
   <p class="shcp-item-price">
     <span><?php echo Helper_Price::currency($product->detail->saleprice); ?></span>
-<?php if ($product->detail->regularprice): 
-        $price_savings = Helper_Price::format(abs((float)($product->detail->saleprice - $product->detail->regularprice)), 2, TRUE);
-        if($price_savings != 0.00): ?>
-    <span class="price-savings">A savings of <?php echo Helper_Price::currency($price_savings); ?></span>
-        <?php endif; ?>
+<?php if ($product->cutprice): ?>
+    <span class="price-savings">A savings of <?php echo Helper_Price::currency($product->cutprice - $product->detail->saleprice); ?></span>
 <?php endif; ?>
   </p>
   <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart" rel="#shcp-cartconfirm" data-post_id="<?php echo $product->ID; ?>">Add To Cart</a>  

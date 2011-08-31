@@ -22,7 +22,7 @@ $.shcCart = {
     eventNames: [],
     options: {
         endpoint: '/wp-admin/admin-ajax.php',
-        autoUpdate: false,
+        autoUpdate: false
     },
     json: {},
     init: function(args) {
@@ -85,7 +85,7 @@ $.shcCart = {
             success: function(response, status) {
                 $.event.trigger('shcCartUpdate', [action, response]);
             },
-            type: 'GET',
+            type: 'GET'
         }, opts || {}));
     },
     _productData: function(prods) {
