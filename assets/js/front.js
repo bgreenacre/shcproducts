@@ -101,4 +101,9 @@ jQuery(document).ready(function($) {
         else
             window.location = $form.attr('action');
     });
+    $('.shcp-overlay').overlay({
+        onLoad: function(e) {
+            $(this.getOverlay()).find('.close').html('Close');
+        }
+    });
 });
