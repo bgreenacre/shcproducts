@@ -24,8 +24,20 @@
  */
 class Model_Cart extends Library_Sears_Api_Cart {
 
+    /**
+     * cart - Contains the simple cart object. Typically used for json requests.
+     * 
+     * @var mixed
+     * @access public
+     */
     public $cart;
 
+    /**
+     * _initialize 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function _initialize()
     {
         parent::_initialize();
@@ -46,13 +58,23 @@ class Model_Cart extends Library_Sears_Api_Cart {
         }
     }
 
+    /**
+     * _load 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function _load()
     {
+        // Default to a view api call if none set.
         if ( ! $this->method())
+        {
             $this->view();
+        }
 
         parent::_load();
 
+        // Set the session key in the cookies.
         if (self::session() != SHCP::get($_COOKIE, 'sessionKey'))
         {
             setcookie('sessionKey', self::session(), time()+3600, '/');
@@ -61,6 +83,12 @@ class Model_Cart extends Library_Sears_Api_Cart {
         $this->update_cart();
     }
 
+    /**
+     * update_cart - Transform API result into a simplified cart object.
+     * 
+     * @access public
+     * @return void
+     */
     public function update_cart()
     {
         $this->cart = (object) $this->cart;

@@ -126,9 +126,9 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
             $limit = ((int) SHCP::get($data, 'limit', 3)) * 20;
             $search->limit(0, $limit);
         }
-        
+
         $search->load();
-        
+
         if (count($search) > 0)
         {
             $search->rewind();
@@ -151,13 +151,13 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
                         'cutprice'      => $search->cutprice,
                         'displayprice'  => $search->displayprice,
                     );
-                    
+
                     $data_to_import['detail'] = Library_Sears_Api::factory('product')
                         ->get($data_to_import['partnumber'])
                         ->load();
-                    
+
                     $product->values($data_to_import);
-                    
+
                     if ($product->check())
                     {
                         $product->save();

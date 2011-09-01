@@ -60,18 +60,36 @@ class Controller_Front_Cart {
         SHCP::bind_global('cart', $this->cart);
     }
 
+    /**
+     * action_mini 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_mini()
     {
         $this->cart->view()->load();
         echo SHCP::view('front/cart/mini', array('simple_cart' => $this->cart->cart));
     }
 
+    /**
+     * action_view 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_view()
     {
         $this->cart->view()->load();
         echo SHCP::view('front/cart/view', array('simple_cart' => $this->cart->cart));
     }
 
+    /**
+     * action_add 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_add()
     {
         if ($catentryid = (array) SHCP::get($_POST, 'catentryid', SHCP::get($_GET, 'catentryid')))
@@ -102,6 +120,12 @@ class Controller_Front_Cart {
         $this->ajax_response();
     }
 
+    /**
+     * action_remove 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_remove()
     {
         if ($ids = (array) SHCP::get($_POST, 'id', SHCP::get($_GET, 'id')))
@@ -117,6 +141,12 @@ class Controller_Front_Cart {
         $this->ajax_response();
     }
 
+    /**
+     * action_update 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_update()
     {
         $this
@@ -136,6 +166,12 @@ class Controller_Front_Cart {
         $this->ajax_response();
     }
 
+    /**
+     * action_empty 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_empty()
     {
         $this->cart
@@ -148,6 +184,12 @@ class Controller_Front_Cart {
         $this->ajax_response();
     }
 
+    /**
+     * ajax_response 
+     * 
+     * @access public
+     * @return void
+     */
     public function ajax_response()
     {
         if ( ! SHCP::$is_ajax)
