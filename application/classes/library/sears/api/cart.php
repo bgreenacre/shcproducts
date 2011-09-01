@@ -15,17 +15,31 @@
 // -----------------------------------------------------------------------------
 
 /**
- * Library_Sears_Api_Cart
+ * Library_Sears_Api_Cart 
  *
  */
 class Library_Sears_Api_Cart extends Library_Sears_Api {
 
+    /**
+     * products_to_add 
+     * 
+     * @var array
+     * @access public
+     */
     public $products_to_add = array(
         'catalogId'     => array(),
         'catentry_id'   => array(),
         'quantity'      => array(),
     );
 
+    /**
+     * __construct 
+     * 
+     * @param mixed $group 
+     * @param mixed $parent 
+     * @access public
+     * @return void
+     */
     public function __construct($group = NULL, $parent = NULL)
     {
         parent::__construct($group, $parent);
@@ -34,6 +48,12 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         $this->cache(FALSE);
     }
 
+    /**
+     * _load 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function _load()
     {
         parent::_load();
@@ -59,13 +79,20 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         }
     }
 
+    /**
+     * view 
+     * 
+     * @param mixed $catalog_id 
+     * @access public
+     * @return void
+     */
     public function view($catalog_id = NULL)
     {
         $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
 
         $this->method('ViewCart')
             ->param('catalogId', $catalog_id);
-        
+
         return $this;
     }
 
@@ -165,6 +192,14 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * clear 
+     * 
+     * @param mixed $order_id 
+     * @param mixed $catalog_id 
+     * @access public
+     * @return void
+     */
     public function clear($order_id = NULL, $catalog_id = NULL)
     {
         if ($order_id === NULL OR $catalog_id === NULL)
@@ -190,7 +225,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
                 return $this;
             }
         }
-        
+
         $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
         $this->method('EmptyCart')
             ->param('orderId', $order_id)
@@ -199,6 +234,15 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * remove 
+     * 
+     * @param mixed $line_id 
+     * @param mixed $order_id 
+     * @param mixed $catalog_id 
+     * @access public
+     * @return void
+     */
     public function remove($line_id, $order_id = NULL, $catalog_id = NULL)
     {
         if ($order_id === NULL OR $catalog_id === NULL)
@@ -235,6 +279,13 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * checkout 
+     * 
+     * @param mixed $tracking_id 
+     * @access public
+     * @return void
+     */
     public function checkout($tracking_id = NULL)
     {
         $this->method('Checkout');
@@ -247,6 +298,16 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * update 
+     * 
+     * @param mixed $line_id 
+     * @param mixed $quantity 
+     * @param mixed $order_id 
+     * @param mixed $catalog_id 
+     * @access public
+     * @return void
+     */
     public function update($line_id, $quantity, $order_id = NULL, $catalog_id = NULL)
     {
         if ($order_id === NULL OR $catalog_id === NULL)
@@ -283,6 +344,12 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * _add_session 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function _add_session()
     {
         if ($key = self::session())
@@ -295,6 +362,12 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         }
     }
 
+    /**
+     * _request 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function _request()
     {
         if ($this->method() == 'AddtoCart')

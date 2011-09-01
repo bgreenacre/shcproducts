@@ -19,10 +19,10 @@
  *
  * Helper for price formatting in views/templates.
  *
- * @package		shcproducts
- * @subpackage	Helper
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Helper
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Helper_Price {
 
@@ -47,12 +47,12 @@ class Helper_Price {
         $currency = '';
         $number = Helper_Price::format($number, $places, TRUE);
         $info = localeconv();
-        
+
         if ($symbol === NULL)
         {
             $symbol = $info['currency_symbol'];
         }
-        
+
         if ($number < 0)
         {
             $currency = ((bool) $info['n_cs_precedes']) ? $symbol.$number : $number.$symbol;
@@ -61,10 +61,10 @@ class Helper_Price {
         {
             $currency = ((bool) $info['p_cs_precedes']) ? $symbol.$number : $number.$symbol;
         }
-        
+
         return $currency;
     }
-    
+
     /**
      * format - Format a number to the current locale settings.
      *
@@ -79,20 +79,20 @@ class Helper_Price {
      */
     public static function format($number, $places, $monetary = FALSE)
     {
-		$info = localeconv();
+        $info = localeconv();
 
-		if ($monetary)
-		{
-			$decimal   = $info['mon_decimal_point'];
-			$thousands = $info['mon_thousands_sep'];
-		}
-		else
-		{
-			$decimal   = $info['decimal_point'];
-			$thousands = $info['thousands_sep'];
-		}
+        if ($monetary)
+        {
+            $decimal   = $info['mon_decimal_point'];
+            $thousands = $info['mon_thousands_sep'];
+        }
+        else
+        {
+            $decimal   = $info['decimal_point'];
+            $thousands = $info['thousands_sep'];
+        }
 
-		return number_format($number, $places, $decimal, $thousands);
+        return number_format($number, $places, $decimal, $thousands);
     }
 
 }
