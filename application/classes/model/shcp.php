@@ -97,6 +97,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @var bool
      */
     protected $_executed;
+    
+    /**
+     * Tracks the current page of posts.
+     * 
+     * @var int
+     */
+    protected $_current_page;
 
     /**
      * Contents from the request made. Used as the iterator.
@@ -330,79 +337,81 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         $this->_values = array();
         $this->_errors = array();
         $this->_fields = array();
-        $this->_executed = FALSE;
+		$this->_executed = FALSE;
     }
 
     /**
-     * _load - Load the results from the query.
-     *
-     * @return bool
-     */
-    protected function _load()
-    {
-        global $wp_query;
+	 * _load - Load the results from the query.
+	 *
+	 * @return bool
+	 */
+	protected function _load()
+	{
+	    global $wp_query;
+	    
+		if ($this->_executed !== TRUE)
+		{
+		    if ($this->merge_wp_query)
+		    {
+		        $this->_params = array_merge($wp_query->query, $this->_params);
+		    }
+		    
+		    if ($this->use_query_posts)
+		    {
+		        $this->_current_page = $GLOBALS['wp_query']->query_vars['paged'];
+		        $this->_data = query_posts($this->_params);
+		        $this->_position = 0;
+		        $this->_total_rows = $GLOBALS['wp_query']->found_posts;
+		        $this->_total_display = $GLOBALS['wp_query']->post_count;
+		        $this->_posts_per_page = $GLOBALS['wp_query']->posts_per_page;
+		        $this->_max_num_pages = $GLOBALS['wp_query']->max_num_pages;
+		    }
+		    else
+		    {
+		        // Instantiate the query object to get posts.
+		        $query = new WP_Query($this->_params);
+		        
+		        // Dump the posts into this object and set the iterator props.
+		        $this->_current_page = $query->query_vars['paged'];
+		        $this->_data = $query->posts;
+		        $this->_position = 0;
+		        $this->_total_rows = count($this->_data);
+		        $this->_total_display = $query->post_count;
+		        $this->_posts_per_page = $query->posts_per_page;
+		        $this->_max_num_pages = $query->max_num_pages;
+		        
+		        // Destroy the query object.
+		        unset($query);
+		    }
 
-        if ($this->_executed !== TRUE)
-        {
-            if ($this->merge_wp_query)
-            {
-                $this->_params = array_merge($wp_query->query, $this->_params);
-            }
-
-            if ($this->use_query_posts)
-            {
-                $this->_data = query_posts($this->_params);
-                $this->_position = 0;
-                $this->_total_rows = $GLOBALS['wp_query']->found_posts;
-                $this->_total_display = $GLOBALS['wp_query']->post_count;
-                $this->_posts_per_page = $GLOBALS['wp_query']->posts_per_page;
-                $this->_max_num_pages = $GLOBALS['wp_query']->max_num_pages;
-            }
-            else
-            {
-                // Instantiate the query object to get posts.
-                $query = new WP_Query($this->_params);
-
-                // Dump the posts into this object and set the iterator props.
-                $this->_data = $query->posts;
-                $this->_position = 0;
-                $this->_total_rows = count($this->_data);
-                $this->_total_display = $query->post_count;
-                $this->_posts_per_page = $query->posts_per_page;
-                $this->_max_num_pages = $query->max_num_pages;
-
-                // Destroy the query object.
-                unset($query);
-            }
-
-            $this->_executed = TRUE;
-        }
+		    $this->_executed = TRUE;
+		}
 
 
 
-        if ( ! $this->_data)
-        {
-            $this->_position = 0;
-            $this->_total_rows = 0;
-            $this->_total_display = 0;
-            return FALSE;
-        }
+		if ( ! $this->_data)
+		{
+		    $this->_position = 0;
+		    $this->_total_rows = 0;
+		    $this->_total_display = 0;
+			return FALSE;
+		}
 
-        return TRUE;
-    }
+		return TRUE;
+	}
 
     /**
-     * _save - Internal method to save the current post to the database.
-     *
-     * This method will merge $this->_values array into the current post
-     * of this object. Then it will figure out if this is an update or a
-     * creation of a new post. Execute the save and then ensure the current
-     * post object is updated with the saved data.
-     *
-     * @return void
-     */
-    protected function _save()
-    {
+	 * _save - Internal method to save the current post to the database.
+	 *
+	 * This method will merge $this->_values array into the current post
+	 * of this object. Then it will figure out if this is an update or a
+	 * creation of a new post. Execute the save and then ensure the current
+	 * post object is updated with the saved data.
+	 *
+	 * @return void
+	 */
+	protected function _save()
+	{
         // Nothing to save so just return.
         if ( ! $this->_values)
         {
@@ -862,7 +871,14 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         $this->load();
 
-        return $this->_max_num_pages;
+        return (int)$this->_max_num_pages;
+    }
+
+    public function posts_per_page()
+    {
+        $this->load();
+
+        return (int)$this->_posts_per_page;
     }
 
     /**
@@ -875,7 +891,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         $this->load();
 
-        return $this->_posts_per_page;
+        return (int)$this->_current_page;
     }
 
     /**
