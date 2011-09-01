@@ -19,20 +19,30 @@
  *
  * Helper for product API work.
  *
- * @package		shcproducts
- * @subpackage	Helper
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Helper
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Helper_Products {
 
+    /**
+     * image 
+     * 
+     * @param mixed $image 
+     * @param array $attrs 
+     * @param mixed $disable_url_dimensions 
+     * @static
+     * @access public
+     * @return void
+     */
     public static function image($image, array $attrs = array(), $disable_url_dimensions = FALSE)
     {
         $attrs['height']  = SHCP::get($attrs, 'height', 140);
         $attrs['width']   = SHCP::get($attrs, 'width', 140);
         $attrs['alt']     = SHCP::get($attrs, 'alt', '');
         $attrs_str        = '';
-        
+
         $attrs['src'] = self::image_url($image, $attrs['height'], $attrs['width'], $disable_url_dimensions);
 
         foreach ($attrs as $key => $value)
@@ -46,7 +56,18 @@ class Helper_Products {
 
         return '<img'.$attrs_str.' />';
     }
-    
+
+    /**
+     * image_url 
+     * 
+     * @param mixed $image 
+     * @param mixed $height 
+     * @param mixed $width 
+     * @param mixed $disable_url_dimensions 
+     * @static
+     * @access public
+     * @return void
+     */
     public static function image_url($image, $height, $width, $disable_url_dimensions = FALSE)
     {
         $image = urldecode($image);
@@ -54,7 +75,7 @@ class Helper_Products {
         if (strpos($image, 'http//') !== FALSE)
         {
             $parts = parse_url($image);
-            
+
             if ($qs = SHCP::get($parts, 'query'))
             {
                 // for marketplace products, which are not available at the above url
@@ -72,15 +93,15 @@ class Helper_Products {
                 $image = substr($image, $pos+1);
             }
         }
-        
+
         if (strpos($image, 'http://') === FALSE)
         {
             $image = 'http://s.shld.net/is/image/Sears/'.$image;
-            
+
             if ($disable_url_dimensions === FALSE)
                 $image .= '?hei='.$height.'&wid='.$width;
         }
-        
+
         return $image;
     }
 

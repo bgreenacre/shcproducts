@@ -119,8 +119,9 @@ margin: 0 0 0 40px;
 
 #shcp_quickview_modal .quickview_wrapper {
   height: 400px;
-  overflow: auto;  
+  overflow: auto;
   margin-top: 10px;
+  padding-right: 10px;
 }
 
 #shcp_quickview_modal .close, .shcp_modal .close {
@@ -193,7 +194,6 @@ margin: 0 0 0 40px;
 #shcp-cartconfirm #shcp-modal-productinfo {
   float: left;
   width: 275px;
-  margin-right: 50px;
   color: #666;
   padding: 8px;
 }
@@ -457,3 +457,13 @@ height: 32px;
 }
 li.shcp-item .shcp-rating {margin: 5px 36px;}
 #shcp_product-detail .shcp-rating {margin: 0 0 10px 268px;}
+#shcp_grid_filter {padding: 10px 0;}
+#shcp_grid_filter label {margin: 0 10px 0 0;}
+.cart a.shcp-checkout {
+  display: block;
+  background: url("../images/kmart-cart-sprite.gif") no-repeat scroll -25px -220px transparent;
+  border: medium none;
+  height: 31px;
+  text-indent: -9000px;
+  width: 215px;
+}
