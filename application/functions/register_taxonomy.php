@@ -14,6 +14,12 @@
 
 // -----------------------------------------------------------------------------
 
+/**
+ * shcp_register_taxonomy 
+ * 
+ * @access public
+ * @return void
+ */
 function shcp_register_taxonomy()
 {
     if ($taxonomies = (array) SHCP::config('taxonomies'))
@@ -31,4 +37,3 @@ function shcp_register_taxonomy()
 }
 
 add_action('init', 'shcp_register_taxonomy');
-
