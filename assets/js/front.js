@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
     //Get the window height and width
     var winH = jQuery(window).height(),
         winW = jQuery(window).width();
-    
+
     $('form.cart').shcCart();
     $.shcCart.options.endpoint = shcp_ajax.ajaxurl;
     $('.shcp-image-thumbnail').live('click', function(e) {
@@ -20,9 +20,9 @@ jQuery(document).ready(function($) {
       left: 'center',
       closeOnClick: true,
 //      mask: {
-//    		color: '#fff',
-//    		loadSpeed: 200,
-//    		opacity: 0.5
+//          color: '#fff',
+//          loadSpeed: 200,
+//          opacity: 0.5
 //      },
       onBeforeLoad: function(e) {
         var id = this.getTrigger().data('post_id'),
@@ -51,10 +51,10 @@ jQuery(document).ready(function($) {
         left: 'center',
         closeOnClick: true,
 //        mask: {
-//      		color: '#fff',
-//      		loadSpeed: 200,
-//      		opacity: 0.5,
-//      		zIndex: 9000,
+//              color: '#fff',
+//              loadSpeed: 200,
+//              opacity: 0.5,
+//              zIndex: 9000,
 //        },
         onBeforeLoad: function(e) {
             var id = this.getTrigger().data('post_id'),
@@ -92,5 +92,18 @@ jQuery(document).ready(function($) {
     $('.shcp-update-cart').live('click', function(e) {
         e.preventDefault();
         $(this).closest('form.cart').trigger('submit');
+    });
+    $('select#shcp_category').live('change', function(e) {
+        var $form = $(this).closest('form');
+
+        if (this.value)
+            window.location = $form.attr('action') + '/category/' + this.value;
+        else
+            window.location = $form.attr('action');
+    });
+    $('.shcp-overlay').overlay({
+        onLoad: function(e) {
+            $(this.getOverlay()).find('.close').html('Close');
+        }
     });
 });
