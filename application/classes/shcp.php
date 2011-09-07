@@ -234,18 +234,6 @@ class SHCP {
         // Capture the view output
         ob_start();
 
-<<<<<<< HEAD
-		try
-		{
-		    $themepath = get_stylesheet_directory() . '/application/views/' . $view . '.php';
-		    
-		    if (is_file($themepath))
-		    {
-		        include $themepath;
-		    }
-		    else
-		    {
-=======
         try
         {
             $themepath = get_stylesheet_directory() . '/application/views/' . $view . '.php';
@@ -256,7 +244,6 @@ class SHCP {
             }
             else
             {
->>>>>>> kmart-gamer
                 $view = SHCP_VIEW . '/' . $view . '.php';
 
                 // Load the view within the current scope
