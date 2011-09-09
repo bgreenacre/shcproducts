@@ -152,7 +152,7 @@ class Controller_Front_Products {
             'products'      => $this->products,
         );
 
-        $categories = get_categories(array('child_of' => 0));
+        $categories = get_categories(array('child_of' => 0, 'hide_empty' => FALSE));
 
         echo SHCP::view('front/product/grid_filter', array(
             'categories'    => $categories,
