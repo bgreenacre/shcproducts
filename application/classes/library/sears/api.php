@@ -23,6 +23,10 @@
  */
 class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayAccess, Serializable {
 
+    /**
+     * @static
+     * @var string 
+     */
     protected static $_session;
 
     /**
@@ -65,6 +69,13 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      * @var bool
      */
     protected $success = FALSE;
+
+    /**
+     * errors 
+     * 
+     * @var array
+     * @access protected
+     */
     protected $errors = array();
 
     /**
@@ -150,23 +161,29 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      */
     protected $_data;
 
+    /**
+     * _object 
+     * 
+     * @var mixed
+     * @access protected
+     */
     protected $_object;
 
-	/**
-	 * Current position within the object.data
-	 *
-	 * @access	protected
-	 * @var		int
-	 */
-	protected $_position = 0;
+    /**
+     * Current position within the object.data
+     *
+     * @access  protected
+     * @var     int
+     */
+    protected $_position = 0;
 
-	/**
-	 * Total number of rows in the object.data
-	 *
-	 * @access	protected
-	 * @var		int
-	 */
-	protected $_total_rows;
+    /**
+     * Total number of rows in the object.data
+     *
+     * @access  protected
+     * @var     int
+     */
+    protected $_total_rows;
 
     /**
      * factory - Instantiate objects that are extended from this class.
@@ -191,6 +208,14 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         }
     }
 
+    /**
+     * session 
+     * 
+     * @param mixed $key 
+     * @static
+     * @access public
+     * @return void
+     */
     public static function session($key = NULL)
     {
         if ($key === NULL)
@@ -262,35 +287,48 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     }
 
     /**
-	 * _initialize - Initialize propertys of this class.
-	 *
-	 * @return void
-	 */
-	protected function _initialize()
-	{
-		$this->_object = NULL;
-		$this->_data = array();
-		$this->_position = 0;
-		$this->_total_rows = 0;
-		$this->_params = array();
-		$this->_request_made = FALSE;
-		$this->_url = NULL;
-		$this->_method = NULL;
-		$this->success = FALSE;
-		$this->errors = array();
-	}
+     * _initialize - Initialize propertys of this class.
+     *
+     * @return void
+     */
+    protected function _initialize()
+    {
+        $this->_object = NULL;
+        $this->_data = array();
+        $this->_position = 0;
+        $this->_total_rows = 0;
+        $this->_params = array();
+        $this->_request_made = FALSE;
+        $this->_url = NULL;
+        $this->_method = NULL;
+        $this->success = FALSE;
+        $this->errors = array();
+    }
 
-	public function with($with)
-	{
-	    $this->_with[] = $with;
-	}
+    /**
+     * with 
+     * 
+     * @param mixed $with 
+     * @access public
+     * @return void
+     */
+    public function with($with)
+    {
+        $this->_with[] = $with;
+    }
 
-	public function detail()
-	{
-	    return Library_Sears_Api::factory('product', $this->_group, $this->current())
-	        ->get()
-	        ->load();
-	}
+    /**
+     * detail 
+     * 
+     * @access public
+     * @return void
+     */
+    public function detail()
+    {
+        return Library_Sears_Api::factory('product', $this->_group, $this->current())
+            ->get()
+            ->load();
+    }
 
     /**
      * method - The API method to call.
@@ -320,32 +358,32 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     }
 
     /**
-	 * reload - Reload the response for a specific api call.
-	 *
-	 * @param bool $refresh = FALSE
-	 * @return object $this
-	 */
-	public function reload($refresh = FALSE)
-	{
-		if ($refresh !== FALSE OR ! $this->_request_made)
-		{
-			$this->_request();
-		}
+     * reload - Reload the response for a specific api call.
+     *
+     * @param bool $refresh = FALSE
+     * @return object $this
+     */
+    public function reload($refresh = FALSE)
+    {
+        if ($refresh !== FALSE OR ! $this->_request_made)
+        {
+            $this->_request();
+        }
 
-		$this->load();
-		return $this;
-	}
+        $this->load();
+        return $this;
+    }
 
     /**
-	 * load - Public method to load up a API call.
-	 *
-	 * @return object $this
-	 */
-	public function load()
-	{
-		$this->_load();
+     * load - Public method to load up a API call.
+     *
+     * @return object $this
+     */
+    public function load()
+    {
+        $this->_load();
 
-		if ($this->success() AND $this->_with)
+        if ($this->success() AND $this->_with)
         {
             foreach ($this->_with as $with)
             {
@@ -353,22 +391,22 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             }
         }
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
-	 * success - Getter to check if the API call was successful.
-	 *
-	 * @return bool
-	 */
-	public function success()
-	{
-	    return $this->success;
-	}
+     * success - Getter to check if the API call was successful.
+     *
+     * @return bool
+     */
+    public function success()
+    {
+        return $this->success;
+    }
 
-	public function cache($cache = NULL)
-	{
-	    if ($cache === NULL)
+    public function cache($cache = NULL)
+    {
+        if ($cache === NULL)
         {
             return $this->cache;
         }
@@ -376,7 +414,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         $this->cache = (bool) $cache;
 
         return $this;
-	}
+    }
 
     /**
      * param - Add a parameter which be sent to the API in the form of $_GET
@@ -521,34 +559,34 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         // Init the curl resource.
         $ch = curl_init($this->_url);
 
-		// Set connection options
-		if ( ! curl_setopt_array($ch, $this->curl_options))
-		{
-			throw new Exception('Failed to set CURL options, check CURL documentation.');
-		}
+        // Set connection options
+        if ( ! curl_setopt_array($ch, $this->curl_options))
+        {
+            throw new Exception('Failed to set CURL options, check CURL documentation.');
+        }
 
-		// Get the response body
-		$body = curl_exec($ch);
+        // Get the response body
+        $body = curl_exec($ch);
 
-		// Get the response information
-		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // Get the response information
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-		if ($body === FALSE)
-		{
-			$error = curl_error($ch);
-		}
+        if ($body === FALSE)
+        {
+            $error = curl_error($ch);
+        }
 
-		// Close the connection
-		curl_close($ch);
+        // Close the connection
+        curl_close($ch);
 
-		if (isset($error))
-		{
-			throw new Exception('Error fetching remote ' . $this->url . ' [ status ' . $code . ' ] ' . $error);
-		}
+        if (isset($error))
+        {
+            throw new Exception('Error fetching remote ' . $this->url . ' [ status ' . $code . ' ] ' . $error);
+        }
 
         // Check for the posibility of a fault xml repsponse and
         // throw as an error.
-		if (strpos($body, '<fault>') !== FALSE)
+        if (strpos($body, '<fault>') !== FALSE)
         {
             $fault = simplexml_load_string($body);
 
@@ -611,24 +649,24 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     }
 
     /**
-	 * _load - Load the response from the API call.
-	 *
-	 * * Request the API call if needed.
-	 * * Check the $this->_object and look for any errors.
-	 * * Each extended should overload this method to do additional validation.
-	 *
-	 * @return bool
-	 */
-	protected function _load()
-	{
-		if ($this->_request_made !== TRUE)
-		{
-			$this->_request();
-		}
+     * _load - Load the response from the API call.
+     *
+     * * Request the API call if needed.
+     * * Check the $this->_object and look for any errors.
+     * * Each extended should overload this method to do additional validation.
+     *
+     * @return bool
+     */
+    protected function _load()
+    {
+        if ($this->_request_made !== TRUE)
+        {
+            $this->_request();
+        }
 
-		if ($this->_object)
-		{
-		    if (isset($this->_object->StatusData))
+        if ($this->_object)
+        {
+            if (isset($this->_object->StatusData))
             {
                 if ($this->_object->StatusData->ResponseCode > 0)
                 {
@@ -640,169 +678,247 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
                     $this->success = TRUE;
                 }
             }
-		}
-		else
-		{
-		    $this->success = FALSE;
-			return FALSE;
-		}
+        }
+        else
+        {
+            $this->success = FALSE;
+            return FALSE;
+        }
 
         $this->success = TRUE;
-		return TRUE;
-	}
+        return TRUE;
+    }
 
     /**
-	 * sort
-	 *
-	 * @param string $sort
-	 * @return void
-	 */
-	public function sort($sort)
-	{
-	    $this->param('sortBy', $sort);
-	}
+     * sort
+     *
+     * @param string $sort
+     * @return void
+     */
+    public function sort($sort)
+    {
+        $this->param('sortBy', $sort);
+    }
 
     /**
-	 * limit - Limit the results from the api by start and end index.
-	 *
-	 * @param int $start
-	 * @param int $end = NULL
-	 * @return void
-	 */
-	public function limit($start, $end = NULL)
-	{
-	    $this->param('startIndex', $start);
+     * limit - Limit the results from the api by start and end index.
+     *
+     * @param int $start
+     * @param int $end = NULL
+     * @return void
+     */
+    public function limit($start, $end = NULL)
+    {
+        $this->param('startIndex', $start);
 
-	    if ($end !== NULL)
-	    {
-	        $this->param('endIndex', $end);
-	    }
+        if ($end !== NULL)
+        {
+            $this->param('endIndex', $end);
+        }
 
-	    return $this;
-	}
+        return $this;
+    }
 
     /**
-	 * serialize
-	 *
-	 * @return void
-	 */
-	public function serialize()
-	{
+     * serialize
+     *
+     * @return void
+     */
+    public function serialize()
+    {
         $this->load();
 
-		foreach (array('_object', '_url', '_params', '_request_made') as $var)
-		{
-			$data[$var] = $this->{$var};
-		}
+        foreach (array('_object', '_url', '_params', '_request_made') as $var)
+        {
+            $data[$var] = $this->{$var};
+        }
 
-		return serialize($data);
-	}
+        return serialize($data);
+    }
 
     /**
-	 * unserialize
-	 *
-	 * @param array $data
-	 * @return void
-	 */
-	public function unserialize($data)
-	{
-		$this->_initialize();
+     * unserialize
+     *
+     * @param array $data
+     * @return void
+     */
+    public function unserialize($data)
+    {
+        $this->_initialize();
 
-		foreach (unserialize($data) as $name => $var)
-		{
-			$this->{$name} = $var;
-		}
+        foreach (unserialize($data) as $name => $var)
+        {
+            $this->{$name} = $var;
+        }
 
-		$this->reload();
-	}
+        $this->reload();
+    }
 
-	public function rewind()
-	{
-		$this->_position = 0;
-	}
+    /**
+     * rewind 
+     * 
+     * @access public
+     * @return void
+     */
+    public function rewind()
+    {
+        $this->_position = 0;
+    }
 
-	public function count()
-	{
-		if ( ! $this->_request_made)
-		{
-			$this->_load();
-		}
+    /**
+     * count 
+     * 
+     * @access public
+     * @return void
+     */
+    public function count()
+    {
+        if ( ! $this->_request_made)
+        {
+            $this->_load();
+        }
 
-		return $this->_total_rows;
-	}
+        return $this->_total_rows;
+    }
 
-	public function key()
-	{
-		return $this->_position;
-	}
+    /**
+     * key 
+     * 
+     * @access public
+     * @return void
+     */
+    public function key()
+    {
+        return $this->_position;
+    }
 
-	public function prev()
-	{
-		--$this->_position;
-		return $this;
-	}
+    /**
+     * prev 
+     * 
+     * @access public
+     * @return void
+     */
+    public function prev()
+    {
+        --$this->_position;
+        return $this;
+    }
 
-	public function next()
-	{
-		++$this->_position;
-		return $this;
-	}
+    /**
+     * next 
+     * 
+     * @access public
+     * @return void
+     */
+    public function next()
+    {
+        ++$this->_position;
+        return $this;
+    }
 
-	public function seek($offset)
-	{
-		if ($this->offsetExists($offset))
-		{
-			$this->_position = $offset;
-			return TRUE;
-		}
+    /**
+     * seek 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function seek($offset)
+    {
+        if ($this->offsetExists($offset))
+        {
+            $this->_position = $offset;
+            return TRUE;
+        }
 
-		return FALSE;
-	}
+        return FALSE;
+    }
 
-	public function current()
-	{
-		if ( ! $this->seek($this->_position))
-		{
-			return NULL;
-		}
+    /**
+     * current 
+     * 
+     * @access public
+     * @return void
+     */
+    public function current()
+    {
+        if ( ! $this->seek($this->_position))
+        {
+            return NULL;
+        }
 
-		return $this->_data[$this->_position];
-	}
+        return $this->_data[$this->_position];
+    }
 
-	public function valid()
-	{
-		if ( ! $this->_request_made)
-		{
-			$this->_load();
-		}
+    /**
+     * valid 
+     * 
+     * @access public
+     * @return void
+     */
+    public function valid()
+    {
+        if ( ! $this->_request_made)
+        {
+            $this->_load();
+        }
 
-		return isset($this->_data[$this->_position]);
-	}
+        return isset($this->_data[$this->_position]);
+    }
 
-	public function offsetExists($offset)
-	{
-		if ( ! $this->_request_made)
-		{
-			$this->_load();
-		}
+    /**
+     * offsetExists 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function offsetExists($offset)
+    {
+        if ( ! $this->_request_made)
+        {
+            $this->_load();
+        }
 
-		return ($offset >= 0 AND $offset < $this->_total_rows);
-	}
+        return ($offset >= 0 AND $offset < $this->_total_rows);
+    }
 
-	public function offsetGet($offset)
-	{
-		if ( ! $this->seek($offset))
-			return NULL;
+    /**
+     * offsetGet 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function offsetGet($offset)
+    {
+        if ( ! $this->seek($offset))
+            return NULL;
 
-		return $this->current();
-	}
+        return $this->current();
+    }
 
-	public function offsetSet($offset, $value)
-	{
-	}
+    /**
+     * offsetSet 
+     * 
+     * @param mixed $offset 
+     * @param mixed $value 
+     * @access public
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+    }
 
-	public function offsetUnset($offset)
-	{
-	}
+    /**
+     * offsetUnset 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+    }
 
 }

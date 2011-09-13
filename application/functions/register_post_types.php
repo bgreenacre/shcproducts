@@ -14,6 +14,12 @@
 
 // -----------------------------------------------------------------------------
 
+/**
+ * shcp_register_post_types 
+ * 
+ * @access public
+ * @return void
+ */
 function shcp_register_post_types()
 {
     if ($types = (array) SHCP::config('post_types'))
@@ -26,4 +32,3 @@ function shcp_register_post_types()
 }
 
 add_action('init', 'shcp_register_post_types');
-
