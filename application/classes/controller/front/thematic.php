@@ -19,15 +19,27 @@
  * Product display controller. This provides generic templates to be used
  * in theme template files.
  *
- * @package		shcproducts
- * @subpackage	Controller
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Controller
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Controller_Front_Thematic {
 
+    /**
+     * product 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $product;
 
+    /**
+     * __construct 
+     * 
+     * @access public
+     * @return void
+     */
     public function __construct()
     {
         add_filter('thematic_postheader_posttitle', array(&$this, 'filter_postheader_posttitle'));
@@ -36,6 +48,13 @@ class Controller_Front_Thematic {
         add_filter('post_class', array(&$this, 'filter_post_class'));
     }
 
+    /**
+     * filter_postheader_posttitle 
+     * 
+     * @param mixed $title 
+     * @access public
+     * @return void
+     */
     public function filter_postheader_posttitle($title)
     {
         if ($this->product())
@@ -50,6 +69,13 @@ class Controller_Front_Thematic {
         return $title;
     }
 
+    /**
+     * filter_postheader_postmeta 
+     * 
+     * @param mixed $meta 
+     * @access public
+     * @return void
+     */
     public function filter_postheader_postmeta($meta)
     {
         if ($this->product())
@@ -64,16 +90,36 @@ class Controller_Front_Thematic {
         return $title;
     }
 
+    /**
+     * filter_content 
+     * 
+     * @param mixed $content 
+     * @access public
+     * @return void
+     */
     public function filter_content($content)
     {
         return $content;
     }
 
+    /**
+     * filter_post_class 
+     * 
+     * @param mixed $class 
+     * @access public
+     * @return void
+     */
     public function filter_post_class($class)
     {
         return $class;
     }
 
+    /**
+     * product 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function product()
     {
         global $post;

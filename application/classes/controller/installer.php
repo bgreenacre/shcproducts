@@ -18,20 +18,32 @@
  * Sears and Kmart product plugin.
  * Installer controller.
  *
- * @package		shcproducts
- * @category	Controller
+ * @package     shcproducts
+ * @category    Controller
  * @subpackage  Installer
- * @version		0.1
- * @author		Brian Greenacre
+ * @version     0.1
+ * @author      Brian Greenacre
  */
 class Controller_Installer {
 
+    /**
+     * __construct 
+     * 
+     * @access public
+     * @return void
+     */
     public function __construct()
     {
         register_activation_hook(SHCP_PATH.'/shcproducts.php', array(&$this, 'action_install'));
         register_deactivation_hook(SHCP_PATH.'/shcproducts.php', array(&$this, 'action_uninstall'));
     }
 
+    /**
+     * action_install 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_install()
     {
         add_option(SHCP::prefix('options'), array());
@@ -54,6 +66,12 @@ class Controller_Installer {
         unset($page);
     }
 
+    /**
+     * action_uninstall 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_uninstall()
     {
         foreach ( (array) SHCP::get_option('pages') as $page)

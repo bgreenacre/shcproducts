@@ -30,3 +30,4 @@
 </ul>
 <div id="shcp_quickview_modal" class="shcp_modal"></div>
 <div id="shcp-cartconfirm" class="shcp_modal"></div>
+<div class="clear">&nbsp;</div>
