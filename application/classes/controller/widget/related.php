@@ -26,6 +26,13 @@ class Controller_Widget_Related extends SHCP_Controller_Widget {
      */
     protected $content = 'widget/related/list';
 
+    /**
+     * form 
+     * 
+     * @param mixed $values 
+     * @access public
+     * @return void
+     */
     public function form($values = NULL)
     {
         $data = array(
@@ -41,6 +48,14 @@ class Controller_Widget_Related extends SHCP_Controller_Widget {
         echo SHCP::view('widget/related/form', $data);
     }
 
+    /**
+     * update 
+     * 
+     * @param mixed $new 
+     * @param mixed $old 
+     * @access public
+     * @return void
+     */
     public function update($new, $old)
     {
         $data = array_merge($old, $new);
