@@ -17,13 +17,21 @@
 /**
  * Model_SHCP
  *
- * @package		shcproducts
- * @subpackage	Model
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Model
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, Serializable {
 
+    /**
+     * factory 
+     * 
+     * @param mixed $model 
+     * @static
+     * @access public
+     * @return void
+     */
     public static function factory($model)
     {
         $model = 'Model_' . ucfirst($model);
@@ -37,7 +45,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             throw new Exception($e);
         }
     }
-    
+
     /**
      * Use the query_posts function vs direct class instantiation.
      *
@@ -45,9 +53,21 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @var     bool
      */
     protected $use_query_posts = FALSE;
-    
+
+    /**
+     * merge_wp_query 
+     * 
+     * @var mixed
+     * @access protected
+     */
     protected $merge_wp_query = FALSE;
 
+    /**
+     * _id 
+     * 
+     * @var mixed
+     * @access protected
+     */
     protected $_id;
 
     /**
@@ -92,45 +112,58 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      */
     protected $_data = array();
 
-	/**
-	 * Current position within the object.data
-	 *
-	 * @access	protected
-	 * @var		int
-	 */
-	protected $_position = 0;
+    /**
+     * Current position within the object.data
+     *
+     * @access  protected
+     * @var     int
+     */
+    protected $_position = 0;
 
-	/**
-	 * Total number of rows in the object.data
-	 *
-	 * @access	protected
-	 * @var		int
-	 */
-	protected $_total_rows;
+    /**
+     * Total number of rows in the object.data
+     *
+     * @access  protected
+     * @var     int
+     */
+    protected $_total_rows;
 
-	/**
-	 * Number of posts to be displayed.
-	 *
-	 * @var int
-	 */
-	protected $_total_display;
+    /**
+     * Number of posts to be displayed.
+     *
+     * @var int
+     */
+    protected $_total_display;
 
-	protected $_posts_per_page;
-	protected $_max_num_pages;
+    /**
+     * _posts_per_page 
+     * 
+     * @var mixed
+     * @access protected
+     */
+    protected $_posts_per_page;
 
-	/**
-	 * Array of indexed new values to set to the current post.
-	 *
-	 * @var array
-	 */
-	protected $_values = array();
+    /**
+     * _max_num_pages 
+     * 
+     * @var mixed
+     * @access protected
+     */
+    protected $_max_num_pages;
 
-	/**
+    /**
+     * Array of indexed new values to set to the current post.
+     *
+     * @var array
+     */
+    protected $_values = array();
+
+    /**
      * Contains any error messages thrown when saving a post.
      *
-	 * @var array
-	 */
-	protected $_errors;
+     * @var array
+     */
+    protected $_errors;
 
     /**
      * __construct - Call the _initialize method to set the object up.
@@ -154,10 +187,10 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
                 $this->_data = array($id);
                 $this->_total_rows = 1;
                 $this->_position = 0;
-		        $this->_total_display = 1;
-		        $this->_posts_per_page = 1;
-		        $this->_max_num_pages = 1;
-		        $this->_executed = TRUE;
+                $this->_total_display = 1;
+                $this->_posts_per_page = 1;
+                $this->_max_num_pages = 1;
+                $this->_executed = TRUE;
             }
         }
     }
@@ -213,64 +246,78 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     }
 
     /**
-	 * values - Set the values for the post to be saved later.
-	 *
-	 * @param array $values = NULL
-	 * @return object $this
-	 */
-	public function values(array $values = NULL)
-	{
-	    $this->_values = array_merge($this->_values, $values);
+     * values - Set the values for the post to be saved later.
+     *
+     * @param array $values = NULL
+     * @return object $this
+     */
+    public function values(array $values = NULL)
+    {
+        $this->_values = array_merge($this->_values, $values);
 
-	    return $this;
-	}
-	
-	public function use_query_posts($use = FALSE)
-	{
-	    $this->use_query_posts = (bool) $use;
-	    return $this;
-	}
-	
-	public function merge_wp_query($use = FALSE)
-	{
-	    $this->merge_wp_query = (bool) $use;
-	    return $this;
-	}
+        return $this;
+    }
 
     /**
-	 * fields - Get the columns for the current table.
-	 *
-	 * @return array
-	 */
-	public function fields()
-	{
-	    global $wpdb;
+     * use_query_posts 
+     * 
+     * @param mixed $use 
+     * @access public
+     * @return void
+     */
+    public function use_query_posts($use = FALSE)
+    {
+        $this->use_query_posts = (bool) $use;
+        return $this;
+    }
+
+    /**
+     * merge_wp_query 
+     * 
+     * @param mixed $use 
+     * @access public
+     * @return void
+     */
+    public function merge_wp_query($use = FALSE)
+    {
+        $this->merge_wp_query = (bool) $use;
+        return $this;
+    }
+
+    /**
+     * fields - Get the columns for the current table.
+     *
+     * @return array
+     */
+    public function fields()
+    {
+        global $wpdb;
 
         // First check to see if the global has been set.
-	    if ($this->_fields = SHCP::get_global($this->_table_name.'_table_fields'))
-	    {
-	        return $this->_fields;
-	    }
+        if ($this->_fields = SHCP::get_global($this->_table_name.'_table_fields'))
+        {
+            return $this->_fields;
+        }
 
         // Query for the columns of the table
-	    $columns = $wpdb->get_results(
-	        'SHOW COLUMNS FROM `' . $wpdb->prefix . $this->_table_name. '`;'
-	    );
+        $columns = $wpdb->get_results(
+            'SHOW COLUMNS FROM `' . $wpdb->prefix . $this->_table_name. '`;'
+        );
 
         // Dump the result into an array.
-	    if ($columns)
-	    {
-	        foreach ($columns as $column)
-	        {
-	            $this->_fields[$column->Field] = $column;
-	        }
-	    }
+        if ($columns)
+        {
+            foreach ($columns as $column)
+            {
+                $this->_fields[$column->Field] = $column;
+            }
+        }
 
         // Set the global so this query isn't executed more then once per table.
-	    SHCP::set_global($this->_table_name.'_table_fields', $this->_fields);
+        SHCP::set_global($this->_table_name.'_table_fields', $this->_fields);
 
-	    return $this->_fields;
-	}
+        return $this->_fields;
+    }
 
     /**
      * _initialize - Initialize the object properties.
@@ -280,14 +327,14 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     protected function _initialize()
     {
         $this->_id = 0;
-		$this->_data = array();
-		$this->_position = 0;
-		$this->_total_rows = 0;
-		$this->_total_display = 0;
-		$this->_posts_per_page = 0;
-		$this->_max_num_pages = 0;
-		$this->_params = array();
-		$this->_values = array();
+        $this->_data = array();
+        $this->_position = 0;
+        $this->_total_rows = 0;
+        $this->_total_display = 0;
+        $this->_posts_per_page = 0;
+        $this->_max_num_pages = 0;
+        $this->_params = array();
+        $this->_values = array();
         $this->_errors = array();
         $this->_fields = array();
 		$this->_executed = FALSE;
@@ -366,29 +413,29 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	protected function _save()
 	{
         // Nothing to save so just return.
-	    if ( ! $this->_values)
-	    {
-	        return;
-	    }
+        if ( ! $this->_values)
+        {
+            return;
+        }
 
-	    $post = (array) SHCP::get($this->_data, $this->_position);
+        $post = (array) SHCP::get($this->_data, $this->_position);
 
-	    foreach (array_keys($this->fields()) as $field)
-	    {
-	        if (isset($this->_values[$field]) === TRUE)
-	        {
-	            $post[$field] = $this->_values[$field];
-	        }
-	    }
+        foreach (array_keys($this->fields()) as $field)
+        {
+            if (isset($this->_values[$field]) === TRUE)
+            {
+                $post[$field] = $this->_values[$field];
+            }
+        }
 
-	    if ($post['ID'] > 0)
-	    {
+        if ($post['ID'] > 0)
+        {
             $id = wp_update_post($post);
-	    }
-	    else
-	    {
-	        $id = wp_insert_post($post, FALSE);
-	    }
+        }
+        else
+        {
+            $id = wp_insert_post($post, FALSE);
+        }
 
         if ($id > 0)
         {
@@ -396,100 +443,100 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
             // Set the current post to the updated data and reset the total_rows
             // property since this could be an addition rather then an update.
-	        $this->_data[$this->_position] = (object) $post;
-	        $this->_total_rows = count($this->_data);
+            $this->_data[$this->_position] = (object) $post;
+            $this->_total_rows = count($this->_data);
 
-	        // Now that the post has been saved, save any values that are not
-	        // post fields as meta tags in the post.
-	        if ($meta = array_diff_key($this->_values, (array) $this->_data[$this->_position]))
-	        {
-	            foreach ($meta as $key => $value)
-	            {
-	                update_post_meta($id, $key, $value);
-	            }
-	        }
-	    }
-	}
-
-    /**
-	 * check - By default only trivial things are validated for a post save.
-	 * Extend this method to add in additional specific validation routines.
-	 *
-	 * For storing errors, the field name should be the index and the value
-	 * an array of messages. Each message index should be the name of the
-	 * validation routine and the value should be a generic message describing
-	 * the reason the routine failed.
-	 *
-	 *  // Example array of errors.
-	 *  array(
-	 *      'post_title'    => array(
-	 *          'empty'         => 'Empty title',
-	 *          'max_length'    => 'title too long',
-	 *          'min_length'    => 'Title too short',
-	 *      ),
-	 *      'post_status'   => array(
-	 *          'empty'     => 'A post status must be set',
-	 *      ),
-	 *  );
-	 *
-	 * @return bool TRUE is validation routines pass else FALSE.
-	 */
-	public function check()
-	{
-	    if ($this->post_title == '')
-	    {
-	        $this->_errors['post_title']['empty'] = 'There is no post title set';
-	    }
-	    
-	    if ($this->detail == NULL || $this->detail->current() == NULL)
-	    {
-	        $this->_errors['detail']['partnumber'] = $this->partnumber;
-	        $this->_errors['detail']['empty'] = 'There is no detail for this product.';
-	    }
-
-	    return ( ! $this->_errors) ? TRUE : FALSE;
-	}
-
-	/**
-	 * errors - Accessor for the errors array.
-	 *
-	 * @return array
-	 */
-	public function errors()
-	{
-	    return $this->_errors;
-	}
+            // Now that the post has been saved, save any values that are not
+            // post fields as meta tags in the post.
+            if ($meta = array_diff_key($this->_values, (array) $this->_data[$this->_position]))
+            {
+                foreach ($meta as $key => $value)
+                {
+                    update_post_meta($id, $key, $value);
+                }
+            }
+        }
+    }
 
     /**
-	 * save - Save the current post to the database.
-	 *
+     * check - By default only trivial things are validated for a post save.
+     * Extend this method to add in additional specific validation routines.
+     *
+     * For storing errors, the field name should be the index and the value
+     * an array of messages. Each message index should be the name of the
+     * validation routine and the value should be a generic message describing
+     * the reason the routine failed.
+     *
+     *  // Example array of errors.
+     *  array(
+     *      'post_title'    => array(
+     *          'empty'         => 'Empty title',
+     *          'max_length'    => 'title too long',
+     *          'min_length'    => 'Title too short',
+     *      ),
+     *      'post_status'   => array(
+     *          'empty'     => 'A post status must be set',
+     *      ),
+     *  );
+     *
+     * @return bool TRUE is validation routines pass else FALSE.
+     */
+    public function check()
+    {
+        if ($this->post_title == '')
+        {
+            $this->_errors['post_title']['empty'] = 'There is no post title set';
+        }
+
+        if ($this->detail == NULL || $this->detail->current() == NULL)
+        {
+            $this->_errors['detail']['partnumber'] = $this->partnumber;
+            $this->_errors['detail']['empty'] = 'There is no detail for this product.';
+        }
+
+        return ( ! $this->_errors) ? TRUE : FALSE;
+    }
+
+    /**
+     * errors - Accessor for the errors array.
+     *
+     * @return array
+     */
+    public function errors()
+    {
+        return $this->_errors;
+    }
+
+    /**
+     * save - Save the current post to the database.
+     *
      * @return object
-	 */
-	public function save()
-	{
-	    $this->_save();
+     */
+    public function save()
+    {
+        $this->_save();
 
-	    // Reset the _values property to empty array
-	    $this->_values = array();
-	    return $this;
-	}
+        // Reset the _values property to empty array
+        $this->_values = array();
+        return $this;
+    }
 
     /**
-	 * save_all - Save all posts to the database.
-	 *
+     * save_all - Save all posts to the database.
+     *
      * @return object
-	 */
-	public function save_all()
-	{
-	    // Rewind the iteratable array to position 0
-	    $this->rewind();
+     */
+    public function save_all()
+    {
+        // Rewind the iteratable array to position 0
+        $this->rewind();
 
         // Blast through the array of posts and save the data for them
-	    while ($this->valid())
-	    {
-	        $this->_save();
-	        $this->next();
-	    }
+        while ($this->valid())
+        {
+            $this->_save();
+            $this->next();
+        }
 
         // Rewind to begining of the posts array.
         $this->rewind();
@@ -497,42 +544,42 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         // Reset the values array.
         $this->_values = array();
 
-	    return $this;
-	}
+        return $this;
+    }
 
     /**
-	 * as_array - Get the current post as an array rather than an object.
-	 *
-	 * @return array
-	 */
-	public function as_array()
-	{
-	    return (array) $this->current();
-	}
+     * as_array - Get the current post as an array rather than an object.
+     *
+     * @return array
+     */
+    public function as_array()
+    {
+        return (array) $this->current();
+    }
 
     /**
-	 * load - Public method to load up a API call.
-	 *
-	 * @return object $this
-	 */
-	public function load()
-	{
-		$this->_load();
+     * load - Public method to load up a API call.
+     *
+     * @return object $this
+     */
+    public function load()
+    {
+        $this->_load();
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
-	 * loaded - Check whether a result has been loaded from the DB.
-	 *
-	 * @return bool TRUE when there are results else FALSE on empty results.
-	 */
-	public function loaded()
-	{
-	    $this->load();
+     * loaded - Check whether a result has been loaded from the DB.
+     *
+     * @return bool TRUE when there are results else FALSE on empty results.
+     */
+    public function loaded()
+    {
+        $this->load();
 
-	    return ($this->_total_rows > 0);
-	}
+        return ($this->_total_rows > 0);
+    }
 
     /**
      * param - Add a parameter which will passed to the WP_Query object.
@@ -814,6 +861,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return $this;
     }
 
+    /**
+     * total_pages 
+     * 
+     * @access public
+     * @return void
+     */
     public function total_pages()
     {
         $this->load();
@@ -828,6 +881,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         return (int)$this->_posts_per_page;
     }
 
+    /**
+     * current_page 
+     * 
+     * @access public
+     * @return void
+     */
     public function current_page()
     {
         $this->load();
@@ -836,130 +895,208 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     }
 
     /**
-	 * serialize
-	 *
-	 * @return void
-	 */
-	public function serialize()
-	{
+     * serialize
+     *
+     * @return void
+     */
+    public function serialize()
+    {
         $this->load();
 
-		foreach (array('_data', '_executed') as $var)
-		{
-			$data[$var] = $this->{$var};
-		}
+        foreach (array('_data', '_executed') as $var)
+        {
+            $data[$var] = $this->{$var};
+        }
 
-		return serialize($data);
-	}
+        return serialize($data);
+    }
 
     /**
-	 * unserialize
-	 *
-	 * @param array $data
-	 * @return void
-	 */
-	public function unserialize($data)
-	{
-		$this->_initialize();
+     * unserialize
+     *
+     * @param array $data
+     * @return void
+     */
+    public function unserialize($data)
+    {
+        $this->_initialize();
 
-		foreach (unserialize($data) as $name => $var)
-		{
-			$this->{$name} = $var;
-		}
+        foreach (unserialize($data) as $name => $var)
+        {
+            $this->{$name} = $var;
+        }
 
-		$this->load();
-	}
+        $this->load();
+    }
 
-	public function rewind()
-	{
-		$this->_position = 0;
-	}
+    /**
+     * rewind 
+     * 
+     * @access public
+     * @return void
+     */
+    public function rewind()
+    {
+        $this->_position = 0;
+    }
 
-	public function count()
-	{
-		if ( ! $this->_executed)
-		{
-			$this->_load();
-		}
+    /**
+     * count 
+     * 
+     * @access public
+     * @return void
+     */
+    public function count()
+    {
+        if ( ! $this->_executed)
+        {
+            $this->_load();
+        }
 
-		return $this->_total_rows;
-	}
+        return $this->_total_rows;
+    }
 
-	public function key()
-	{
-		return $this->_position;
-	}
+    /**
+     * key 
+     * 
+     * @access public
+     * @return void
+     */
+    public function key()
+    {
+        return $this->_position;
+    }
 
-	public function prev()
-	{
-		--$this->_position;
-		return $this;
-	}
+    /**
+     * prev 
+     * 
+     * @access public
+     * @return void
+     */
+    public function prev()
+    {
+        --$this->_position;
+        return $this;
+    }
 
-	public function next()
-	{
-	    if ($this->use_query_posts)
-	        the_post();
-        
-		++$this->_position;
-		return $this;
-	}
+    /**
+     * next 
+     * 
+     * @access public
+     * @return void
+     */
+    public function next()
+    {
+        if ($this->use_query_posts)
+            the_post();
 
-	public function seek($offset)
-	{
-		if ($this->offsetExists($offset))
-		{
-			$this->_position = $offset;
-			return TRUE;
-		}
+        ++$this->_position;
+        return $this;
+    }
 
-		return FALSE;
-	}
+    /**
+     * seek 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function seek($offset)
+    {
+        if ($this->offsetExists($offset))
+        {
+            $this->_position = $offset;
+            return TRUE;
+        }
 
-	public function current()
-	{
-		if ( ! $this->seek($this->_position))
-		{
-			return NULL;
-		}
+        return FALSE;
+    }
 
-		return $this->_data[$this->_position];
-	}
+    /**
+     * current 
+     * 
+     * @access public
+     * @return void
+     */
+    public function current()
+    {
+        if ( ! $this->seek($this->_position))
+        {
+            return NULL;
+        }
 
-	public function valid()
-	{
-		if ( ! $this->_executed)
-		{
-			$this->_load();
-		}
+        return $this->_data[$this->_position];
+    }
 
-		return isset($this->_data[$this->_position]);
-	}
+    /**
+     * valid 
+     * 
+     * @access public
+     * @return void
+     */
+    public function valid()
+    {
+        if ( ! $this->_executed)
+        {
+            $this->_load();
+        }
 
-	public function offsetExists($offset)
-	{
-		if ( ! $this->_executed)
-		{
-			$this->_load();
-		}
+        return isset($this->_data[$this->_position]);
+    }
 
-		return ($offset >= 0 AND $offset < $this->_total_rows);
-	}
+    /**
+     * offsetExists 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function offsetExists($offset)
+    {
+        if ( ! $this->_executed)
+        {
+            $this->_load();
+        }
 
-	public function offsetGet($offset)
-	{
-		if ( ! $this->seek($offset))
-			return NULL;
+        return ($offset >= 0 AND $offset < $this->_total_rows);
+    }
 
-		return $this->current();
-	}
+    /**
+     * offsetGet 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function offsetGet($offset)
+    {
+        if ( ! $this->seek($offset))
+            return NULL;
 
-	public function offsetSet($offset, $value)
-	{
-	}
+        return $this->current();
+    }
 
-	public function offsetUnset($offset)
-	{
-	}
+    /**
+     * offsetSet 
+     * 
+     * @param mixed $offset 
+     * @param mixed $value 
+     * @access public
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+    }
+
+    /**
+     * offsetUnset 
+     * 
+     * @param mixed $offset 
+     * @access public
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+    }
 
 }

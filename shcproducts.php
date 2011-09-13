@@ -37,7 +37,7 @@ define('SHCP_JS', SHCP_URL . '/assets/js');
  */
 if ( ! defined('SHCP_START_TIME'))
 {
-	define('SHCP_START_TIME', microtime(TRUE));
+    define('SHCP_START_TIME', microtime(TRUE));
 }
 
 /**
@@ -45,7 +45,7 @@ if ( ! defined('SHCP_START_TIME'))
  */
 if ( ! defined('SHCP_START_MEMORY'))
 {
-	define('SHCP_START_MEMORY', memory_get_usage());
+    define('SHCP_START_MEMORY', memory_get_usage());
 }
 
 require_once SHCP_PATH . '/application/bootstrap.php';

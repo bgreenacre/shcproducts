@@ -18,85 +18,95 @@
  * Sears and Kmart product plugin.
  * Product import controller.
  *
- * @package		shcproducts
- * @subpackage	Controller
- * @since		0.1
- * @author		Kyla Klein
+ * @package     shcproducts
+ * @subpackage  Controller
+ * @since       0.1
+ * @author      Kyla Klein
  */
 class Controller_Admin_Import {
 
-	public function __construct(array $params = NULL)
-	{
-		add_action('wp_ajax_action_save', array(&$this, 'action_save'));
-		add_action('wp_ajax_action_list', array(&$this, 'action_list'));
-		add_action('wp_ajax_action_categories', array(&$this, 'action_categories'));
-		add_action('wp_ajax_action_subcategories', array(&$this, 'action_subcategories'));
-		add_action('admin_menu', array(&$this, 'admin_init'));
-	}
+    /**
+     * __construct 
+     * 
+     * @param array $params 
+     * @access public
+     * @return void
+     */
+    public function __construct(array $params = NULL)
+    {
+        add_action('wp_ajax_action_save', array(&$this, 'action_save'));
+        add_action('wp_ajax_action_list', array(&$this, 'action_list'));
+        add_action('wp_ajax_action_categories', array(&$this, 'action_categories'));
+        add_action('wp_ajax_action_subcategories', array(&$this, 'action_subcategories'));
+        add_action('admin_menu', array(&$this, 'admin_init'));
+    }
 
-	/**
-	 * action_list - Displays a list of products to import via the API
-	 *
-	 * @access	public
-	 * @return	void
-	 */
+    /**
+     * action_list - Displays a list of products to import via the API
+     *
+     * @access  public
+     * @return  void
+     */
   public function action_list()
   {
-		$num_per_page       = 20;
-		$page_range         = 3;
-		$method             = isset($_POST['method'])             ? $_POST['method']            : 'keyword';
-		$search_terms       = isset($_POST['search_terms'])       ? $_POST['search_terms']      : '';
-		$vertical_terms     = isset($_POST['vertical_terms'])     ? $_POST['vertical_terms']    : '';
-		$category_terms     = isset($_POST['category_terms'])     ? $_POST['category_terms']    : '';
-		$subcategory_terms  = isset($_POST['subcategory_terms'])  ? $_POST['subcategory_terms'] : '';
-		$current_page       = isset($_POST['page_number'])        ? $_POST['page_number']       : 1;
-		$product_count      = isset($_POST['product_count'])      ? $_POST['product_count']     : 0;
+      $num_per_page       = 20;
+      $page_range         = 3;
+      $method             = isset($_POST['method'])             ? $_POST['method']            : 'keyword';
+      $search_terms       = isset($_POST['search_terms'])       ? $_POST['search_terms']      : '';
+      $vertical_terms     = isset($_POST['vertical_terms'])     ? $_POST['vertical_terms']    : '';
+      $category_terms     = isset($_POST['category_terms'])     ? $_POST['category_terms']    : '';
+      $subcategory_terms  = isset($_POST['subcategory_terms'])  ? $_POST['subcategory_terms'] : '';
+      $current_page       = isset($_POST['page_number'])        ? $_POST['page_number']       : 1;
+      $product_count      = isset($_POST['product_count'])      ? $_POST['product_count']     : 0;
+      $next_page      = $current_page + 1;
+      $previous_page  = $current_page - 1;
+      $start_index    = ($current_page - 1) * $num_per_page + 1;
+      $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page;
 
-    $next_page      = $current_page + 1;
-    $previous_page  = $current_page - 1;
-	  $start_index    = ($current_page - 1) * $num_per_page + 1;
-	  $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page;
-
-    if($method == 'keyword')
-    {
-      $result = Library_Sears_Api::factory('search')
-        ->$method($search_terms, $subcategory)
-        ->limit($start_index, $end_index)
-        ->load();
-    }
-    else
-    {
-      // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
-  		$category_terms     = trim(substr($category_terms, 0, strpos($category_terms, '(')));
-  		$subcategory_terms  = trim(substr($subcategory_terms, 0, strpos($subcategory_terms, '(')));
-
-      $result = Library_Sears_Api::factory('search')
-        ->category(ucwords($vertical_terms), ucwords($category_terms), ucwords($subcategory_terms))
-        ->limit($start_index, $end_index)
-        ->load();
-    }
-
-    $product_count  = $result->mercadoresult->productcount;
-    $num_pages      = ceil($product_count / $num_per_page);
-
-    if($current_page > 1) {
-      // first page link
-      $pagination['first']['number'] = 1;
-      $pagination['first']['message'] = '&laquo; First';
-      // previous page link
-      $pagination['previous']['number'] = $previous_page;
-      $pagination['previous']['message'] = '&laquo; Previous';
-    }
-
-    // numbered page links
-    for($i=($current_page-$page_range); $i<($current_page + $page_range); $i++) {
-      if (($i > 0) && ($i <= $num_pages)) {
-        $pagination[$i]['number'] = $i;
-        $pagination[$i]['message'] = $i;
+      if($method == 'keyword')
+      {
+          $result = Library_Sears_Api::factory('search')
+              ->$method($search_terms, $subcategory)
+              ->limit($start_index, $end_index)
+              ->load();
       }
-    }
+      else
+      {
+          // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+          $category_terms     = trim(substr($category_terms, 0, strpos($category_terms, '(')));
+          $subcategory_terms  = trim(substr($subcategory_terms, 0, strpos($subcategory_terms, '(')));
 
-    if($current_page < $num_pages) {
+          $result = Library_Sears_Api::factory('search')
+              ->category(ucwords($vertical_terms), ucwords($category_terms), ucwords($subcategory_terms))
+              ->limit($start_index, $end_index)
+              ->load();
+      }
+
+      $product_count  = $result->mercadoresult->productcount;
+      $num_pages      = ceil($product_count / $num_per_page);
+
+      if($current_page > 1)
+      {
+          // first page link
+          $pagination['first']['number'] = 1;
+          $pagination['first']['message'] = '&laquo; First';
+
+          // previous page link
+          $pagination['previous']['number'] = $previous_page;
+          $pagination['previous']['message'] = '&laquo; Previous';
+      }
+
+      // numbered page links
+      for($i=($current_page-$page_range); $i<($current_page + $page_range); $i++)
+      {
+          if (($i > 0) && ($i <= $num_pages))
+          {
+              $pagination[$i]['number'] = $i;
+              $pagination[$i]['message'] = $i;
+          }
+      }
+
+      if($current_page < $num_pages) {
       // next page link
       $pagination['next']['number'] = $next_page;
       $pagination['next']['message'] = 'Next &raquo;';
@@ -105,15 +115,15 @@ class Controller_Admin_Import {
       $pagination['last']['message'] = 'Last &raquo;';
     }
 
-	  $args = array(
-			'current_page'	=> $current_page,
-			'product_count'	=> $product_count,
-			'method'	      => $method,
-			'search_terms'	=> $search_terms,
-			'pagination'    => $pagination
-			);
+      $args = array(
+            'current_page'  => $current_page,
+            'product_count' => $product_count,
+            'method'          => $method,
+            'search_terms'  => $search_terms,
+            'pagination'    => $pagination
+            );
 
-	  $data = array_merge($args, array('result' => $result));
+      $data = array_merge($args, array('result' => $result));
 
     $response = SHCP::view('admin/import/list', $data);
     
@@ -131,24 +141,24 @@ class Controller_Admin_Import {
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
-	/**
-	 * action_categories - Displays a list of categories related to the selected vertical
-	 *
-	 * @access	public
-	 * @return	void
-	 */
+    /**
+     * action_categories - Displays a list of categories related to the selected vertical
+     *
+     * @access  public
+     * @return  void
+     */
   public function action_categories() {
-		$method         = isset($_POST['method'])         ? $_POST['method']        : 'keyword';
-		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']  : '';
+        $method         = isset($_POST['method'])         ? $_POST['method']        : 'keyword';
+        $search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']  : '';
 
     $result = Library_Sears_Api::factory('search')
       ->vertical(ucwords($search_terms))
       ->load();
 
-	  $args = array(
-			'method'	      => $method,
-			'search_terms'	=> $search_terms
-			);
+      $args = array(
+            'method'          => $method,
+            'search_terms'  => $search_terms
+            );
 
     $data = array_merge($args, array('result' => $result));
 
@@ -157,28 +167,28 @@ class Controller_Admin_Import {
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
-	/**
-	 * action_subcategories - Displays a list of subcategories related to the selected category
-	 *
-	 * @access	public
-	 * @return	void
-	 */
+    /**
+     * action_subcategories - Displays a list of subcategories related to the selected category
+     *
+     * @access  public
+     * @return  void
+     */
   public function action_subcategories() {
-		$method         = isset($_POST['method'])         ? $_POST['method']          : 'keyword';
-		$vertical_terms = isset($_POST['vertical_terms']) ? $_POST['vertical_terms']  : '';
-		$search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']    : '';
+        $method         = isset($_POST['method'])         ? $_POST['method']          : 'keyword';
+        $vertical_terms = isset($_POST['vertical_terms']) ? $_POST['vertical_terms']  : '';
+        $search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']    : '';
 
-		// remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
-		$search_terms = trim(substr($search_terms, 0, strpos($search_terms, '(')));
+        // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+        $search_terms = trim(substr($search_terms, 0, strpos($search_terms, '(')));
 
     $result = Library_Sears_Api::factory('search')
       ->category(ucwords($vertical_terms), ucwords($search_terms))
       ->load();
 
-	  $args = array(
-			'method'	      => $method,
-			'search_terms'	=> $search_terms
-			);
+      $args = array(
+            'method'          => $method,
+            'search_terms'  => $search_terms
+            );
 
     $data = array_merge($args, array('result' => $result));
 
