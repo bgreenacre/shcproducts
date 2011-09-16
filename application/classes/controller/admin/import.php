@@ -54,7 +54,7 @@ class Controller_Admin_Import {
 
     $next_page      = $current_page + 1;
     $previous_page  = $current_page - 1;
-	  $start_index    = ($current_page - 1) * $num_per_page + 1;
+	  $start_index    = ($current_page - 1) * $num_per_page;
 	  $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page;
 
     if($method == 'keyword')
@@ -76,7 +76,7 @@ class Controller_Admin_Import {
         ->load();
     }
 
-    $product_count  = $result->mercadoresult->productcount;
+    $product_count  = $result->mercadoresult->productcount;    
     $num_pages      = ceil($product_count / $num_per_page);
 
     if($current_page > 1) {
@@ -209,6 +209,7 @@ class Controller_Admin_Import {
         {
             $data['detail'] = Library_Sears_Api::factory('product')
               ->get($data['partnumber'])
+              ->param('showSpec', 'true')
               ->load();
             
             $shcproduct->values($data);
