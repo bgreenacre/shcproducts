@@ -128,7 +128,13 @@ class Model_Products extends Model_SHCP {
         {
             if ($this->detail->skulist)
             {
-                return $this->detail->skulist->sku[1][0]->catentryid;
+                if ($this->detail->skulist->sku->catentryid) {
+                  return $this->detail->skulist->sku->catentryid;
+                } 
+                else 
+                {
+                  return $this->detail->skulist->sku[1][0]->catentryid;
+                }
             }
             else
             {
