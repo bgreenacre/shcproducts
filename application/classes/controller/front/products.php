@@ -68,7 +68,7 @@ class Controller_Front_Products {
 
         if (preg_match('/^products(\/(category|tag)\/([^\/]+))?(\/page\/([0-9]+))?/', $uri, $matches) != FALSE)
         {
-            $path = str_replace(get_bloginfo('siteurl').'/wp-content/themes', get_theme_root(), get_stylesheet_directory_uri());
+            $path = get_theme_root() . '/kmart-gamer/';
 
             $wp_query->query_vars['error'] = FALSE;
 
@@ -152,7 +152,7 @@ class Controller_Front_Products {
             'products'      => $this->products,
         );
 
-        $categories = get_categories(array('child_of' => 0));
+        $categories = get_categories(array('child_of' => 0, 'hide_empty' => FALSE));
 
         echo SHCP::view('front/product/grid_filter', array(
             'categories'    => $categories,
