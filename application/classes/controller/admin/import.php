@@ -32,7 +32,8 @@ class Controller_Admin_Import {
      * @access public
      * @return void
      */
-    public function __construct(array $params = NULL)
+
+	public function __construct(array $params = NULL)
 	{
 		add_action('wp_ajax_action_save', array(&$this, 'action_save'));
 		add_action('wp_ajax_action_list', array(&$this, 'action_list'));
