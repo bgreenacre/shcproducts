@@ -65,38 +65,6 @@ class Controller_Admin_Import {
 	  $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page;
 
     if($method == 'keyword')
-    {
-        add_action('wp_ajax_action_save', array(&$this, 'action_save'));
-        add_action('wp_ajax_action_list', array(&$this, 'action_list'));
-        add_action('wp_ajax_action_categories', array(&$this, 'action_categories'));
-        add_action('wp_ajax_action_subcategories', array(&$this, 'action_subcategories'));
-        add_action('admin_menu', array(&$this, 'admin_init'));
-    }
-  }  
-
-  /**
-   * action_list - Displays a list of products to import via the API
-   *
-   * @access  public
-   * @return  void
-   */
-  public function action_list()
-  {
-      $num_per_page       = 20;
-      $page_range         = 3;
-      $method             = isset($_POST['method'])             ? $_POST['method']            : 'keyword';
-      $search_terms       = isset($_POST['search_terms'])       ? $_POST['search_terms']      : '';
-      $vertical_terms     = isset($_POST['vertical_terms'])     ? $_POST['vertical_terms']    : '';
-      $category_terms     = isset($_POST['category_terms'])     ? $_POST['category_terms']    : '';
-      $subcategory_terms  = isset($_POST['subcategory_terms'])  ? $_POST['subcategory_terms'] : '';
-      $current_page       = isset($_POST['page_number'])        ? $_POST['page_number']       : 1;
-      $product_count      = isset($_POST['product_count'])      ? $_POST['product_count']     : 0;
-      $next_page      = $current_page + 1;
-      $previous_page  = $current_page - 1;
-      $start_index    = ($current_page - 1) * $num_per_page + 1;
-      $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page;
-
-      if($method == 'keyword')
       {
           $result = Library_Sears_Api::factory('search')
               ->$method($search_terms, $subcategory)
