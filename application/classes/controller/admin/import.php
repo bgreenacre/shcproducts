@@ -25,13 +25,13 @@
  */
 class Controller_Admin_Import {
 
-    /**
-     * __construct 
-     * 
-     * @param array $params 
-     * @access public
-     * @return void
-     */
+  /**
+   * __construct 
+   * 
+   * @param array $params 
+   * @access public
+   * @return void
+   */
 	public function __construct(array $params = NULL)
 	{
 		add_action('wp_ajax_action_save', array(&$this, 'action_save'));
@@ -72,13 +72,14 @@ class Controller_Admin_Import {
         add_action('wp_ajax_action_subcategories', array(&$this, 'action_subcategories'));
         add_action('admin_menu', array(&$this, 'admin_init'));
     }
+  }  
 
-    /**
-     * action_list - Displays a list of products to import via the API
-     *
-     * @access  public
-     * @return  void
-     */
+  /**
+   * action_list - Displays a list of products to import via the API
+   *
+   * @access  public
+   * @return  void
+   */
   public function action_list()
   {
       $num_per_page       = 20;
@@ -229,49 +230,49 @@ class Controller_Admin_Import {
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
-    public function action_save()
+  public function action_save()
+  {
+    $product_count = count($_POST['import_single']);
+
+    $keys = array_keys($_POST);
+    unset($keys[array_search('import_all', $keys)]);
+
+    for($i=0; $i<$product_count; $i++)
     {
-      $product_count = count($_POST['import_single']);
+      $check = new Model_Products();
+      $shcproduct = new Model_Products();
+      $data = array();
 
-      $keys = array_keys($_POST);
-      unset($keys[array_search('import_all', $keys)]);
-
-      for($i=0; $i<$product_count; $i++)
+      foreach($keys as $field_name)
       {
-        $check = new Model_Products();
-        $shcproduct = new Model_Products();
-        $data = array();
-
-        foreach($keys as $field_name)
-        {
-          $data[$field_name] = SHCP::get($_POST[$field_name], $i);
-        }
-        
-        if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
-        {
-            $data['detail'] = Library_Sears_Api::factory('product')
-              ->get($data['partnumber'])
-              ->param('showSpec', 'true')
-              ->load();
-            
-            $shcproduct->values($data);
-
-            if ($shcproduct->check())
-            {
-              $shcproduct->save();
-            }
-            else
-            { 
-            }
-            
-            $errors[] = $shcproduct->errors();
-        }
+        $data[$field_name] = SHCP::get($_POST[$field_name], $i);
       }
       
-      echo(json_encode(array('errors' => $errors)));
-        
-      die(); // have to do this in WP otherwise a zero will be appended to all responses
+      if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
+      {
+          $data['detail'] = Library_Sears_Api::factory('product')
+            ->get($data['partnumber'])
+            ->param('showSpec', 'true')
+            ->load();
+          
+          $shcproduct->values($data);
+
+          if ($shcproduct->check())
+          {
+            $shcproduct->save();
+          }
+          else
+          { 
+          }
+          
+          $errors[] = $shcproduct->errors();
+      }
     }
+    
+    echo(json_encode(array('errors' => $errors)));
+      
+    die(); // have to do this in WP otherwise a zero will be appended to all responses
+  }
 
   public function action_index()
   {
