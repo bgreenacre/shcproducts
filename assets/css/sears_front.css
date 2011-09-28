@@ -382,7 +382,7 @@ margin: 0 0 0 40px;
 /* For use when specs are displayed only */
 #shcp_product-detail .shcp-item-details .shcp-item-longdesc {
   float: left;
-  width: 300px;
+  width: 49%;
   margin-right: 10px;
 }
 
@@ -421,7 +421,7 @@ margin: 0 0 0 40px;
 
 .shcp-item-specs {
   float: left;
-  width: 300px;
+  width: 50%;
   padding-top: 20px;
 }
 
