@@ -17,10 +17,10 @@
 /**
  * Product import controller.
  *
- * @package		shcproducts
- * @subpackage	Controller
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Controller
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Controller_Admin_Related {
 
