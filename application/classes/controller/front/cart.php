@@ -25,10 +25,10 @@
  *      SHCP_Controller::factory('front_cart')->action_view();
  *  }
  *
- * @package		shcproducts
- * @subpackage	Controller
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Controller
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Controller_Front_Cart {
 
@@ -41,18 +41,18 @@ class Controller_Front_Cart {
 
     public function __construct()
     {
-    		add_action('wp_ajax_cartaction_mini', array(&$this, 'action_mini'));
-    		add_action('wp_ajax_nopriv_cartaction_mini', array(&$this, 'action_mini'));
-    		add_action('wp_ajax_cartaction_view', array(&$this, 'action_view'));
-    		add_action('wp_ajax_nopriv_cartaction_view', array(&$this, 'action_view'));
-    		add_action('wp_ajax_cartaction_add', array(&$this, 'action_add'));
-    		add_action('wp_ajax_nopriv_cartaction_add', array(&$this, 'action_add'));
-    		add_action('wp_ajax_cartaction_remove', array(&$this, 'action_remove'));
-    		add_action('wp_ajax_nopriv_cartaction_remove', array(&$this, 'action_remove'));
-    		add_action('wp_ajax_cartaction_update', array(&$this, 'action_update'));
-    		add_action('wp_ajax_nopriv_cartaction_update', array(&$this, 'action_update'));
-    		add_action('wp_ajax_cartaction_empty', array(&$this, 'action_empty'));
-    		add_action('wp_ajax_nopriv_cartaction_empty', array(&$this, 'action_empty'));
+        add_action('wp_ajax_cartaction_mini', array(&$this, 'action_mini'));
+        add_action('wp_ajax_nopriv_cartaction_mini', array(&$this, 'action_mini'));
+        add_action('wp_ajax_cartaction_view', array(&$this, 'action_view'));
+        add_action('wp_ajax_nopriv_cartaction_view', array(&$this, 'action_view'));
+        add_action('wp_ajax_cartaction_add', array(&$this, 'action_add'));
+        add_action('wp_ajax_nopriv_cartaction_add', array(&$this, 'action_add'));
+        add_action('wp_ajax_cartaction_remove', array(&$this, 'action_remove'));
+        add_action('wp_ajax_nopriv_cartaction_remove', array(&$this, 'action_remove'));
+        add_action('wp_ajax_cartaction_update', array(&$this, 'action_update'));
+        add_action('wp_ajax_nopriv_cartaction_update', array(&$this, 'action_update'));
+        add_action('wp_ajax_cartaction_empty', array(&$this, 'action_empty'));
+        add_action('wp_ajax_nopriv_cartaction_empty', array(&$this, 'action_empty'));
         add_shortcode('shcp_cart', array(&$this, 'action_view'));
         add_shortcode('shcp_minicart', array(&$this, 'action_mini'));
 
@@ -60,18 +60,36 @@ class Controller_Front_Cart {
         SHCP::bind_global('cart', $this->cart);
     }
 
+    /**
+     * action_mini 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_mini()
     {
         $this->cart->view()->load();
         echo SHCP::view('front/cart/mini', array('simple_cart' => $this->cart->cart));
     }
 
+    /**
+     * action_view 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_view()
     {
         $this->cart->view()->load();
         echo SHCP::view('front/cart/view', array('simple_cart' => $this->cart->cart));
     }
 
+    /**
+     * action_add 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_add()
     {
         if ($catentryid = (array) SHCP::get($_POST, 'catentryid', SHCP::get($_GET, 'catentryid')))
@@ -88,7 +106,7 @@ class Controller_Front_Cart {
                     );
             }
         }
-        
+
         try
         {
             $this->cart->load();
@@ -98,10 +116,16 @@ class Controller_Front_Cart {
         {
             throw new Exception($e);
         }
-        
+
         $this->ajax_response();
     }
 
+    /**
+     * action_remove 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_remove()
     {
         if ($ids = (array) SHCP::get($_POST, 'id', SHCP::get($_GET, 'id')))
@@ -113,29 +137,41 @@ class Controller_Front_Cart {
                     ->load();
             }
         }
-        
+
         $this->ajax_response();
     }
 
+    /**
+     * action_update 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_update()
     {
         $this
             ->cart
             ->load();
-        
+
         $quantity = (array) SHCP::get($_GET, 'quantity');
-        
+
         foreach ((array) SHCP::get($_GET, 'item_id') as $key => $item_id)
         {
             $this->cart
                 ->update($item_id, (int) SHCP::get($quantity, $key))
                 ->load();
         }
-        
+
         $this->cart->view()->load();
         $this->ajax_response();
     }
 
+    /**
+     * action_empty 
+     * 
+     * @access public
+     * @return void
+     */
     public function action_empty()
     {
         $this->cart
@@ -144,17 +180,23 @@ class Controller_Front_Cart {
             ->load()
             ->view()
             ->load();
-        
+
         $this->ajax_response();
     }
-    
+
+    /**
+     * ajax_response 
+     * 
+     * @access public
+     * @return void
+     */
     public function ajax_response()
     {
         if ( ! SHCP::$is_ajax)
             return;
-        
+
         $response = json_encode($this->cart->cart);
-        
+
         // Send headers to not cache this result.
         header('Cache-Control: no-cache, must-revalidate');
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

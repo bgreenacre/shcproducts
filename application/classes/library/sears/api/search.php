@@ -20,6 +20,12 @@
  */
 class Library_Sears_Api_Search extends Library_Sears_Api {
 
+    /**
+     * _load 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function _load()
     {
         parent::_load();
@@ -36,6 +42,13 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
         }
     }
 
+    /**
+     * keyword 
+     * 
+     * @param mixed $q 
+     * @access public
+     * @return void
+     */
     public function keyword($q)
     {
         $this->method('productsearch')
@@ -45,6 +58,15 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * category 
+     * 
+     * @param mixed $vertical 
+     * @param mixed $category 
+     * @param mixed $sub_category 
+     * @access public
+     * @return void
+     */
     public function category($vertical, $category, $sub_category = NULL)
     {
         $this->method('productsearch')
@@ -65,6 +87,13 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * vertical 
+     * 
+     * @param mixed $vertical 
+     * @access public
+     * @return void
+     */
     public function vertical($vertical)
     {
         $this->method('productsearch')
@@ -74,12 +103,26 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
         return $this;
     }
 
+    /**
+     * filter 
+     * 
+     * @param mixed $filter 
+     * @access public
+     * @return void
+     */
     public function filter($filter)
     {
         $this->param('filter', $filter);
         return $this;
     }
 
+    /**
+     * part_numbers 
+     * 
+     * @param array $numbers 
+     * @access public
+     * @return void
+     */
     public function part_numbers(array $numbers)
     {
         if ($numbers)

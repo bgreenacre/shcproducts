@@ -17,15 +17,28 @@
 /**
  * Model_SHCP
  *
- * @package		shcproducts
- * @subpackage	Model
- * @since		0.1
- * @author		Brian Greenacre
+ * @package     shcproducts
+ * @subpackage  Model
+ * @since       0.1
+ * @author      Brian Greenacre
  */
 class Model_Products extends Model_SHCP {
 
+    /**
+     * _detail 
+     * 
+     * @var mixed
+     * @access protected
+     */
     protected $_detail;
 
+    /**
+     * __construct 
+     * 
+     * @param mixed $id 
+     * @access public
+     * @return void
+     */
     public function __construct($id = NULL)
     {
         parent::__construct($id);
@@ -59,6 +72,13 @@ class Model_Products extends Model_SHCP {
         return $value;
     }
 
+    /**
+     * related 
+     * 
+     * @param mixed $id 
+     * @access public
+     * @return void
+     */
     public function related($id)
     {
         $ids = (array) get_post_meta($id, 'shcp_related_products', TRUE);
@@ -75,6 +95,12 @@ class Model_Products extends Model_SHCP {
         return $this;
     }
 
+    /**
+     * save 
+     * 
+     * @access public
+     * @return void
+     */
     public function save()
     {
         $this->post_type = $this->param('post_type');
@@ -82,7 +108,7 @@ class Model_Products extends Model_SHCP {
 
         return parent::save();
     }
-    
+
     /**
      * get_catentryid - This method tries to use the item vs product level rules
      * of the Sears API. _rules_ is a loose term as this particular way of

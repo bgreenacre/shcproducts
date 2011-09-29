@@ -19,11 +19,11 @@
  * site installed on. It can randomize displaying of product posts or a set
  * limit of products.
  *
- * @package		shcproducts
- * @category	Controller
+ * @package     shcproducts
+ * @category    Controller
  * @subpackage  Installer
- * @version		0.1
- * @author		Brian Greenacre
+ * @version     0.1
+ * @author      Brian Greenacre
  */
 class Controller_Widget_Products extends SHCP_Controller_Widget {
 
@@ -32,7 +32,7 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
      * @var string
      */
     protected $content = 'widget/products/list';
-    
+
     /**
      * Cache output on frontend or not.
      *
@@ -82,22 +82,22 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
     public function widget($args, $instance)
     {
         $products = new Model_Products();
-        
+
         $products
             ->param('post__in', $instance['pool'])
             ->orderby((SHCP::get($instance, 'randomize')) ? 'rand': 'none')
             ->limit(SHCP::get($instance, 'limit', 3))
             ->load();
-        
+
         $data = array(
             'products'  => $products,
         );
-        
+
         $this->content = SHCP::view($this->content, $data);
-        
+
         parent::widget($args, $instance);
     }
-    
+
     /**
      * update - Update the setting for the widget. Based on the keywords entered
      * in the widget form the product API will search for products with that
@@ -126,9 +126,9 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
             $limit = ((int) SHCP::get($data, 'limit', 3)) * 20;
             $search->limit(0, $limit);
         }
-        
+
         $search->load();
-        
+
         if (count($search) > 0)
         {
             $search->rewind();
@@ -151,13 +151,13 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
                         'cutprice'      => $search->cutprice,
                         'displayprice'  => $search->displayprice,
                     );
-                    
+
                     $data_to_import['detail'] = Library_Sears_Api::factory('product')
                         ->get($data_to_import['partnumber'])
                         ->load();
-                    
+
                     $product->values($data_to_import);
-                    
+
                     if ($product->check())
                     {
                         $product->save();
