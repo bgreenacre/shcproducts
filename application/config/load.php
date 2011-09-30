@@ -11,7 +11,7 @@
 return array(
     'functions'     => array('register_post_types', 'register_taxonomy'),
     'controllers'   => array(
-        'app', 'installer', 'admin_options', 'admin_import', 'admin_related',
+        'app', 'installer', 'admin_options', 'admin_import', 'admin_related', 'admin_fileimport',
         'front_products', 'front_cart',
         ),
 );
