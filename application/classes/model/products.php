@@ -128,6 +128,7 @@ class Model_Products extends Model_SHCP {
         {
             if ($this->detail->skulist)
             {
+<<<<<<< HEAD
                 if ($this->detail->skulist->sku->catentryid) {
                   return $this->detail->skulist->sku->catentryid;
                 } 
@@ -135,6 +136,9 @@ class Model_Products extends Model_SHCP {
                 {
                   return $this->detail->skulist->sku[1][0]->catentryid;
                 }
+=======
+                return $this->detail->skulist->sku[1][0]->catentryid;
+>>>>>>> responsys
             }
             else
             {

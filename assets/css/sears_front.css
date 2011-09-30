@@ -30,7 +30,11 @@
 }
 
 #shcp_items div.shcp-quickview a {
+<<<<<<< HEAD
   background: url('../images/sears-product-sprite.gif') no-repeat scroll -294px -18px;
+=======
+  background: url('../images/sears-sears-product-sprite.gif') no-repeat scroll -294px -18px;
+>>>>>>> responsys
   text-indent: -5000px;
   text-transform: capitalize;  
   display: block;
@@ -127,7 +131,10 @@ margin: 0 0 0 40px;
   height: 400px;
   overflow: auto;  
   margin-top: 10px;
+<<<<<<< HEAD
   padding-right: 10px;
+=======
+>>>>>>> responsys
 }
 
 #shcp_quickview_modal .close, .shcp_modal .close {
@@ -140,8 +147,11 @@ margin: 0 0 0 40px;
   top: 0;
   right: 15px;
   cursor: pointer;
+<<<<<<< HEAD
   text-indent: -5000px;
   text-transform: capitalize;  
+=======
+>>>>>>> responsys
 }
 
 
@@ -326,14 +336,25 @@ margin: 0 0 0 40px;
 }
 #shcp_product-detail p {
   clear: none;
+<<<<<<< HEAD
+=======
+  margin-left: 268px;
+>>>>>>> responsys
 }
 #shcp_product-detail h1 {
   clear: none;
   margin-left: 268px;
+<<<<<<< HEAD
   margin-bottom: 20px;
   color: #333;
   font-size: 20px;
   line-height: 24px;
+=======
+  padding-top: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 20px;
+>>>>>>> responsys
 }
 
 #shcp_product-detail .shcp-item-shortdesc {
@@ -343,6 +364,7 @@ margin: 0 0 0 40px;
   line-height: 18px;
 }
 
+<<<<<<< HEAD
 #shcp_product-detail .shcp-item-shortdesc ul {
   list-style: disc;
   margin-left: 15px;
@@ -351,17 +373,28 @@ margin: 0 0 0 40px;
 #shcp_product-detail .shcp-item-price {
   margin-left: 268px;
   margin-bottom: 0px;  
+=======
+#shcp_product-detail .shcp-item-price {
+  margin-left: 268px;
+>>>>>>> responsys
 }
 
 #shcp_product-detail .shcp-item-price span {
   color: #8DA351;
   font-size: 30px;
+<<<<<<< HEAD
   line-height: 36px;  
+=======
+>>>>>>> responsys
 }
 
 #shcp_product-detail .shcp-item-price span.price-savings {
   display: block;
+<<<<<<< HEAD
   margin: 0 0 20px 0;
+=======
+  margin: 20px 0 0 0;
+>>>>>>> responsys
   color: #333;  
   font-size: 15px;
   line-height: 18px;  
@@ -379,6 +412,7 @@ margin: 0 0 0 40px;
   overflow: hidden;  
 }
 
+<<<<<<< HEAD
 /* For use when specs are displayed only */
 #shcp_product-detail .shcp-item-details .shcp-item-longdesc {
   float: left;
@@ -443,6 +477,12 @@ margin: 0 0 0 40px;
   text-transform: none;
 }
 
+=======
+#shcp_product-detail .shcp-item-longdesc {
+  padding: 20px 0 0 0;
+  clear: both;
+}
+>>>>>>> responsys
 /** Cart **/
 .cart input.shcp-quantity {
 width: 25px;
@@ -474,6 +514,7 @@ height: 32px;
   float: right;
 }
 .shcp-cart-legalbar {float: left;}
+<<<<<<< HEAD
 .shcp-checkout {font-size: 18px; font-weight: bold;}
 .shcp-rating {
   background: url('../images/sears-product-sprite.gif') no-repeat scroll -85px -72px;
@@ -526,3 +567,5 @@ height: 32px;
 }
 li.shcp-item .shcp-rating {margin: 5px 36px;}
 #shcp_product-detail .shcp-rating {margin: 0 0 10px 268px;}
+=======
+>>>>>>> responsys
