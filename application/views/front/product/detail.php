@@ -12,11 +12,7 @@
   <?php endif; ?>
     </div>
   <h1><?php echo $product->post_title; ?></h1>
-<<<<<<< HEAD
-  <div class="shcp-item-shortdesc"><?php echo html_entity_decode($product->detail->shortdescription, ENT_QUOTES); ?></div>
-=======
   <div class="shcp-item-shortdesc"><?php echo htmlspecialchars_decode($product->detail->shortdescription); ?></div>
->>>>>>> responsys
   <?php echo SHCP::view('front/product/rating', array('rating' => $product->detail->rating)); ?>
   <p class="shcp-item-price">
     <span><?php echo Helper_Price::currency($product->detail->saleprice); ?></span>
@@ -24,33 +20,7 @@
     <span class="price-savings">A savings of <?php echo Helper_Price::currency($product->cutprice - $product->detail->saleprice); ?></span>
 <?php endif; ?>
   </p>
-<<<<<<< HEAD
-  <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart" rel="#shcp-cartconfirm" data-post_id="<?php echo $product->ID; ?>">Add To Cart</a>    
-  <?php if ($product->detail->specifications->specification): ?>
-  <div class="shcp-item-details">
-  <?php endif; ?>  
-    <div class="shcp-item-longdesc"><?php echo str_replace('http//', 'http://', htmlspecialchars_decode(html_entity_decode($product->detail->longdescription))); ?></div>      
-  <?php if ($product->detail->specifications->specification): ?>
-    <div class="shcp-item-specs">
-      <ul>
-        <?php foreach($product->detail->specifications->specification[1] as $specification): ?>
-        <li><?php echo $specification->label; ?>
-          <ul>
-          <?php foreach ($specification->attribute[1] as $attribute): ?>
-            <li class="<?php echo (($i % 2) ? "odd" : "even"); ?>"><?php echo html_entity_decode($attribute->value); ?></li>
-            <?php $i++; ?>
-          <?php endforeach;?>
-          </ul>
-        </li>
-        <?php endforeach; ?>  
-      </ul>  
-    </div>
-  </div>    
-  <?php endif; ?>    
-  <div id="shcp-cartconfirm" class="shcp_modal"></div>
-=======
   <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart" rel="#shcp-cartconfirm" data-post_id="<?php echo $product->ID; ?>">Add To Cart</a>  
   <div class="shcp-item-longdesc"><?php echo htmlspecialchars_decode($product->detail->longdescription); ?></div>
 <div id="shcp-cartconfirm" class="shcp_modal"></div>
->>>>>>> responsys
 </div>
