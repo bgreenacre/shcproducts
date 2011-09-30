@@ -1,0 +1,469 @@
+/* ----------- Product Grid ----------- */
+
+#shcp_items {
+  list-style: none;
+  margin: 0;
+  font-family: arial, helvetica, sans-serif;
+}
+
+#shcp_items li {
+  float: left;
+  width: 162px;
+  height: 287px;
+  margin: 0 0 10px 4px;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid #fff;
+  position: relative;
+  text-align: center;
+}
+
+#shcp_items li:hover {
+  border: 1px solid #C0C0BE;
+}
+
+#shcp_items div.shcp-quickview {
+  position: absolute;
+  top: -2px;
+  left: 50px;
+  display: none;
+}
+
+#shcp_items div.shcp-quickview a {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll -294px -18px;
+  text-indent: -5000px;
+  text-transform: capitalize;  
+  display: block;
+  height: 27px;
+  width: 81px;
+}
+
+#shcp_items p.shcp-image {
+  height: 140px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-align: center;
+}
+
+#shcp_items p.shcp-image img {
+  margin: 0;
+}
+
+#shcp_items p.shcp-title {
+  font-size: 12px;
+  height: 30px;
+  line-height: 15px;
+  overflow: hidden;
+  margin: 0 0 10px 0;
+}
+
+#shcp_items p.shcp-title a {
+  color: #7C0505;  
+  text-decoration: none;
+}
+
+#shcp_items p.shcp-title a:hover {
+  color: #7C0505;  
+  text-decoration: underline;
+}
+
+#shcp_items p.shcp-item-price {
+  height: 36px;
+  line-height: 18px;
+  margin: 0 0 10px 0;
+}
+
+#shcp_items p.shcp-add-to-cart {
+margin: 0 0 0 40px;
+}
+
+#shcp_items p.shcp-item-price span {
+  color: #8DA351;
+  font-size: 16px;
+}
+
+#shcp_items p.shcp-item-price del {
+  color: #9B9B9B;
+  font-size: 12px;
+}
+
+#shcp_items a.addtocart {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll -295px -47px;
+  cursor: pointer;
+  display: block;
+  height: 22px;
+  width: 95px;
+  text-indent: -5000px;
+  text-transform: capitalize;
+  overflow: hidden;
+}
+
+/* ----------- Quickview Modal ----------- */
+
+/* the overlayed element */
+.shcp_modal {
+	display: none;
+	z-index: 10000;
+	width: 675px;	
+	text-align: left;
+    border: 5px solid #7D0707;
+    position: relative;
+    background: #fff;
+}
+#shcp-modal-container {margin: 5px;}
+.shcp-modal-content {overflow: auto;max-height: 400px;}
+#shcp_quickview_modal #shcp_product-detail, .shcp-modal-content {
+	background-color: #fff;  
+	padding: 15px 15px 30px;
+}
+
+#shcp_quickview_modal .quickview_wrapper {
+  height: 400px;
+  overflow: auto;
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+#shcp_quickview_modal .close, .shcp_modal .close {
+  color: #7C0505;
+  display: block;
+  height: 20px;
+  width: 60px;
+  margin-top: 15px;
+  position: absolute;
+  top: 0;
+  right: 15px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+
+/* ----------- Cart Confirmation Modal ----------- */
+
+/* the overlayed element */
+#shcp-cartconfirm {
+	display:none;
+	z-index:10000;
+	background-color:#fff;
+	
+	width:675px;	
+  padding: 14px;
+	text-align: left;
+
+	background: #CFE4F3;
+  background: rgba(253, 190, 81, 0.7);
+  border: none;
+/*  background: hsla(207, 63%, 61%, 0.8);*/
+
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px; 
+	border-radius: 8px;
+  position: relative; 
+}
+
+#shcp-cartconfirm #shcp-modal-container {
+	background-color: #fff;  
+	padding: 15px 15px 30px;  
+	overflow: auto;
+}
+
+#shcp-cartconfirm .close {
+  color: #7C0505;
+  display: block;
+  width: 77px;
+  height: 15px;
+  margin-top: 15px;
+  position: absolute;
+  top: 0;
+  right: 15px;
+  cursor: pointer;
+}
+
+#shcp-cartconfirm h2 {
+  color: #666;
+  padding: 0 0 20px 0;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+
+#shcp-cartconfirm img {
+  border: 1px solid #F2F2F2;
+  float: left;
+}
+
+#shcp-cartconfirm #shcp-modal-productinfo {
+  float: left;
+  width: 275px;
+  color: #666;
+  padding: 8px;
+}
+
+#shcp-cartconfirm #shcp-modal-productinfo h1 {
+  font-size: 16px;
+  line-height: 16px;
+  padding: 0;
+  margin-bottom: 10px;
+  margin-left: 0;
+}
+
+#shcp-cartconfirm #shcp-modal-productinfo dl {
+  margin: 0px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#shcp-cartconfirm #shcp-modal-productinfo dt {
+  clear: left;
+  float: left;
+  width: 120px;
+  font-size: 11px;
+  line-height: 14px;
+}
+
+#shcp-cartconfirm #shcp-modal-productinfo dd {
+  float: left;
+  font-size: 11px;
+  line-height: 14px;  
+  margin: 0px;
+}
+
+#shcp-cartconfirm #shcp-modal-productinfo dd.price {
+  font-size: 12px;
+  font-weight: bold;
+  color: #8DA351;  
+}
+
+#shcp-cartconfirm #shcp-modal-buttons {
+  float: left;
+  width: 180px;
+  margin-top: 10px;
+}
+
+#shcp-cartconfirm #shcp-modal-buttons a {
+  text-transform: capitalize;
+  overflow: hidden;
+  margin-bottom: 15px;
+  display: inline-block;
+  text-indent: -9999px;
+  width: 176px;
+  height: 21px;
+}
+
+#shcp-cartconfirm #shcp-modal-buttons a#continue_shopping {
+  background: url('../images/kmart-continue-shopping.gif') no-repeat top left;
+  position: static;
+  margin-top: 0;
+/*  
+  display: block;
+  width: 77px;
+  height: 15px;
+  margin-top: 15px;
+  position: absolute;
+  top: 0;
+  right: 15px;*/
+}
+
+#shcp-cartconfirm #shcp-modal-buttons a#view_cart {
+  background: url('../images/kmart-checkout.gif') no-repeat top left;
+  
+}
+
+.shcp-image-tank {
+  width: 248px;
+}
+/* ----------- Product Detail and Quickview ----------- */
+
+#shcp_product-detail {
+  font-family: arial, helvetica, sans-serif;    
+}
+
+#shcp_product-detail .shcp-image-tank {
+  float: left;
+}
+
+#shcp_product-detail .shcp-current-image {
+  overflow: hidden;
+}  
+
+#shcp_product-detail img {
+  float: left;
+  padding: 1px;  
+  margin: 0px;
+}
+
+#shcp_product-detail .shcp-more-images {
+  clear: left;
+  border-top: 1px solid #C0C0BE;
+  margin-top: 10px;
+  padding: 7px 10px 6px;
+  height: 42px;
+  overflow: hidden;
+}
+
+#shcp_product-detail .shcp-more-images .shcp-image-thumbnail {
+  padding: 1px;
+}
+
+#shcp_product-detail .shcp-more-images .shcp-image-thumbnail img {
+  width: 40px;
+  height: 40px;
+}
+
+#shcp_product-detail .shcp-more-images a {
+  display: block;
+  float: left;  
+  margin: 0 2px;
+  border: 1px solid #C0C0BE;
+}
+
+#shcp_product-detail .shcp-more-images a.selected {
+  border: 1px solid #E64F22;
+}
+#shcp_product-detail p {
+  clear: none;
+  margin-left: 268px;
+}
+#shcp_quickview_modal p {
+margin-left: 0;
+}
+#shcp_product-detail h1 {
+  clear: none;
+  margin-left: 268px;
+  padding-top: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 20px;
+}
+
+#shcp_product-detail .shcp-item-shortdesc {
+  margin-left: 268px;
+  margin-bottom: 20px;  
+  font-size: 15px;
+  line-height: 18px;
+}
+
+#shcp_product-detail .shcp-item-price {
+  margin-left: 268px;
+}
+
+#shcp_product-detail .shcp-item-price span {
+  color: #8DA351;
+  font-size: 30px;
+}
+
+#shcp_product-detail .shcp-item-price span.price-savings {
+  display: block;
+  margin: 20px 0 0 0;
+  color: #333;  
+  font-size: 15px;
+  line-height: 18px;  
+}
+
+#shcp_product-detail .addtocart {
+  margin-left: 268px;  
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll -295px -47px;
+  cursor: pointer;
+  display: block;
+  height: 22px;
+  width: 95px;
+  text-indent: -5000px;
+  text-transform: capitalize;
+  overflow: hidden;  
+}
+
+#shcp_product-detail .shcp-item-longdesc {
+  padding: 20px 0 0 0;
+  clear: both;
+}
+/** Cart **/
+.cart input.shcp-quantity {
+width: 25px;
+}
+.cart td {
+vertical-align: top;
+}
+.cart .shcp-item-description img {
+float: left;
+}
+.cart .shcp-item-description p {
+margin-left: 160px;
+clear: none;
+}
+
+#shcp_cart_link {
+background: url(../images/cart.png)  no-repeat top left;
+text-indent: -9999px;
+overflow: hidden;
+width: 32px;
+height: 32px;
+}
+
+#shcp_loader {
+  background-image: url("/wp-content/plugins/shcproducts/assets/images/ajax-loader.gif");
+  height: 16px;
+  width: 16px;
+  display: none;
+  float: right;
+}
+.shcp-cart-legalbar {float: left;}
+.shcp-checkout {font-size: 18px; font-weight: bold;}
+.shcp-rating {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll -85px -72px;
+  height: 17px;
+  width: 85px;
+  margin: 2px 0;
+  position: relative;
+  text-indent: -9999px;
+}
+.shcp-rating span {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll 0px -72px;
+  height: 17px;
+  display: block;
+  left: 0;
+  position: absolute;
+}
+.shcp-rating span.zeroStar {
+  background: url('../images/kmart-product-sprite.gif') no-repeat scroll 0px -91px;
+  width: 90px;
+}
+.shcp-rating span.halfStar {
+  width: 13.5px;
+}
+.shcp-rating span.oneStar {
+  width: 17px;
+}
+.shcp-rating span.one5Star {
+  width: 20.5px;
+}
+.shcp-rating span.twoStar {
+  width: 34px;
+}
+.shcp-rating span.two5Star {
+  width: 36.5px;
+}
+.shcp-rating span.threeStar {
+  width: 51px;
+}
+.shcp-rating span.three5Star {
+  width: 59.5px;
+}
+.shcp-rating span.fourStar {
+  width: 68px;
+}
+.shcp-rating span.four5Star {
+  width: 76.5px;
+}
+.shcp-rating span.fiveStar {
+  width: 85px;
+}
+li.shcp-item .shcp-rating {margin: 5px 36px;}
+#shcp_product-detail .shcp-rating {margin: 0 0 10px 268px;}
+#shcp_grid_filter {padding: 10px 0;}
+#shcp_grid_filter label {margin: 0 10px 0 0;}
+.cart a.shcp-checkout {
+  display: block;
+  background: url("../images/kmart-cart-sprite.gif") no-repeat scroll -25px -220px transparent;
+  border: medium none;
+  height: 31px;
+  text-indent: -9000px;
+  width: 215px;
+}
