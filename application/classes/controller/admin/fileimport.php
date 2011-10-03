@@ -84,6 +84,12 @@ class Controller_Admin_FileImport {
             $this->errors[] = __('There is no file uploaded. Please upload an import file.');
         }
 
+        $import = FileImport::factory($_GET['filename']);
+
+        $data = array(
+            'rows'  => $import->load(),
+        );
+
         echo SHCP::view('admin/fileimport/review', $data);
     }
 
@@ -91,7 +97,13 @@ class Controller_Admin_FileImport {
     {
         if ($_FILES)
         {
-            $upload_dir = realpath(wp_upload_dir()).DIRECTORY_SEPARATOR;
+            $upload_dir = realpath(wp_upload_dir()) . DIRECTORY_SEPARATOR . 'import' . DIRECTORY_SEPARATOR;
+
+            if ( ! is_dir($upload_dir))
+            {
+                mkdir($upload_dir, '0644');
+                @chmod($upload_dir, '0644')
+            }
 
             // Is there file uploaded and without errors?
             $not_empty = (isset($_FILES['upload_file']['error'])
