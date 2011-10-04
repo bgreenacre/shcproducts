@@ -426,7 +426,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             }
         }
 
-        if ($post['ID'] > 0)
+        if (isset($post['ID']) && $post['ID'] > 0)
         {
             $id = wp_update_post($post);
         }
