@@ -1,4 +1,5 @@
 <div class="wrap shcp_wrap">
+<?php var_dump($errors); ?>
 <div class="icon32 icon32-posts-shcproduct" id="icon-edit"><br /></div>
 <h2><?php echo __('Import Products from File'); ?></h2>
 <form action="<?php echo admin_url('edit.php?post_type=shcproduct&page=fileimport&part=upload'); ?>" method="POST" enctype="multipart/form-data">
