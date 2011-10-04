@@ -35,6 +35,7 @@ class Controller_Admin_Import {
     public function __construct(array $params = NULL)
     {
         add_action('wp_ajax_action_save', array(&$this, 'action_save'));
+        add_action('wp_ajax_action_save_all', array(&$this, 'action_save_all'));
         add_action('wp_ajax_action_list', array(&$this, 'action_list'));
         add_action('wp_ajax_action_categories', array(&$this, 'action_categories'));
         add_action('wp_ajax_action_subcategories', array(&$this, 'action_subcategories'));
@@ -240,6 +241,74 @@ class Controller_Admin_Import {
       
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
+  
+  public function action_save_all()
+  {
+    
+    foreach($_POST as $key => $value) {
+      $data[$key] = $value;
+    }
+    
+    if($data['method'] == 'keyword')
+    {
+        $result = Library_Sears_Api::factory('search')
+            ->$method($data['keyword_terms'])
+            ->limit(0, $data['product_count'])
+            ->load();
+    }
+    else
+    {
+        // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+        $data['category_terms']     = trim(substr($data['category_terms'], 0, strpos($data['category_terms'], '(')));
+        $data['subcategory_terms']  = trim(substr($data['subcategory_terms'], 0, strpos($data['subcategory_terms'], '(')));
+    
+        $result = Library_Sears_Api::factory('search')
+            ->category(ucwords($data['vertical_terms']), ucwords($data['category_terms']), ucwords($data['subcategory_terms']))
+            ->limit(0, $data['product_count'])
+            ->load();
+    }    
+    
+    foreach($result as $product)
+    {
+      $check = new Model_Products();
+      $shcproduct = new Model_Products();
+      $product_data = array();
+    
+      $product_data['post_title']     = $product->name;
+      $product_data['catentryid']     = $product->catentryid;
+      $product_data['cutprice']       = $product->cutprice;
+      $product_data['displayprice']   = $product->displayprice;
+      $product_data['imageid']        = $product->imageid;
+      $product_data['import_single']  = $product->import_single;
+      $product_data['numreview']      = $product->numreview;
+      $product_data['partnumber']     = $product->partnumber;
+      $product_data['rating']         = $product->rating;
+      
+      if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
+      { 
+          $product_data['detail'] = Library_Sears_Api::factory('product')
+            ->get($product_data['partnumber'])
+            ->param('showSpec', 'true')
+            ->load();
+          
+          $shcproduct->values($product_data);
+    
+          if ($shcproduct->check())
+          {
+            $shcproduct->save();
+          }
+          else
+          {
+          }
+          
+          $errors[] = $shcproduct->errors();
+      }
+    }
+    
+    echo(json_encode(array('errors' => $errors)));
+      
+    die(); // have to do this in WP otherwise a zero will be appended to all responses
+  }  
 
   public function action_index()
   {

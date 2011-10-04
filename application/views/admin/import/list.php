@@ -10,6 +10,9 @@
 </div>
 
 <form action="" id="shcp_import_form" method="post">
+<div class="shcp_import_all_button">
+  <input type='submit' value='Import all <?php echo $product_count; ?> Products' id='save_all_products' data-product-count="<?php echo $product_count; ?>" data-method="<?php echo $method; ?>" />
+</div>  
 <table class="widefat" id="shcp_import_table">
   <thead>
     <tr>
