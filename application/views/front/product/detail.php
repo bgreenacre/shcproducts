@@ -32,7 +32,7 @@
         <li><?php echo $specification->label; ?>
           <ul>
           <?php foreach ($specification->attribute[1] as $attribute): ?>
-            <li class="<?php echo (($i % 2) ? "odd" : "even"); ?>"><?php echo html_entity_decode($attribute->value); ?></li>
+            <li class="<?php echo (($i % 2) ? "odd" : "even"); ?>"><span class="description"><?php echo preg_replace("/([a-hj-z\)])([A-Z0-9])/", '$1 :</span> <span class="value">$2', html_entity_decode($attribute->value)); ?></span></li>
             <?php $i++; ?>
           <?php endforeach;?>
           </ul>
