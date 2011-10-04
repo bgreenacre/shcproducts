@@ -128,6 +128,12 @@ function import_callback() {
       jQuery(this).attr('checked', status);
     });
   });
+  
+    // activate import all products button
+  jQuery('#save_all_products').click(function(e) {
+      e.preventDefault();
+      save_all_products(jQuery(this), jQuery('#keyword_form'), jQuery('#vertical_form'));
+  });  
 
   // activate save_products button
   jQuery("#save_products").unbind('click').click(function(e) {
@@ -212,6 +218,49 @@ function save_products() {
         row.find('.displayprice').text("");
       }
       
+      import_callback(this);
+    }
+  });
+}
+
+function save_all_products(el) {
+
+  var product_count = el != null ? el.attr('data-product-count') : 0;
+  var method        = el != null ? el.attr('data-method') : 0;
+  
+  var keyword_terms     = jQuery("#search_terms_keyword").val();
+  var vertical_terms    = jQuery("#search_terms_vertical").val();
+  var category_terms    = jQuery("#search_categories option:selected").val();
+  var subcategory_terms = jQuery("#search_subcategories option:selected").val();
+
+  keyword_terms         = keyword_terms != "Enter keywords" ? keyword_terms : '';
+  vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
+  category_terms        = category_terms != "Choose Category" ? category_terms : '';
+  subcategory_terms     = subcategory_terms != "Choose Subategory" ? subcategory_terms : '';
+  
+  data = {
+    "method": method,
+    "product_count"     : product_count,
+    "keyword_terms"     : keyword_terms,
+    "vertical_terms"    : vertical_terms,
+    "category_terms"    : category_terms,
+    "subcategory_terms" : subcategory_terms
+  };
+  
+  jQuery.ajax({
+    type: 'post',
+    dataType: 'json',
+    url: shcp_ajax.ajaxurl+'?action=action_save_all',
+    data: data,
+    success: function(response) {
+      var response_text = '';
+      jQuery(response.errors).each(function() {
+        if(typeof(this.detail) != 'undefined') {
+          response_text += '<p class="error">' + this.detail + '</p>';
+        }
+      });      
+      response_text += '<p>All products imported</p>';
+      jQuery('#shcp_import_list').html(response_text);
       import_callback(this);
     }
   });
