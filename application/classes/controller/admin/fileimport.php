@@ -79,16 +79,36 @@ class Controller_Admin_FileImport {
 
     public function action_review()
     {
+        global $wpdb;
+
         if ( ! isset($_GET['filename']))
         {
             $this->errors[] = __('There is no file uploaded. Please upload an import file.');
         }
 
-        $import = FileImport::factory($_GET['filename']);
+        $field_map = SHCP::config('import.field_map');
+
+        $fields = $wpdb->query('SELECT DISTINCT `meta_key` FROM '.$wpdb->postmeta.' ORDER BY `meta_key`;');
+
+        foreach ($fields as $field)
+        {
+            $field_map[$field->meta_key] = $field->meta_key;
+        }
+
+        $filename = urldecode($_GET['filename']);
+
+        $import = FileImport::factory($filename)
+            ->load();
 
         $data = array(
-            'rows'  => $import->load(),
+            'rows'          => $import,
+            'cols'          => $import->cols(),
+            'filename'      => $filename,
+            'field_count'   => $import->field_count(),
+            'field_map'     => $field_map,
         );
+
+        var_dump($data);
 
         echo SHCP::view('admin/fileimport/review', $data);
     }
@@ -97,18 +117,21 @@ class Controller_Admin_FileImport {
     {
         if ($_FILES)
         {
-            $upload_dir = realpath(wp_upload_dir()) . DIRECTORY_SEPARATOR . 'import' . DIRECTORY_SEPARATOR;
+            $paths = wp_upload_dir();
+            $path = preg_replace('/[0-9]+\/[0-9]+$/', '', $paths['path']);
+
+            $upload_dir = realpath($path) . DIRECTORY_SEPARATOR . 'import' . DIRECTORY_SEPARATOR;
 
             if ( ! is_dir($upload_dir))
             {
-                mkdir($upload_dir, '0644');
-                @chmod($upload_dir, '0644')
+                mkdir($upload_dir, 0644);
+                @chmod($upload_dir, 0644);
             }
 
             // Is there file uploaded and without errors?
-            $not_empty = (isset($_FILES['upload_file']['error'])
-                AND isset($_FILES['upload_file']['tmp_name'])
-                AND is_uploaded_file($_FILES['upload_file']['tmp_name']));
+            $not_empty = (isset($_FILES['import_file']['error'])
+                AND isset($_FILES['import_file']['tmp_name'])
+                AND is_uploaded_file($_FILES['import_file']['tmp_name']));
 
             if ( ! $not_empty)
             {
@@ -117,7 +140,7 @@ class Controller_Admin_FileImport {
                 return;
             }
 
-            if ($_FILES['upload_file']['error'] === UPLOAD_ERR_INI_SIZE)
+            if ($_FILES['import_file']['error'] === UPLOAD_ERR_INI_SIZE)
             {
                 $this->errors[] = __('The uploaded file is too large.');
                 // Upload is larger than PHP allowed size (upload_max_filesize)
@@ -125,7 +148,7 @@ class Controller_Admin_FileImport {
                 return;
             }
 
-            if ($_FILES['upload_file']['error'] !== UPLOAD_ERR_OK)
+            if ($_FILES['import_file']['error'] !== UPLOAD_ERR_OK)
             {
                 $this->errors[] = __('An error occured during upload.');
                 // The upload failed, no size to check
@@ -134,14 +157,14 @@ class Controller_Admin_FileImport {
             }
 
             // Test that the file is greater than the max size
-            if ($_FILES['upload_file']['size'] > wp_max_upload_size())
+            if ($_FILES['import_file']['size'] > wp_max_upload_size())
             {
                 $this->errors[] = __('The uploaded file is too large.');
                 $this->action_upload_form();
                 return;
             }
 
-            $ext = strtolower(pathinfo($_FILES['upload_file']['name'], PATHINFO_EXTENSION));
+            $ext = strtolower(pathinfo($_FILES['import_file']['name'], PATHINFO_EXTENSION));
 
             if ( ! in_array($ext, array('csv', 'xml', 'json')))
             {
@@ -150,7 +173,7 @@ class Controller_Admin_FileImport {
                 return;
             }
 
-            $filename = uniqid().$_FILES['upload_file']['name'];
+            $filename = uniqid().$_FILES['import_file']['name'];
             $filename = preg_replace('/\s+/u', '_', $filename);
 
             if (is_file($upload_dir.$filename))
@@ -158,10 +181,10 @@ class Controller_Admin_FileImport {
                 @unlink($upload_dir.$filename);
             }
 
-            if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $upload_dir.$filename))
+            if (move_uploaded_file($_FILES['import_file']['tmp_name'], $upload_dir.$filename))
             {
                 // Set permissions on filename
-                chmod($upload_dir.$filename, '0644');
+                chmod($upload_dir.$filename, 0644);
 
                 // File has been uploaded and now needs to be reviewed.
                 wp_redirect(admin_url('edit.php?post_type=shcproduct&page=fileimport&part=review&filename='.urlencode($filename)));

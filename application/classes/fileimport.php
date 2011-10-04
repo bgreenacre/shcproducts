@@ -22,7 +22,7 @@ class FileImport implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @var mixed
      * @access protected
      */
-    protected $path;
+    protected static $path;
 
     /**
      * file 
@@ -39,6 +39,14 @@ class FileImport implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @access protected
      */
     protected $cols = array();
+
+    /**
+     * field_count 
+     * 
+     * @var mixed
+     * @access protected
+     */
+    protected $field_count;
 
     /**
      * Used as the array to iterate over.
@@ -67,7 +75,10 @@ class FileImport implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         if ( ! FileImport::$path)
         {
-            FileImport::$path = realpath(wp_upload_dir()) . DIRECTORY_SEPARATOR . 'import' . DIRECTORY_SEPARATOR;
+            $paths = wp_upload_dir();
+            $path = preg_replace('/[0-9]+\/[0-9]+$/', '', $paths['path']);
+
+            FileImport::$path = realpath($path) . DIRECTORY_SEPARATOR . 'import' . DIRECTORY_SEPARATOR;
         }
 
         if ($type === NULL)
@@ -94,6 +105,7 @@ class FileImport implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
         $this->_position = 0;
         $this->_total_rows = count($this->_data);
+        $this->field_count = count($this->current());
 
         return $this;
     }
@@ -107,12 +119,29 @@ class FileImport implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      */
     public function as_array()
     {
-        return $this->current();
+        return (array) $this->current();
     }
 
+    /**
+     * cols 
+     * 
+     * @access public
+     * @return void
+     */
     public function cols()
     {
         return $this->_cols;
+    }
+
+    /**
+     * field_count 
+     * 
+     * @access public
+     * @return void
+     */
+    public function field_count()
+    {
+        return $this->field_count;
     }
 
     /**
