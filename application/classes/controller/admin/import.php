@@ -241,11 +241,6 @@ class Controller_Admin_Import {
       die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
     
-    echo(json_encode(array('errors' => $errors)));
-      
-    die(); // have to do this in WP otherwise a zero will be appended to all responses
-  }
-  
   public function action_save_all()
   {
     
