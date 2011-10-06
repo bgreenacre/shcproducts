@@ -1,4 +1,4 @@
-<?php defined('SHCP_PATH') OR die('No direct script access.');
+ <?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
  * Sears Holding Company Products Wordpress plugin.
  *
@@ -198,50 +198,49 @@ class Controller_Admin_Import {
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
-  public function action_save()
-  {
-    $product_count = count($_POST['import_single']);
-
-    $keys = array_keys($_POST);
-    unset($keys[array_search('import_all', $keys)]);
-
-    for($i=0; $i<$product_count; $i++)
+    public function action_save()
     {
-      $check = new Model_Products();
-      $shcproduct = new Model_Products();
-      $data = array();
+      $product_count = count($_POST['import_single']);
+      
+      $keys = array_keys($_POST);
+      unset($keys[array_search('import_all', $keys)]);
 
-      foreach($keys as $field_name)
+      for($i=0; $i<$product_count; $i++)
       {
-        $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+        $check = new Model_Products();
+        $shcproduct = new Model_Products();
+        $data = array();
+
+        foreach($keys as $field_name)
+        {
+          $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+        }
+        
+        if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
+        {
+            $data['detail'] = Library_Sears_Api::factory('product')
+              ->get($data['partnumber'])
+              ->load();
+            
+            $shcproduct->values($data);
+
+            if ($shcproduct->check())
+            {
+              $shcproduct->save();
+            }
+            else
+            { 
+            }
+            
+            $errors[] = $shcproduct->errors();
+        }
       }
       
-      if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
-      {
-          $data['detail'] = Library_Sears_Api::factory('product')
-            ->get($data['partnumber'])
-            ->param('showSpec', 'true')
-            ->load();
-          
-          $shcproduct->values($data);
-
-          if ($shcproduct->check())
-          {
-            $shcproduct->save();
-          }
-          else
-          { 
-          }
-          
-          $errors[] = $shcproduct->errors();
-      }
+      echo(json_encode(array('errors' => $errors)));
+        
+      die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
     
-    echo(json_encode(array('errors' => $errors)));
-      
-    die(); // have to do this in WP otherwise a zero will be appended to all responses
-  }
-  
   public function action_save_all()
   {
     
