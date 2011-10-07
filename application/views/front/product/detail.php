@@ -20,7 +20,27 @@
     <span class="price-savings">A savings of <?php echo Helper_Price::currency($product->cutprice - $product->detail->saleprice); ?></span>
 <?php endif; ?>
   </p>
-  <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart" rel="#shcp-cartconfirm" data-post_id="<?php echo $product->ID; ?>">Add To Cart</a>  
-  <div class="shcp-item-longdesc"><?php echo htmlspecialchars_decode($product->detail->longdescription); ?></div>
-<div id="shcp-cartconfirm" class="shcp_modal"></div>
+  <a href="<?php echo bloginfo('url').'/cart/add?catentryid='.$product->get_catentryid(); ?>" class="addtocart" rel="#shcp-cartconfirm" data-post_id="<?php echo $product->ID; ?>">Add To Cart</a>    
+  <?php if ($product->detail->specifications->specification): ?>
+  <div class="shcp-item-details">
+  <?php endif; ?>  
+    <div class="shcp-item-longdesc"><?php echo str_replace('http//', 'http://', htmlspecialchars_decode(html_entity_decode($product->detail->longdescription))); ?></div>      
+  <?php if ($product->detail->specifications->specification): ?>
+    <div class="shcp-item-specs">
+      <ul>
+        <?php foreach($product->detail->specifications->specification[1] as $specification): ?>
+        <li><?php echo $specification->label; ?>
+          <ul>
+          <?php foreach ($specification->attribute[1] as $attribute): ?>
+            <li class="<?php echo (($i % 2) ? "odd" : "even"); ?>"><span class="description"><?php echo preg_replace("/([a-hj-z\)])([A-Z0-9])/", '$1 :</span> <span class="value">$2', html_entity_decode($attribute->value)); ?></span></li>
+            <?php $i++; ?>
+          <?php endforeach;?>
+          </ul>
+        </li>
+        <?php endforeach; ?>  
+      </ul>  
+    </div>
+  </div>    
+  <?php endif; ?>    
+  <div id="shcp-cartconfirm" class="shcp_modal"></div>
 </div>

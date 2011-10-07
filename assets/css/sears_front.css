@@ -374,6 +374,50 @@ margin: 0 0 0 40px;
   padding: 20px 0 0 0;
   clear: both;
 }
+
+.shcp-item-specs {
+  float: left;
+  width: 50%;
+  padding-top: 20px;
+}
+
+.shcp-item-specs li {
+  line-height: 20px;
+  text-transform: uppercase;
+  list-style-type: none;
+  clear: left;
+  overflow: auto;
+}
+
+.shcp-item-specs li.even {
+  background-color: #DBECFF;
+}
+
+.shcp-item-specs li.odd {
+  background-color: #fff;
+}
+
+.shcp-item-specs ul ul li {
+  text-align: center;
+  text-transform: none;
+}
+
+.shcp-item-specs li span.description {
+  display: block;
+  float: left;
+  width: 50%;
+  text-align: right;
+  font-weight: bold;
+}
+
+.shcp-item-specs li span.value {
+  display: block;
+  float: left;
+  width: 48%;
+  text-align: left;
+  padding-left: 2%;
+}
+
 /** Cart **/
 .cart input.shcp-quantity {
 width: 25px;
