@@ -1,4 +1,4 @@
- <?php defined('SHCP_PATH') OR die('No direct script access.');
+<?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
  * Sears Holding Company Products Wordpress plugin.
  *
@@ -126,7 +126,7 @@ class Controller_Admin_Import {
         'show_count'    => 1,
         'hide_empty'    => 0,
         'hierarchical'  => 1,
-        'name'          => 'shcp_category[]',
+        'name'          => 'shcp_category',
         'id'            => 'shcp_category'
       )
     );
@@ -205,49 +205,49 @@ class Controller_Admin_Import {
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
-    public function action_save()
+  public function action_save()
     {
       $product_count = count($_POST['import_single']);
+
+      $shcp_category = $_POST['shcp_category'];
 
       $keys = array_keys($_POST);
       unset($keys[array_search('import_all', $keys)]);
 
       for($i=0; $i<$product_count; $i++)
       {
-      $check = new Model_Products();
-      $shcproduct = new Model_Products();
-      $data = array();
+        $check = new Model_Products();
+        $shcproduct = new Model_Products();
+        $data = array();
 
-      foreach($keys as $field_name)
-      {
-        if($field_name != 'schp_category') { // categories are not saved the same as other metadata
-          $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+        foreach($keys as $field_name)
+        {
+          if($field_name != 'shcp_category') {
+            $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+          }
         }
-      }
       
-      if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
-      {
+        if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
+        {
           $data['detail'] = Library_Sears_Api::factory('product')
             ->get($data['partnumber'])
             ->param('showSpec', 'true')
             ->load();
-          
+        
           $shcproduct->values($data);
 
           if ($shcproduct->check())
           {
             $shcproduct->save();
-            
-            
-            error_log($shcproduct->post_title . " | " . $shcproduct->ID . " || "); // wtf?
+            wp_set_post_categories($shcproduct->ID, array($shcp_category));
           }
           else
           { 
           }
-          
+        
           $errors[] = $shcproduct->errors();
+        }
       }
-    }
     
     echo(json_encode(array('errors' => $errors)));
       
@@ -308,6 +308,7 @@ class Controller_Admin_Import {
           if ($shcproduct->check())
           {
             $shcproduct->save();
+            wp_set_post_categories($shcproduct->ID, array($data['assigned_category']));
           }
           else
           {
@@ -331,5 +332,4 @@ class Controller_Admin_Import {
   {
     add_submenu_page( 'edit.php?post_type=shcproduct', __('Import Products'), __('Import Products'), 'edit_posts', 'import', array(&$this, 'action_index'));
   }
-
 }
