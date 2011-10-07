@@ -1,4 +1,4 @@
- <?php defined('SHCP_PATH') OR die('No direct script access.');
+<?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
  * Sears Holding Company Products Wordpress plugin.
  *
@@ -116,15 +116,22 @@ class Controller_Admin_Import {
       $pagination['last']['message'] = 'Last &raquo;';
     }
 
-      $args = array(
-            'current_page'  => $current_page,
-            'product_count' => $product_count,
-            'method'          => $method,
-            'search_terms'  => $search_terms,
-            'pagination'    => $pagination
-            );
+    $args = array(
+      'current_page'  => $current_page,
+      'product_count' => $product_count,
+      'method'        => $method,
+      'search_terms'  => $search_terms,
+      'pagination'    => $pagination,
+      'dropdown_args' => array( //settings for category dropdown
+        'show_count'    => 1,
+        'hide_empty'    => 0,
+        'hierarchical'  => 1,
+        'name'          => 'shcp_category',
+        'id'            => 'shcp_category'
+      )
+    );
 
-      $data = array_merge($args, array('result' => $result));
+    $data = array_merge($args, array('result' => $result));
 
     $response = SHCP::view('admin/import/list', $data);
     
@@ -198,10 +205,12 @@ class Controller_Admin_Import {
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
-    public function action_save()
+  public function action_save()
     {
       $product_count = count($_POST['import_single']);
-      
+
+      $shcp_category = $_POST['shcp_category'];
+
       $keys = array_keys($_POST);
       unset($keys[array_search('import_all', $keys)]);
 
@@ -213,33 +222,37 @@ class Controller_Admin_Import {
 
         foreach($keys as $field_name)
         {
-          $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+          if($field_name != 'shcp_category') {
+            $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+          }
         }
-        
+      
         if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
         {
-            $data['detail'] = Library_Sears_Api::factory('product')
-              ->get($data['partnumber'])
-              ->load();
-            
-            $shcproduct->values($data);
+          $data['detail'] = Library_Sears_Api::factory('product')
+            ->get($data['partnumber'])
+            ->param('showSpec', 'true')
+            ->load();
+        
+          $shcproduct->values($data);
 
-            if ($shcproduct->check())
-            {
-              $shcproduct->save();
-            }
-            else
-            { 
-            }
-            
-            $errors[] = $shcproduct->errors();
+          if ($shcproduct->check())
+          {
+            $shcproduct->save();
+            wp_set_post_categories($shcproduct->ID, array($shcp_category));
+          }
+          else
+          { 
+          }
+        
+          $errors[] = $shcproduct->errors();
         }
       }
+    
+    echo(json_encode(array('errors' => $errors)));
       
-      echo(json_encode(array('errors' => $errors)));
-        
-      die(); // have to do this in WP otherwise a zero will be appended to all responses
-    }
+    die(); // have to do this in WP otherwise a zero will be appended to all responses          
+  }
     
   public function action_save_all()
   {
@@ -295,6 +308,7 @@ class Controller_Admin_Import {
           if ($shcproduct->check())
           {
             $shcproduct->save();
+            wp_set_post_categories($shcproduct->ID, array($data['assigned_category']));
           }
           else
           {
@@ -318,5 +332,4 @@ class Controller_Admin_Import {
   {
     add_submenu_page( 'edit.php?post_type=shcproduct', __('Import Products'), __('Import Products'), 'edit_posts', 'import', array(&$this, 'action_index'));
   }
-
 }

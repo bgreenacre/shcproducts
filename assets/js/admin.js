@@ -132,7 +132,7 @@ function import_callback() {
     // activate import all products button
   jQuery('#save_all_products').click(function(e) {
       e.preventDefault();
-      save_all_products(jQuery(this), jQuery('#keyword_form'), jQuery('#vertical_form'));
+      save_all_products(jQuery(this));
   });  
 
   // activate save_products button
@@ -188,10 +188,8 @@ function save_products() {
     url: shcp_ajax.ajaxurl+'?action=action_save',
     data: data,
     success: function(response) {
-      
       for(var i in items) {
         row = jQuery("#row_" + items[i]);
-        
         var show_error = false;
         var show_error_text = '';
         
@@ -232,6 +230,7 @@ function save_all_products(el) {
   var vertical_terms    = jQuery("#search_terms_vertical").val();
   var category_terms    = jQuery("#search_categories option:selected").val();
   var subcategory_terms = jQuery("#search_subcategories option:selected").val();
+  var assigned_category = jQuery('#shcp_import_form option:selected').val();
 
   keyword_terms         = keyword_terms != "Enter keywords" ? keyword_terms : '';
   vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
@@ -244,8 +243,11 @@ function save_all_products(el) {
     "keyword_terms"     : keyword_terms,
     "vertical_terms"    : vertical_terms,
     "category_terms"    : category_terms,
-    "subcategory_terms" : subcategory_terms
+    "subcategory_terms" : subcategory_terms,
+    "assigned_category" : assigned_category
   };
+  
+  console.log(assigned_category);
   
   jQuery.ajax({
     type: 'post',
