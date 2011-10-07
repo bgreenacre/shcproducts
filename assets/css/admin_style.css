@@ -36,7 +36,7 @@ min-height: 50px;
 }
 
 .shcp_form_fields {
-  margin-left: 120px;
+  margin-left: 125px;
   overflow: auto;
   margin-bottom: 20px;
 }
@@ -67,6 +67,10 @@ min-height: 50px;
 
 #search_term_subcategory {
   float: left;
+}
+
+.shcp_import_all_button {
+  margin: 10px 0;
 }
 
 /*Import Products Table*/
