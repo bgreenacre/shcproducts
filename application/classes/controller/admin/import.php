@@ -116,15 +116,22 @@ class Controller_Admin_Import {
       $pagination['last']['message'] = 'Last &raquo;';
     }
 
-      $args = array(
-            'current_page'  => $current_page,
-            'product_count' => $product_count,
-            'method'          => $method,
-            'search_terms'  => $search_terms,
-            'pagination'    => $pagination
-            );
+    $args = array(
+      'current_page'  => $current_page,
+      'product_count' => $product_count,
+      'method'        => $method,
+      'search_terms'  => $search_terms,
+      'pagination'    => $pagination,
+      'dropdown_args' => array( //settings for category dropdown
+        'show_count'    => 1,
+        'hide_empty'    => 0,
+        'hierarchical'  => 1,
+        'name'          => 'shcp_category[]',
+        'id'            => 'shcp_category'
+      )
+    );
 
-      $data = array_merge($args, array('result' => $result));
+    $data = array_merge($args, array('result' => $result));
 
     $response = SHCP::view('admin/import/list', $data);
     
@@ -213,7 +220,9 @@ class Controller_Admin_Import {
 
       foreach($keys as $field_name)
       {
-        $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+        if($field_name != 'schp_category') { // categories are not saved the same as other metadata
+          $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+        }
       }
       
       if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
@@ -228,6 +237,9 @@ class Controller_Admin_Import {
           if ($shcproduct->check())
           {
             $shcproduct->save();
+            
+            
+            error_log($shcproduct->post_title . " | " . $shcproduct->ID . " || "); // wtf?
           }
           else
           { 
