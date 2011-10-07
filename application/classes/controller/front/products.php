@@ -259,5 +259,4 @@ class Controller_Front_Products {
 
         $this->products->param($attrs);
     }
-
 }

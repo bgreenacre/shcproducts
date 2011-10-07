@@ -475,7 +475,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             $this->param($params);
             return $this->build_url();
         }
-
+        
         return $this->_url;
     }
 
@@ -501,7 +501,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             $url .= rtrim($qs, '&');
             unset($qs);
         }
-
+        
         return $url;
     }
 

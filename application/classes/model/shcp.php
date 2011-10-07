@@ -97,6 +97,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @var bool
      */
     protected $_executed;
+    
+    /**
+     * Tracks the current page of posts.
+     * 
+     * @var int
+     */
+    protected $_current_page;
 
     /**
      * Contents from the request made. Used as the iterator.
@@ -419,7 +426,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             }
         }
 
-        if ($post['ID'] > 0)
+        if (isset($post['ID']) && $post['ID'] > 0)
         {
             $id = wp_update_post($post);
         }
@@ -677,7 +684,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             }
             else
             {
-                $this->param('cat_name', $slugs[0]);
+                $this->param('category_name', $slugs[0]);
             }
         }
 
@@ -862,7 +869,14 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         $this->load();
 
-        return $this->_max_num_pages;
+        return (int)$this->_max_num_pages;
+    }
+
+    public function posts_per_page()
+    {
+        $this->load();
+
+        return (int)$this->_posts_per_page;
     }
 
     /**
@@ -875,7 +889,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         $this->load();
 
-        return $this->_posts_per_page;
+        return (int)$this->_current_page;
     }
 
     /**
