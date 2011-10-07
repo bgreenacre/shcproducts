@@ -1,4 +1,4 @@
-<?php defined('SHCP_PATH') OR die('No direct script access.');
+ <?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
  * Sears Holding Company Products Wordpress plugin.
  *
@@ -205,15 +205,15 @@ class Controller_Admin_Import {
     die(); // have to do this in WP otherwise a zero will be appended to all responses
   }
 
-  public function action_save()
-  {
-    $product_count = count($_POST['import_single']);
-
-    $keys = array_keys($_POST);
-    unset($keys[array_search('import_all', $keys)]);
-
-    for($i=0; $i<$product_count; $i++)
+    public function action_save()
     {
+      $product_count = count($_POST['import_single']);
+
+      $keys = array_keys($_POST);
+      unset($keys[array_search('import_all', $keys)]);
+
+      for($i=0; $i<$product_count; $i++)
+      {
       $check = new Model_Products();
       $shcproduct = new Model_Products();
       $data = array();
@@ -251,9 +251,9 @@ class Controller_Admin_Import {
     
     echo(json_encode(array('errors' => $errors)));
       
-    die(); // have to do this in WP otherwise a zero will be appended to all responses
+    die(); // have to do this in WP otherwise a zero will be appended to all responses          
   }
-  
+    
   public function action_save_all()
   {
     
