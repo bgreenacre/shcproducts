@@ -10,6 +10,9 @@
 </div>
 
 <form action="" id="shcp_import_form" method="post">
+<div class="shcp_assign_category">
+  <label class="shcp_form_labels" for="shcp_category">Assign category:</label><?php wp_dropdown_categories($dropdown_args); ?>
+</div>  
 <div class="shcp_import_all_button">
   <input type='submit' value='Import all <?php echo $product_count; ?> Products' id='save_all_products' data-product-count="<?php echo $product_count; ?>" data-method="<?php echo $method; ?>" />
 </div>  
