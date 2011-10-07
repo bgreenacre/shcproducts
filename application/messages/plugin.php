@@ -18,16 +18,16 @@ return array(
 	'options'	=> array(
 		'title'	=> 'SHC Product/Cart API Settings',
 		'submit'	=> 'Save Settings',
-		'api_key'	=> array(
+		'apikey'	=> array(
 			'label'	=> 'Product API Key'
 			),
 		'store'	=> array(
 			'label'	=> 'Choose Store'
 			),
-		'app_id'	=> array(
+		'appid'	=> array(
 			'label'	=> 'Cart App ID'
 			),
-		'auth_id'	=> array(
+		'authid'	=> array(
 			'label'	=> 'Cart Auth ID'
 			),
 		'widgets'	=> array(
