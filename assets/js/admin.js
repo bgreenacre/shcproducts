@@ -246,9 +246,7 @@ function save_all_products(el) {
     "subcategory_terms" : subcategory_terms,
     "assigned_category" : assigned_category
   };
-  
-  console.log(assigned_category);
-  
+    
   jQuery.ajax({
     type: 'post',
     dataType: 'json',
