@@ -1,4 +1,4 @@
- <?php defined('SHCP_PATH') OR die('No direct script access.');
+<?php defined('SHCP_PATH') OR die('No direct script access.');
 /**
  * Sears Holding Company Products Wordpress plugin.
  *
