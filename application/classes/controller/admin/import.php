@@ -154,6 +154,7 @@ class Controller_Admin_Import {
         die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
 
+
     /**
      * action_categories - Displays a list of categories related to the selected vertical
      *
@@ -219,16 +220,17 @@ class Controller_Admin_Import {
         die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
 
+
     /**
      * action_save - Save all the selected products in the list
      *
      * @access  public
      * @return  void
      */
+
     public function action_save()
     {
         $product_count = count($_POST['import_single']);
-
         $shcp_category = $_POST['shcp_category'];
 
         $keys = array_keys($_POST);
