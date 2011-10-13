@@ -28,10 +28,12 @@ jQuery(document).ready(function($) {
 
     // attach loading div functionality
     $("#ajax_loading").bind("ajaxSend", function(){
-      $(this).show();
+        $('#ajax_loading_overlay').show();
+        $(this).show();
     })
     .bind("ajaxComplete", function(){
-      $(this).hide();
+        $('#ajax_loading_overlay').hide();
+        $(this).hide();
     });
 
 });
@@ -173,14 +175,17 @@ function save_products() {
 
  var import_table = jQuery("#shcp_import_table");
  var items = [];
-
+ var data;
+ 
+ data = jQuery('#shcp_category').serialize();
+ 
  import_table.find('tbody tr').each(function(index) {
     if(jQuery(this).find("input[name='import_single[]']").is(":checked")) {
       items.push(index);
+      // don't send entire form, only values from those rows which are selected
+      data += "&" + jQuery('#row_' + index).find('input').serialize();
     }
   });
-
-  data = jQuery('#shcp_import_form').serialize();
 
   jQuery.ajax({
     type: 'post',
