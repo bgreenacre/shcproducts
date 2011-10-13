@@ -23,6 +23,8 @@
       <div id="shcp_subcategories"></div>
     </div>  
   </form>  
-  <div id="shcp_import_list"></div>  
-  <div id="ajax_loading"></div>
+  <div id="shcp_import_list"></div>
+  <div id="ajax_loading_overlay">
+    <div id="ajax_loading"></div>
+  </div>
 </div>
