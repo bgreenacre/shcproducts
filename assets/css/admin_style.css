@@ -36,7 +36,7 @@ min-height: 50px;
 }
 
 .shcp_form_fields {
-  margin-left: 120px;
+  margin-left: 125px;
   overflow: auto;
   margin-bottom: 20px;
 }
@@ -67,6 +67,10 @@ min-height: 50px;
 
 #search_term_subcategory {
   float: left;
+}
+
+.shcp_import_all_button {
+  margin: 10px 0;
 }
 
 /*Import Products Table*/
@@ -123,14 +127,31 @@ span.current_page {
   position: relative;
 }
 
+.shcp_wrap #ajax_loading_overlay {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    -moz-opacity: 0.50;
+    filter: alpha(opacity=50);
+    opacity: 0.50;    
+}
+
 .shcp_wrap #ajax_loading {
   background-image: url("/wp-content/plugins/shcproducts/assets/images/ajax-loader.gif");
-  height: 16px;
-  width: 16px;
+  height: 100px;
+  width: 100px;
   display: none;
   position: absolute;
-  top: 25px;
-  left: 200px;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -50px;
 }
 
 /*-------------------------------*/
