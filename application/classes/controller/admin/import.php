@@ -154,6 +154,7 @@ class Controller_Admin_Import {
         die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
 
+
     /**
      * action_categories - Displays a list of categories related to the selected vertical
      *
@@ -191,11 +192,16 @@ class Controller_Admin_Import {
         $vertical_terms = isset($_POST['vertical_terms']) ? $_POST['vertical_terms']  : '';
         $search_terms   = isset($_POST['search_terms'])   ? $_POST['search_terms']    : '';
 
-        // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+        /**
+        * remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+        */
         $search_terms = trim(substr($search_terms, 0, strpos($search_terms, '(')));
 
-        // somewhere single quotes are being escaped with a backslash.  We need to remove the backslash but not the single quote
-        // for the API call to work correctly
+        /**
+        * somewhere single quotes are being escaped with a backslash.  
+        * We need to remove the backslash but not the single quote
+        * for the API call to work correctly
+        */
         $search_terms = str_replace('\\', '', $search_terms);    
 
         $result = Library_Sears_Api::factory('search')
@@ -214,16 +220,17 @@ class Controller_Admin_Import {
         die(); // have to do this in WP otherwise a zero will be appended to all responses
     }
 
+
     /**
      * action_save - Save all the selected products in the list
      *
      * @access  public
      * @return  void
      */
+
     public function action_save()
     {
         $product_count = count($_POST['import_single']);
-
         $shcp_category = $_POST['shcp_category'];
 
         $keys = array_keys($_POST);
@@ -234,13 +241,14 @@ class Controller_Admin_Import {
             $check = new Model_Products();
             $shcproduct = new Model_Products();
             $data = array();
+            $categories = array();
 
             foreach($keys as $field_name)
             {
                 if($field_name != 'shcp_category') {
                     $data[$field_name] = SHCP::get($_POST[$field_name], $i);
                 }
-            }
+            } 
 
             if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
             {
@@ -254,7 +262,19 @@ class Controller_Admin_Import {
                 if ($shcproduct->check())
                 {
                     $shcproduct->save();
-                    wp_set_post_categories($shcproduct->ID, array($shcp_category));
+                    
+                    $categories[] = $shcp_category;
+
+                    /**
+                    * if there is a category that matches the brand name (slug) add that as a category for the product
+                    */                    
+                    $brand = get_category_by_slug(str_replace(' ', '-', strtolower($data['detail']->brandname)));
+                    
+                    if($brand) {
+                        $categories[] = $brand->term_id;
+                    }           
+
+                    wp_set_post_categories($shcproduct->ID, $categories);                    
                 }
                 else
                 { 
@@ -293,12 +313,17 @@ class Controller_Admin_Import {
         }
         else
         {
-            // remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+            /**
+            * remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+            */
             $data['category_terms']     = trim(substr($data['category_terms'], 0, strpos($data['category_terms'], '(')));
             $data['subcategory_terms']  = trim(substr($data['subcategory_terms'], 0, strpos($data['subcategory_terms'], '(')));
 
-            // somewhere single quotes are being escaped with a backslash.  We need to remove the backslash but not the single quote
-            // for the API call to work correctly
+            /**
+            * somewhere single quotes are being escaped with a backslash.  
+            * We need to remove the backslash but not the single quote
+            * for the API call to work correctly
+            */
             $data['category_terms']     = str_replace('\\', '', $data['category_terms']); 
             $data['subcategory_terms']  = str_replace('\\', '', $data['subcategory_terms']);
 
@@ -313,6 +338,7 @@ class Controller_Admin_Import {
             $check = new Model_Products();
             $shcproduct = new Model_Products();
             $product_data = array();
+            $categories = array();
 
             $product_data['post_title']     = $product->name;
             $product_data['catentryid']     = $product->catentryid;
@@ -329,14 +355,26 @@ class Controller_Admin_Import {
                 $product_data['detail'] = Library_Sears_Api::factory('product')
                     ->get($product_data['partnumber'])
                     ->param('showSpec', 'true')
-                    ->load();
+                    ->load(); 
 
                 $shcproduct->values($product_data);
 
                 if ($shcproduct->check())
                 {
                     $shcproduct->save();
-                    wp_set_post_categories($shcproduct->ID, array($data['assigned_category']));
+                    
+                    $categories[] = $data['assigned_category'];
+
+                    /**
+                    * if there is a category that matches the brand name (slug) add that as a category for the product
+                    */
+                    $brand = get_category_by_slug(str_replace(' ', '-', strtolower($product_data['detail']->brandname)));
+                    
+                    if($brand) {
+                        $categories[] = $brand->term_id;
+                    }           
+
+                    wp_set_post_categories($shcproduct->ID, $categories);
                 }
                 else
                 {
