@@ -35,6 +35,20 @@ jQuery(document).ready(function($) {
         $('#ajax_loading_overlay').hide();
         $(this).hide();
     });
+    
+    // remove default search text on focus, put it back on blur
+    $('.search_terms').live({
+        focus: function() {
+            if($(this).val() == 'Enter search terms') {
+                $(this).val('');
+            }
+        },
+        blur: function() {
+            if($(this).val() == '') {
+                $(this).val('Enter search terms');
+            }
+        }
+    });
 
 });
 
