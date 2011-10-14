@@ -143,7 +143,7 @@ span.current_page {
 }
 
 .shcp_wrap #ajax_loading {
-  background-image: url("/wp-content/plugins/shcproducts/assets/images/ajax-loader.gif");
+  background-image: url("../images/ajax-loader.gif");
   height: 100px;
   width: 100px;
   display: none;
