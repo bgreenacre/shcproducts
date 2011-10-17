@@ -8,7 +8,7 @@ return array(
 		),
 	'options'	=> array(
 		'api_key'	=> array(
-			'name'		=> 'api_key',
+			'name'		=> 'apikey',
 			'default'	=> 'api_key_default_value'
 			),
 		'store'	=> array(
@@ -16,11 +16,11 @@ return array(
 			'default'	=> 'Sears'
 			),
 		'app_id'	=> array(
-			'name'		=> 'app_id',
+			'name'		=> 'appid',
 			'default'	=> 'app_id_default_value'
 			),
 		'auth_id'	=> array(
-			'name'		=> 'auth_id',
+			'name'		=> 'authid',
 			'default'	=> 'auth_id_default_value'
 			),
         'widgets'   => array(
