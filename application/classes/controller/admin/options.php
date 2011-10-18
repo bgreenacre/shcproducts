@@ -64,6 +64,8 @@ class Controller_Admin_Options {
      */
     public $widgets_field_name;
 
+    public $cart_field_name;
+
     /**
      * Initialize the class. Add menu and admin wordpress init.
      *
@@ -78,6 +80,7 @@ class Controller_Admin_Options {
         $this->app_id_field_name = SHCP::config('plugin.options.app_id.name');
         $this->auth_id_field_name = SHCP::config('plugin.options.auth_id.name');
         $this->widgets_field_name = SHCP::config('plugin.options.widgets.name');
+        $this->cart_field_name = SHCP::config('plugin.options.cart.name');
         add_action('admin_menu', array(&$this, 'menu'));
         add_action('admin_init', array(&$this, 'init'));
     }
@@ -101,6 +104,7 @@ class Controller_Admin_Options {
         add_settings_field($this->app_id_field_name, '', array(&$this, 'action_app_id_field'), __CLASS__, 'action_cart_section');
         add_settings_field($this->auth_id_field_name, '', array(&$this, 'action_auth_id_field'), __CLASS__, 'action_cart_section');
         add_settings_field($this->widgets_field_name, '', array(&$this, 'action_widgets_field'), __CLASS__, 'action_widgets_section');
+        add_settings_field($this->cart_field_name, '', array(&$this, 'action_cart_field'), __CLASS__, 'action_cart_section');
     }
 
     /**
@@ -258,6 +262,18 @@ class Controller_Admin_Options {
             );
 
         echo SHCP::view('admin/options/fields/widgets', $data);
+    }
+
+    public function action_cart_field()
+    {
+        $data = array(
+            'id'    => $this->cart_field_name,
+            'name'  => SHCP::prefix('options['.$this->cart_field_name.']'),
+            'value' => SHCP::get_option($this->cart_field_name, SHCP::config('plugin.options.cart.default')),
+            'lang'  => SHCP::lang('plugin', 'options.'.$this->cart_field_name)
+        );
+
+        echo SHCP::view('admin/options/fields/cart', $data);
     }
 
 }
