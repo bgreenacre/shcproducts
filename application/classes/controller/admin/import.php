@@ -297,12 +297,14 @@ class Controller_Admin_Import {
      */    
     public function action_save_all()
     {
-
+        
         foreach($_POST as $key => $value) {
             $data[$key] = $value;
+            error_log($key . " | " . $value);
         }
 
         $data['product_count'] = $data['product_count'] > 1000 ? 1000 : $data['product_count']; // api maxes out at 1000 items
+        error_log("Product Count: " . $data['product_count']);
 
         if($data['method'] == 'keyword')
         {
@@ -310,9 +312,11 @@ class Controller_Admin_Import {
                 ->$method($data['keyword_terms'])
                 ->limit(0, $data['product_count'])
                 ->load();
+            error_log("Keyword Search");    
         }
         else
         {
+            error_log("Subcategory Search");
             /**
             * remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
             */
@@ -345,13 +349,14 @@ class Controller_Admin_Import {
             $product_data['cutprice']       = $product->cutprice;
             $product_data['displayprice']   = $product->displayprice;
             $product_data['imageid']        = $product->imageid;
-            $product_data['import_single']  = $product->import_single;
             $product_data['numreview']      = $product->numreview;
             $product_data['partnumber']     = $product->partnumber;
             $product_data['rating']         = $product->rating;
 
             if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
             { 
+                error_log("New Product");
+                
                 $product_data['detail'] = Library_Sears_Api::factory('product')
                     ->get($product_data['partnumber'])
                     ->param('showSpec', 'true')
@@ -361,6 +366,9 @@ class Controller_Admin_Import {
 
                 if ($shcproduct->check())
                 {
+                    error_log("Saving: " . $product_data['post_title']);
+                    error_log("To Category: " . $data['assigned_category']);
+                    
                     $shcproduct->save();
                     
                     $categories[] = $data['assigned_category'];
@@ -378,9 +386,17 @@ class Controller_Admin_Import {
                 }
                 else
                 {
+                    error_log("Product Already Saved");
                 }
 
                 $errors[] = $shcproduct->errors();
+                foreach($errors as $error) {
+                    foreach($error as $key => $value) {
+                        error_log("Error: " . $key . " | " . $value);
+                    }
+                }
+            } else {
+                error_log("Existing Product");
             }
         }
 
