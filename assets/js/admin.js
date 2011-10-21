@@ -35,6 +35,20 @@ jQuery(document).ready(function($) {
         $('#ajax_loading_overlay').hide();
         $(this).hide();
     });
+    
+    // remove default search text on focus, put it back on blur
+    $('.search_terms').live({
+        focus: function() {
+            if($(this).val() == 'Enter search terms') {
+                $(this).val('');
+            }
+        },
+        blur: function() {
+            if($(this).val() == '') {
+                $(this).val('Enter search terms');
+            }
+        }
+    });
 
 });
 
@@ -178,6 +192,7 @@ function save_products() {
  var data;
  
  data = jQuery('#shcp_category').serialize();
+ data += '&action=action_save';
  
  import_table.find('tbody tr').each(function(index) {
     if(jQuery(this).find("input[name='import_single[]']").is(":checked")) {
@@ -190,7 +205,7 @@ function save_products() {
   jQuery.ajax({
     type: 'post',
     dataType: 'json',
-    url: shcp_ajax.ajaxurl+'?action=action_save',
+    url: shcp_ajax.ajaxurl,
     data: data,
     success: function(response) {
       for(var i in items) {
@@ -200,12 +215,14 @@ function save_products() {
         
         var partnumber = row.find('input[name="partnumber[]"]').val();
         
-        jQuery(response.errors).each(function() {
-          if(typeof(this.detail) != 'undefined' && this.detail.partnumber == partnumber) {
-            show_error_text = this.detail.empty;
-            show_error = true;
-          }
-        });
+        if(response) {
+            jQuery(response.errors).each(function() {
+              if(typeof(this.detail) != 'undefined' && this.detail.partnumber == partnumber) {
+                show_error_text = this.detail.empty;
+                show_error = true;
+              }
+            });
+        }
         
         if(show_error == true) {
           row.css({ background : '#FCCFD4' }).addClass('disable');
@@ -222,6 +239,10 @@ function save_products() {
       }
       
       import_callback(this);
+    },
+    error:function (xhr, ajaxOptions, thrownError){
+        alert(xhr.status);
+        alert(thrownError);
     }
   });
 }
@@ -243,7 +264,8 @@ function save_all_products(el) {
   subcategory_terms     = subcategory_terms != "Choose Subategory" ? subcategory_terms : '';
   
   data = {
-    "method": method,
+    "action"            : 'action_save_all',
+    "method"            : method,
     "product_count"     : product_count,
     "keyword_terms"     : keyword_terms,
     "vertical_terms"    : vertical_terms,
@@ -254,19 +276,25 @@ function save_all_products(el) {
     
   jQuery.ajax({
     type: 'post',
-    dataType: 'json',
-    url: shcp_ajax.ajaxurl+'?action=action_save_all',
+    url: shcp_ajax.ajaxurl,
     data: data,
+    dataType: 'json',
     success: function(response) {
       var response_text = '';
-      jQuery(response.errors).each(function() {
-        if(typeof(this.detail) != 'undefined') {
-          response_text += '<p class="error">' + this.detail + '</p>';
-        }
-      });      
+      if(response) {
+          jQuery(response.errors).each(function() {
+            if(typeof(this.detail) != 'undefined') {
+              response_text += '<p class="error">' + this.detail + '</p>';
+            }
+          });      
+      }
       response_text += '<p>All products imported</p>';
       jQuery('#shcp_import_list').html(response_text);
       import_callback(this);
+    },
+    error:function (xhr, ajaxOptions, thrownError){
+        alert(xhr.status);
+        alert(thrownError);
     }
   });
 }

@@ -62,7 +62,7 @@ class Controller_Admin_Import {
         $next_page      = $current_page + 1;
         $previous_page  = $current_page - 1;
         $start_index    = ($current_page - 1) * $num_per_page + 1;
-        $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page;
+        $end_index      = (($start_index + $num_per_page) > $product_count) && ($product_count > 0) ? $product_count : $start_index + $num_per_page - 1;
 
         if($method == 'keyword')
         {
@@ -230,8 +230,8 @@ class Controller_Admin_Import {
 
     public function action_save()
     {
-        $product_count = count($_POST['import_single']);
-        $shcp_category = $_POST['shcp_category'];
+        $product_count = count(SHCP::get($_POST, 'import_single'));
+        $shcp_category = SHCP::get($_POST, 'shcp_category');
 
         $keys = array_keys($_POST);
         unset($keys[array_search('import_all', $keys)]);
@@ -246,7 +246,7 @@ class Controller_Admin_Import {
             foreach($keys as $field_name)
             {
                 if($field_name != 'shcp_category') {
-                    $data[$field_name] = SHCP::get($_POST[$field_name], $i);
+                    $data[$field_name] = SHCP::get($_POST, $field_name);
                 }
             } 
 
@@ -297,41 +297,47 @@ class Controller_Admin_Import {
      */    
     public function action_save_all()
     {
+        $data = array();
 
         foreach($_POST as $key => $value) {
             $data[$key] = $value;
+            error_log($key . " | " . $value);
         }
 
-        $data['product_count'] = $data['product_count'] > 1000 ? 1000 : $data['product_count']; // api maxes out at 1000 items
+        $data['product_count'] = SHCP::get($data, 'product_count') > 1000 ? 1000 : SHCP::get($data, 'product_count'); // api maxes out at 1000 items
+        error_log("Product Count: " . $data['product_count']);
 
-        if($data['method'] == 'keyword')
+        if(SHCP::get($data, 'method') == 'keyword')
         {
             $result = Library_Sears_Api::factory('search')
-                ->$method($data['keyword_terms'])
-                ->limit(0, $data['product_count'])
+                ->$method(SHCP::get($data, 'keyword_terms'))
+                ->limit(0, SHCP::get($data, 'product_count'))
                 ->load();
+            error_log("Keyword Search");    
         }
         else
         {
+            error_log("Subcategory Search");
             /**
             * remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
             */
-            $data['category_terms']     = trim(substr($data['category_terms'], 0, strpos($data['category_terms'], '(')));
-            $data['subcategory_terms']  = trim(substr($data['subcategory_terms'], 0, strpos($data['subcategory_terms'], '(')));
-
+            $data['category_terms']     = trim(substr(SHCP::get($data, 'category_terms'), 0, strpos(SHCP::get($data, 'category_terms'), '(')));
+            $data['subcategory_terms']  = trim(substr(SHCP::get($data, 'subcategory_terms'), 0, strpos(SHCP::get($data, 'subcategory_terms'), '(')));
+            
             /**
             * somewhere single quotes are being escaped with a backslash.  
             * We need to remove the backslash but not the single quote
             * for the API call to work correctly
             */
-            $data['category_terms']     = str_replace('\\', '', $data['category_terms']); 
-            $data['subcategory_terms']  = str_replace('\\', '', $data['subcategory_terms']);
+            $data['category_terms']     = str_replace('\\', '', SHCP::get($data, 'category_terms')); 
+            $data['subcategory_terms']  = str_replace('\\', '', SHCP::get($data, 'subcategory_terms'));
 
             $result = Library_Sears_Api::factory('search')
-                ->category(ucwords($data['vertical_terms']), ucwords($data['category_terms']), ucwords($data['subcategory_terms']))
+                ->category(ucwords(SHCP::get($data, 'vertical_terms')), ucwords(SHCP::get($data, 'category_terms')), ucwords(SHCP::get($data, 'subcategory_terms')))
                 ->limit(0, $data['product_count'])
                 ->load();
         }    
+        var_dump($result);
 
         foreach($result as $product)
         {
@@ -340,18 +346,19 @@ class Controller_Admin_Import {
             $product_data = array();
             $categories = array();
 
-            $product_data['post_title']     = $product->name;
-            $product_data['catentryid']     = $product->catentryid;
-            $product_data['cutprice']       = $product->cutprice;
-            $product_data['displayprice']   = $product->displayprice;
-            $product_data['imageid']        = $product->imageid;
-            $product_data['import_single']  = $product->import_single;
-            $product_data['numreview']      = $product->numreview;
-            $product_data['partnumber']     = $product->partnumber;
-            $product_data['rating']         = $product->rating;
+            $product_data['post_title']     = isset($product->name)         ? $product->name            : '';
+            $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
+            $product_data['cutprice']       = isset($product->cutprice)     ? $product->cutprice        : '';
+            $product_data['displayprice']   = isset($product->displayprice) ? $product->displayprice    : '';
+            $product_data['imageid']        = isset($product->imageid)      ? $product->imageid         : '';
+            $product_data['numreview']      = isset($product->numreview)    ? $product->numreview       : '';
+            $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
+            $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
 
             if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
             { 
+                error_log("New Product");
+                
                 $product_data['detail'] = Library_Sears_Api::factory('product')
                     ->get($product_data['partnumber'])
                     ->param('showSpec', 'true')
@@ -361,16 +368,29 @@ class Controller_Admin_Import {
 
                 if ($shcproduct->check())
                 {
+                    error_log("Saving: " . $product_data['post_title']);
+                    error_log("To Category: " . $data['assigned_category']);
+                    
                     $shcproduct->save();
                     
-                    $categories[] = $data['assigned_category'];
+                    $categories[] = SHCP::get($data, 'assigned_category', 1);
 
+                    error_log("Assigned Category: " . $categories[0]);
                     /**
                     * if there is a category that matches the brand name (slug) add that as a category for the product
                     */
-                    $brand = get_category_by_slug(str_replace(' ', '-', strtolower($product_data['detail']->brandname)));
+                    $product_detail = SHCP::get($product_data, 'detail');
                     
-                    if($brand) {
+                    $brand_name = isset($product_detail) ? $product_detail->brandname : null;
+                    
+                    error_log("Brand Name (from API): " . $brand_name);
+                    if(isset($brand_name)) {
+                        $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
+                        error_log("Brand: " . $brand->name);
+                    } else {
+                        error_log("No brand name");
+                    }
+                    if(isset($brand->term_id)) {
                         $categories[] = $brand->term_id;
                     }           
 
@@ -378,9 +398,17 @@ class Controller_Admin_Import {
                 }
                 else
                 {
+                    error_log("Product Already Saved");
                 }
 
                 $errors[] = $shcproduct->errors();
+                foreach($errors as $error) {
+                    foreach($error as $key => $value) {
+                        error_log("Error: " . $key . " | " . $value);
+                    }
+                }
+            } else {
+                error_log("Existing Product");
             }
         }
 
