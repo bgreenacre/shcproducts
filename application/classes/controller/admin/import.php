@@ -297,6 +297,7 @@ class Controller_Admin_Import {
      */    
     public function action_save_all()
     {
+        $data = array();
 
         foreach($_POST as $key => $value) {
             $data[$key] = $value;
@@ -379,7 +380,9 @@ class Controller_Admin_Import {
                     * if there is a category that matches the brand name (slug) add that as a category for the product
                     */
                     $product_detail = SHCP::get($product_data, 'detail');
-                    $brand_name = $product_detail->brandname;
+                    
+                    $brand_name = isset($product_detail) ? $product_detail->brandname : null;
+                    
                     error_log("Brand Name (from API): " . $brand_name);
                     if(isset($brand_name)) {
                         $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
