@@ -372,14 +372,22 @@ class Controller_Admin_Import {
                     
                     $shcproduct->save();
                     
-                    $categories[] = $data['assigned_category'];
+                    $categories[] = SHCP::get($data, 'assigned_category', 1);
 
+                    error_log("Assigned Category: " . $categories[0]);
                     /**
                     * if there is a category that matches the brand name (slug) add that as a category for the product
                     */
-                    $brand = get_category_by_slug(str_replace(' ', '-', strtolower($product_data['detail']->brandname)));
-                    
-                    if($brand) {
+                    $product_detail = SHCP::get($product_data, 'detail');
+                    $brand_name = $product_detail->brandname;
+                    error_log("Brand Name (from API): " . $brand_name);
+                    if(isset($brand_name)) {
+                        $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
+                        error_log("Brand: " . $brand->name);
+                    } else {
+                        error_log("No brand name");
+                    }
+                    if(isset($brand->term_id)) {
                         $categories[] = $brand->term_id;
                     }           
 
