@@ -457,6 +457,7 @@ error_log("nothing to save");
                 foreach ($meta as $key => $value)
                 {
                     update_post_meta($id, $key, $value);
+                    error_log("Post meta - key: " . $key . " value: " . $value);
                 }
             }
         }
