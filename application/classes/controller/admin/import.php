@@ -373,6 +373,8 @@ class Controller_Admin_Import {
                     
                     $shcproduct->save();
                     
+                    error_log("Product Saved");
+                    
                     $categories[] = SHCP::get($data, 'assigned_category', 1);
 
                     error_log("Assigned Category: " . $categories[0]);
