@@ -337,7 +337,6 @@ class Controller_Admin_Import {
                 ->limit(0, $data['product_count'])
                 ->load();
         }    
-        var_dump($result);
 
         foreach($result as $product)
         {
@@ -359,10 +358,14 @@ class Controller_Admin_Import {
             { 
                 error_log("New Product");
                 
-                $product_data['detail'] = Library_Sears_Api::factory('product')
+                $detail = Library_Sears_Api::factory('product')
                     ->get($product_data['partnumber'])
                     ->param('showSpec', 'true')
                     ->load(); 
+                    
+                $product_data['detail'] = serialize($detail);    
+                //error_log("Detail: " . $detail);
+                error_log("serialized Detail: " . $product_data['detail']);    
 
                 $shcproduct->values($product_data);
 
