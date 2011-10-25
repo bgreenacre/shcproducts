@@ -252,10 +252,16 @@ class Controller_Admin_Import {
 
             if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
             {
-                $data['detail'] = Library_Sears_Api::factory('product')
+                $detail = Library_Sears_Api::factory('product')
                     ->get($data['partnumber'])
                     ->param('showSpec', 'true')
                     ->load();
+                    
+                if(is_object($detail)) {
+                    $data['detail'] = serialize($detail);
+                } else {
+                    $data['detail'] = $detail;
+                }    
 
                 $shcproduct->values($data);
 
@@ -265,21 +271,24 @@ class Controller_Admin_Import {
                     
                     $categories[] = $shcp_category;
 
+                    $product_detail = unserialize(SHCP::get($data, 'detail'));
+                    
+                    $brand_name = isset($product_detail) ? $product_detail->brandname : null;
+                    
                     /**
                     * if there is a category that matches the brand name (slug) add that as a category for the product
                     */                    
-                    $brand = get_category_by_slug(str_replace(' ', '-', strtolower($data['detail']->brandname)));
+                    $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
                     
-                    if($brand) {
+                    if(isset($brand_name)) {
+                        $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
+                    } 
+                    if(isset($brand->term_id)) {
                         $categories[] = $brand->term_id;
                     }           
-
-                    wp_set_post_categories($shcproduct->ID, $categories);                    
+                            
+                    wp_set_post_categories($shcproduct->ID, $categories);      
                 }
-                else
-                { 
-                }
-
                 $errors[] = $shcproduct->errors();
             }
         }
@@ -301,23 +310,19 @@ class Controller_Admin_Import {
 
         foreach($_POST as $key => $value) {
             $data[$key] = $value;
-            error_log($key . " | " . $value);
         }
 
         $data['product_count'] = SHCP::get($data, 'product_count') > 1000 ? 1000 : SHCP::get($data, 'product_count'); // api maxes out at 1000 items
-        error_log("Product Count: " . $data['product_count']);
 
         if(SHCP::get($data, 'method') == 'keyword')
         {
             $result = Library_Sears_Api::factory('search')
                 ->$method(SHCP::get($data, 'keyword_terms'))
                 ->limit(0, SHCP::get($data, 'product_count'))
-                ->load();
-            error_log("Keyword Search");    
+                ->load(); 
         }
         else
         {
-            error_log("Subcategory Search");
             /**
             * remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
             */
@@ -355,65 +360,44 @@ class Controller_Admin_Import {
             $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
 
             if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
-            { 
-                error_log("New Product");
-                
+            {   
                 $detail = Library_Sears_Api::factory('product')
                     ->get($product_data['partnumber'])
                     ->param('showSpec', 'true')
                     ->load(); 
-                    
-                $product_data['detail'] = serialize($detail);    
-                //error_log("Detail: " . $detail);
-                error_log("serialized Detail: " . $product_data['detail']);    
+                
+                if(is_object($detail)) {
+                    $product_data['detail'] = serialize($detail);
+                } else {
+                    $product_data['detail'] = $detail;
+                }
 
                 $shcproduct->values($product_data);
 
                 if ($shcproduct->check())
-                {
-                    error_log("Saving: " . $product_data['post_title']);
-                    error_log("To Category: " . $data['assigned_category']);
-                    
+                {   
                     $shcproduct->save();
                     
-                    error_log("Product Saved");
-                    
                     $categories[] = SHCP::get($data, 'assigned_category', 1);
-
-                    error_log("Assigned Category: " . $categories[0]);
+                    
                     /**
                     * if there is a category that matches the brand name (slug) add that as a category for the product
                     */
-                    $product_detail = SHCP::get($product_data, 'detail');
+                    $product_detail = unserialize(SHCP::get($product_data, 'detail'));
                     
                     $brand_name = isset($product_detail) ? $product_detail->brandname : null;
                     
-                    error_log("Brand Name (from API): " . $brand_name);
                     if(isset($brand_name)) {
                         $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
-                        error_log("Brand: " . $brand->name);
-                    } else {
-                        error_log("No brand name");
-                    }
+                    } 
                     if(isset($brand->term_id)) {
                         $categories[] = $brand->term_id;
                     }           
 
                     wp_set_post_categories($shcproduct->ID, $categories);
                 }
-                else
-                {
-                    error_log("Product Already Saved");
-                }
 
-                $errors[] = $shcproduct->errors();
-                foreach($errors as $error) {
-                    foreach($error as $key => $value) {
-                        error_log("Error: " . $key . " | " . $value);
-                    }
-                }
-            } else {
-                error_log("Existing Product");
+                $errors[] = $shcproduct->errors();   
             }
         }
 
