@@ -409,7 +409,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @return void
      */
     protected function _save()
-    {
+    {      
         // Nothing to save so just return.
         if ( ! $this->_values)
         {
