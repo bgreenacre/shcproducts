@@ -311,95 +311,74 @@ class Controller_Admin_Import {
         foreach($_POST as $key => $value) {
             $data[$key] = $value;
         }
+        
+        // split data into chunks of 100 to facilitate import process and work around timeout issues.
+        $chunk_size = 100;
+        
+        for($i = 0; $i < $data['product_count']; $i+=$chunk_size) {
 
-        $data['product_count'] = SHCP::get($data, 'product_count') > 1000 ? 1000 : SHCP::get($data, 'product_count'); // api maxes out at 1000 items
+            $limit = $this->get_product_limits($i, $data['product_count'], $chunk_size);
 
-        if(SHCP::get($data, 'method') == 'keyword')
-        {
-            $result = Library_Sears_Api::factory('search')
-                ->$method(SHCP::get($data, 'keyword_terms'))
-                ->limit(0, SHCP::get($data, 'product_count'))
-                ->load(); 
-        }
-        else
-        {
-            /**
-            * remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
-            */
-            $data['category_terms']     = trim(substr(SHCP::get($data, 'category_terms'), 0, strpos(SHCP::get($data, 'category_terms'), '(')));
-            $data['subcategory_terms']  = trim(substr(SHCP::get($data, 'subcategory_terms'), 0, strpos(SHCP::get($data, 'subcategory_terms'), '(')));
-            
-            /**
-            * somewhere single quotes are being escaped with a backslash.  
-            * We need to remove the backslash but not the single quote
-            * for the API call to work correctly
-            */
-            $data['category_terms']     = str_replace('\\', '', SHCP::get($data, 'category_terms')); 
-            $data['subcategory_terms']  = str_replace('\\', '', SHCP::get($data, 'subcategory_terms'));
+            $result = $this->get_api_result($data, $limit);
 
-            $result = Library_Sears_Api::factory('search')
-                ->category(ucwords(SHCP::get($data, 'vertical_terms')), ucwords(SHCP::get($data, 'category_terms')), ucwords(SHCP::get($data, 'subcategory_terms')))
-                ->limit(0, $data['product_count'])
-                ->load();
-        }    
+            foreach($result as $product)
+            {
+                $check = new Model_Products();
+                $shcproduct = new Model_Products();
+                $product_data = array();
+                $categories = array();
 
-        foreach($result as $product)
-        {
-            $check = new Model_Products();
-            $shcproduct = new Model_Products();
-            $product_data = array();
-            $categories = array();
+                $product_data['post_title']     = isset($product->name)         ? $product->name            : '';
+                $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
+                $product_data['cutprice']       = isset($product->cutprice)     ? $product->cutprice        : '';
+                $product_data['displayprice']   = isset($product->displayprice) ? $product->displayprice    : '';
+                $product_data['imageid']        = isset($product->imageid)      ? $product->imageid         : '';
+                $product_data['numreview']      = isset($product->numreview)    ? $product->numreview       : '';
+                $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
+                $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
 
-            $product_data['post_title']     = isset($product->name)         ? $product->name            : '';
-            $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
-            $product_data['cutprice']       = isset($product->cutprice)     ? $product->cutprice        : '';
-            $product_data['displayprice']   = isset($product->displayprice) ? $product->displayprice    : '';
-            $product_data['imageid']        = isset($product->imageid)      ? $product->imageid         : '';
-            $product_data['numreview']      = isset($product->numreview)    ? $product->numreview       : '';
-            $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
-            $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
-
-            if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
-            {   
-                $detail = Library_Sears_Api::factory('product')
-                    ->get($product_data['partnumber'])
-                    ->param('showSpec', 'true')
-                    ->load(); 
-                
-                if(is_object($detail)) {
-                    $product_data['detail'] = serialize($detail);
-                } else {
-                    $product_data['detail'] = $detail;
-                }
-
-                $shcproduct->values($product_data);
-
-                if ($shcproduct->check())
+                if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
                 {   
-                    $shcproduct->save();
-                    
-                    $categories[] = SHCP::get($data, 'assigned_category', 1);
-                    
-                    /**
-                    * if there is a category that matches the brand name (slug) add that as a category for the product
-                    */
-                    $product_detail = unserialize(SHCP::get($product_data, 'detail'));
-                    
-                    $brand_name = isset($product_detail) ? $product_detail->brandname : null;
-                    
-                    if(isset($brand_name)) {
-                        $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
-                    } 
-                    if(isset($brand->term_id)) {
-                        $categories[] = $brand->term_id;
-                    }           
+                    $detail = Library_Sears_Api::factory('product')
+                        ->get($product_data['partnumber'])
+                        ->param('showSpec', 'true')
+                        ->load(); 
+                
+                    if(is_object($detail)) {
+                        $product_data['detail'] = serialize($detail);
+                    } else {
+                        $product_data['detail'] = $detail;
+                    }
 
-                    wp_set_post_categories($shcproduct->ID, $categories);
+                    $shcproduct->values($product_data);
+
+                    if ($shcproduct->check())
+                    {   
+                        $shcproduct->save();
+                    
+                        $categories[] = SHCP::get($data, 'assigned_category', 1);
+                    
+                        /**
+                        * if there is a category that matches the brand name (slug) add that as a category for the product
+                        */
+                        $product_detail = unserialize(SHCP::get($product_data, 'detail'));
+                    
+                        $brand_name = isset($product_detail) ? $product_detail->brandname : null;
+                    
+                        if(isset($brand_name)) {
+                            $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
+                        } 
+                        if(isset($brand->term_id)) {
+                            $categories[] = $brand->term_id;
+                        }           
+
+                        wp_set_post_categories($shcproduct->ID, $categories);
+                    }
+
+                    $errors[] = $shcproduct->errors();   
                 }
-
-                $errors[] = $shcproduct->errors();   
             }
-        }
+        }    
 
         echo(json_encode(array('errors' => $errors)));
   
@@ -427,4 +406,66 @@ class Controller_Admin_Import {
     {
         add_submenu_page( 'edit.php?post_type=shcproduct', __('Import Products'), __('Import Products'), 'edit_posts', 'import', array(&$this, 'action_index'));
     }
+
+    /**
+     * get_product_limits - Returns the lower and upper limit to use in a product call
+     *
+     * @access  protected
+     * @return  array
+     */
+    protected function get_product_limits($index, $product_count, $chunk_size) {
+        
+        $limit = array();
+        
+        if(($product_count - $index) < $chunk_size) {
+            $limit['lower'] = $index;
+            $limit['upper'] = $index + ($product_count % $chunk_size) - 1;
+        } else {
+            $limit['lower'] = $index;
+            $limit['upper'] = $index + $chunk_size;
+        }
+        
+        return $limit;
+    }
+
+    /**
+     * get_api_result - Returns the result of an api query, which depends on method and number of products
+     *
+     * @access  protected
+     * @return  object
+     */    
+    protected function get_api_result($data, $limit) {
+        
+        if(SHCP::get($data, 'method') == 'keyword')
+        {
+            $result = Library_Sears_Api::factory('search')
+                ->keyword(SHCP::get($data, 'keyword_terms'))
+                ->limit($limit['lower'], $limit['upper'])
+                ->load(); 
+        }
+        else
+        {
+            /**
+            * remove product count from terms - e.g. for "Subcategory (1234)" removes the (1234) part
+            */
+            $data['category_terms']     = trim(substr(SHCP::get($data, 'category_terms'), 0, strpos(SHCP::get($data, 'category_terms'), '(')));
+            $data['subcategory_terms']  = trim(substr(SHCP::get($data, 'subcategory_terms'), 0, strpos(SHCP::get($data, 'subcategory_terms'), '(')));
+        
+            /**
+            * somewhere single quotes are being escaped with a backslash.  
+            * We need to remove the backslash but not the single quote
+            * for the API call to work correctly
+            */
+            $data['category_terms']     = str_replace('\\', '', SHCP::get($data, 'category_terms')); 
+            $data['subcategory_terms']  = str_replace('\\', '', SHCP::get($data, 'subcategory_terms'));
+
+            $result = Library_Sears_Api::factory('search')
+                ->category(ucwords(SHCP::get($data, 'vertical_terms')), ucwords(SHCP::get($data, 'category_terms')), ucwords(SHCP::get($data, 'subcategory_terms')))
+                ->limit($limit['lower'], $limit['upper'])
+                ->load();
+        }
+        
+        return $result;
+    }
+    
 }
