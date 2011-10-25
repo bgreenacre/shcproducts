@@ -409,12 +409,10 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @return void
      */
     protected function _save()
-    {
-error_log("SHCP Model: _save function");        
+    {      
         // Nothing to save so just return.
         if ( ! $this->_values)
         {
-error_log("nothing to save");
             return;
         }
 
@@ -425,26 +423,22 @@ error_log("nothing to save");
             if (isset($this->_values[$field]) === TRUE)
             {
                 $post[$field] = $this->_values[$field];
-                error_log("Saving: " . $field);
             }
         }
 
         if (isset($post['ID']) && $post['ID'] > 0)
         {
             $id = wp_update_post($post);
-            error_log("updating post");
         }
         else
         {
             $id = wp_insert_post($post, FALSE);
-            error_log("inserting post");
         }
 
         if ($id > 0)
         {
             $post['ID'] = $id;
 
-            error_log("Post ID: " . $id);
             // Set the current post to the updated data and reset the total_rows
             // property since this could be an addition rather then an update.
             $this->_data[$this->_position] = (object) $post;
@@ -457,7 +451,6 @@ error_log("nothing to save");
                 foreach ($meta as $key => $value)
                 {
                     update_post_meta($id, $key, $value);
-                    error_log("Post meta - key: " . $key . " value: " . $value);
                 }
             }
         }
