@@ -92,6 +92,8 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      */
     protected $curl_options = array(
         CURLOPT_RETURNTRANSFER  => 1,
+        CURLOPT_CONNECTTIMEOUT => 300,          // timeout on connect 
+        CURLOPT_TIMEOUT        => 300,          // timeout on response
         //CURLOPT_HTTPHEADER      => array('X-SHCMMR-Client-Id: app_ui'),
     );
 
