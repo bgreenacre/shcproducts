@@ -283,12 +283,15 @@ function save_all_products(el) {
       var response_text = '';
       if(response) {
           jQuery(response.errors).each(function() {
+            console.log(this);
             if(typeof(this.detail) != 'undefined') {
               response_text += '<p class="error">' + this.detail + '</p>';
             }
           });      
       }
-      response_text += '<p>All products imported</p>';
+      if(!response.errors) {
+          response_text += '<p>All products imported</p>';
+      }
       jQuery('#shcp_import_list').html(response_text);
       import_callback(this);
     },

@@ -305,7 +305,7 @@ class Controller_Admin_Import {
      * @return  void
      */    
     public function action_save_all()
-    {
+    {        
         $data = array();
 
         foreach($_POST as $key => $value) {
