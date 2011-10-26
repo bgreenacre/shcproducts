@@ -283,13 +283,15 @@ function save_all_products(el) {
       var response_text = '';
       if(response) {
           jQuery(response.errors).each(function() {
-            console.log(this);
             if(typeof(this.detail) != 'undefined') {
-              response_text += '<p class="error">' + this.detail + '</p>';
+              response_text += '<p class="error"><strong>' + this.detail.partnumber + '</strong>' + this.detail.empty + '</p>';
+            }
+            if(typeof(this.post_title) != 'undefined') {
+                response_text += '<p class="error"><strong>' + this.post_title.partnumber + '</strong>' + this.post_title.empty + '</p>';
             }
           });      
       }
-      if(!response.errors) {
+      if(response.errors == null) {
           response_text += '<p>All products imported</p>';
       }
       jQuery('#shcp_import_list').html(response_text);
