@@ -305,7 +305,7 @@ class Controller_Admin_Import {
      * @return  void
      */    
     public function action_save_all()
-    {
+    {        
         $data = array();
 
         foreach($_POST as $key => $value) {
@@ -327,6 +327,7 @@ class Controller_Admin_Import {
                 $shcproduct = new Model_Products();
                 $product_data = array();
                 $categories = array();
+                $detail = '';
 
                 $product_data['post_title']     = isset($product->name)         ? $product->name            : '';
                 $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
@@ -337,7 +338,7 @@ class Controller_Admin_Import {
                 $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
                 $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
 
-                if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
+                if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded()) // check if product exists
                 {   
                     $detail = Library_Sears_Api::factory('product')
                         ->get($product_data['partnumber'])
@@ -352,7 +353,7 @@ class Controller_Admin_Import {
 
                     $shcproduct->values($product_data);
 
-                    if ($shcproduct->check())
+                    if ($shcproduct->check()) // check if there are errors
                     {   
                         $shcproduct->save();
                     
