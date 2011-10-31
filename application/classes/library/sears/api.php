@@ -503,7 +503,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             $url .= rtrim($qs, '&');
             unset($qs);
         }
-        error_log($url);
+
         return $url;
     }
 
