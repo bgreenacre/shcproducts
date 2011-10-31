@@ -499,11 +499,11 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             {
                 $qs .= $param . '=' . urlencode($value) . '&';
             }
-
+            
             $url .= rtrim($qs, '&');
             unset($qs);
         }
-        
+
         return $url;
     }
 

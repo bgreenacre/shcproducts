@@ -234,7 +234,10 @@ class Controller_Admin_Import {
         $shcp_category = SHCP::get($_POST, 'shcp_category');
 
         $keys = array_keys($_POST);
+        
         unset($keys[array_search('import_all', $keys)]);
+        unset($keys[array_search('import_single', $keys)]);
+        unset($keys[array_search('action', $keys)]);
 
         for($i=0; $i<$product_count; $i++)
         {
@@ -246,12 +249,14 @@ class Controller_Admin_Import {
             foreach($keys as $field_name)
             {
                 if($field_name != 'shcp_category') {
-                    $data[$field_name] = SHCP::get($_POST, $field_name);
+                    $field_values = SHCP::get($_POST, $field_name);
+                    $data[$field_name] = $field_values[$i];
                 }
             } 
 
             if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
             {
+
                 $detail = Library_Sears_Api::factory('product')
                     ->get($data['partnumber'])
                     ->param('showSpec', 'true')
@@ -305,7 +310,7 @@ class Controller_Admin_Import {
      * @return  void
      */    
     public function action_save_all()
-    {
+    {        
         $data = array();
 
         foreach($_POST as $key => $value) {
@@ -327,6 +332,7 @@ class Controller_Admin_Import {
                 $shcproduct = new Model_Products();
                 $product_data = array();
                 $categories = array();
+                $detail = '';
 
                 $product_data['post_title']     = isset($product->name)         ? $product->name            : '';
                 $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
@@ -337,7 +343,7 @@ class Controller_Admin_Import {
                 $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
                 $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
 
-                if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded())
+                if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded()) // check if product exists
                 {   
                     $detail = Library_Sears_Api::factory('product')
                         ->get($product_data['partnumber'])
@@ -352,7 +358,7 @@ class Controller_Admin_Import {
 
                     $shcproduct->values($product_data);
 
-                    if ($shcproduct->check())
+                    if ($shcproduct->check()) // check if there are errors
                     {   
                         $shcproduct->save();
                     
