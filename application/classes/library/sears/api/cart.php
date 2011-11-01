@@ -166,6 +166,8 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
      */
     public function add($quantity = 1, $catalog_id = NULL, $catentry_id = NULL)
     {
+        $quantity = ($quantity <= 1) ? 1 : $quantity;
+        
         if ($catentry_id === NULL)
         {
             if ($this->_parent)
