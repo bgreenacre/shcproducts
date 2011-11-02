@@ -380,6 +380,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
             }
 
             $this
+                ->param('IndicatorA', 'pickup')
                 ->param('catentryId', implode(',', $this->products_to_add['catentry_id']))
                 ->param('quantity', implode(',', $this->products_to_add['quantity']));
         }
