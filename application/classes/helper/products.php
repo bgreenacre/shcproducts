@@ -99,7 +99,7 @@ class Helper_Products {
             $image = 'http://s.shld.net/is/image/Sears/'.$image;
 
             if ($disable_url_dimensions === FALSE)
-                $image .= '?hei='.$height.'&wid='.$width;
+                $image .= '?hei='.$height.'&wid='.$width.'&op_sharpen=1&resMode=sharp';
         }
 
         return $image;
