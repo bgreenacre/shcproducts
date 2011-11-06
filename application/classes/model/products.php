@@ -156,6 +156,7 @@ class Model_Products extends Model_SHCP {
         if ($search->success())
         {
             $search = $search->current();
+	    $this->post_title = $search->name;
             $this->imageid = $search->imageid;
             $this->numreview = $search->numreview;
             $this->catentryid = $search->catentryid;
