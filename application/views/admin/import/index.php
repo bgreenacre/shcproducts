@@ -6,7 +6,7 @@
       <label for="search_terms">Keyword Search: </label>
     </div>
     <div class="shcp_form_fields">
-      <input type="text" name="search_terms" class="search_terms" id="search_terms_keyword" value="Enter keywords" />
+      <input type="text" name="search_terms" class="search_terms" id="search_terms_keyword" value="Enter search terms" />
       <input type="submit" name="submit_keyword" id="submit_keyword" value="Search" />
     </div>
   </form>
@@ -15,7 +15,7 @@
       <label for="search_terms">Vertical Search: </label>
     </div>
     <div class="shcp_form_fields">
-      <input type="text" name="search_terms" class="search_terms" id="search_terms_vertical" value="Enter vertical name" />
+      <input type="text" name="search_terms" class="search_terms" id="search_terms_vertical" value="Enter search terms" />
       <input type="submit" name="submit_vertical" id="submit_vertical" value="Search" />
     </div>
     <div class="shcp_form_fields">

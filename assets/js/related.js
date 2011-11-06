@@ -34,7 +34,6 @@ jQuery(document).ready(function($) {
         return false;
     });
     $('#shcp_pager a').live('click', function() {
-        console.log($(this).attr('href'));
         $('#shcp_products_tank').load($(this).attr('href'));
         return false;
     });
