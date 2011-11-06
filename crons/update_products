@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source ~/.bashrc
+cd $(dirname $0)
+/opt/php/bin/php update_products.php > /dev/null 2>&1
