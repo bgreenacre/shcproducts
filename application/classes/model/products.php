@@ -140,16 +140,59 @@ class Model_Products extends Model_SHCP {
             return $this->catentryid;
         }
     }
-	
-    public function create_shc_url($isSears=false) {
-    	$baseUrl = ($isSears === true) ? 'http://www.sears.com/shc/s/p_' : 'http://www.kmart.com/shc/s/p_';
-    	
-    	$productCatalog = $this->detail->catalogid;
-    	$productId = $this->detail->partnumber;
-    	$productStoreId = $this->storeid;
-    	
-    	$url = $baseUrl.$productStoreId.'_'.$productCatalog.'_'.$productId;
-    	
-    	return $url;
+
+    public function sync_from_api()
+    {
+        if ( ! $this->loaded())
+        {
+            return $this;
+        }
+
+        $search = Library_Sears_Api::factory('search')
+            ->cache(FALSE)
+            ->keyword($this->partnumber)
+            ->load();
+
+        if ($search->success())
+        {
+            $search = $search->current();
+	    $this->post_title = $search->name;
+            $this->imageid = $search->imageid;
+            $this->numreview = $search->numreview;
+            $this->catentryid = $search->catentryid;
+            $this->rating = $search->rating;
+            $this->displayprice = $search->displayprice;
+            $this->cutprice = $search->cutprice;
+
+            $detail = Library_Sears_Api::factory('product')
+                ->cache(FALSE)
+                ->get($this->partnumber)
+                ->param('showSpec', 'true')
+                ->load();
+
+            if ($detail->success())
+            {
+                $this->detail = serialize($detail);
+            }
+
+            if ($this->check())
+            {
+                $this->save();
+            }
+        }
+
+        return $this;
+    }
+
+    public function create_shc_url($isSears=false)
+    {
+        $baseUrl = ($isSears === true) ? 'http://www.sears.com/shc/s/p_' : 'http://www.kmart.com/shc/s/p_';
+
+        $productCatalog = $this->detail->catalogid;
+        $productId = $this->detail->partnumber;
+        $productStoreId = $this->storeid;
+        $url = $baseUrl.$productStoreId.'_'.$productCatalog.'_'.$productId;
+
+        return $url;
     }
 }

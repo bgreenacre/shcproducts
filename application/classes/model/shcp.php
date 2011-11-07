@@ -409,7 +409,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @return void
      */
     protected function _save()
-    {
+    {      
         // Nothing to save so just return.
         if ( ! $this->_values)
         {
@@ -483,6 +483,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         if ($this->post_title == '')
         {
+            $this->_errors['post_title']['partnumber'] = $this->partnumber;
             $this->_errors['post_title']['empty'] = 'There is no post title set';
         }
 
