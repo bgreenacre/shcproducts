@@ -1,4 +1,6 @@
-<?php (PHP_SAPI === 'cli') or die('This can only be executed via command line.');
+<?php
+ini_set('memory_limit', '128M');
+(PHP_SAPI === 'cli') or die('This can only be executed via command line.');
 /**
  * This file contains a scheduled task to update products in wordpress.
  * It first attempts to load the wordpress environment and then

@@ -19,6 +19,7 @@ class Controller_Crons_Products {
     public function action_update()
     {
         $posts = new Model_Products();
+        $posts->limit(-1);
 
         foreach ($posts as $post)
         {
