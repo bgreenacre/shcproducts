@@ -42,7 +42,7 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
         }
         else
         {
-            $this->success = TRUE;
+            $this->success = FALSE;
         }
     }
 
