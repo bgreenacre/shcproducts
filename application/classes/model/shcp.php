@@ -409,7 +409,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * @return void
      */
     protected function _save()
-    {      
+    {
         // Nothing to save so just return.
         if ( ! $this->_values)
         {
@@ -544,6 +544,20 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         $this->_values = array();
 
         return $this;
+    }
+
+    public function delete($id = NULL)
+    {
+        if ($id === NULL AND $this->loaded())
+        {
+            $id = $this->ID;
+        }
+        else
+        {
+            return $this;
+        }
+
+        wp_delete_post( (int) $id, TRUE);
     }
 
     /**
