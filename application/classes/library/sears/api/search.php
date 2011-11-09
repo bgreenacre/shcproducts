@@ -40,6 +40,10 @@ class Library_Sears_Api_Search extends Library_Sears_Api {
           $this->_total_rows = (int) count($this->_object->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1]);
           $this->_data =& $this->_object->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1];
         }
+        else
+        {
+            $this->success = FALSE;
+        }
     }
 
     /**
