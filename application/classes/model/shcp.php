@@ -483,6 +483,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         if ($this->post_title == '')
         {
+            $this->_errors['post_title']['partnumber'] = $this->partnumber;
             $this->_errors['post_title']['empty'] = 'There is no post title set';
         }
 
@@ -543,6 +544,20 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         $this->_values = array();
 
         return $this;
+    }
+
+    public function delete($id = NULL)
+    {
+        if ($id === NULL AND $this->loaded())
+        {
+            $id = $this->ID;
+        }
+        else
+        {
+            return $this;
+        }
+
+        wp_delete_post( (int) $id, TRUE);
     }
 
     /**

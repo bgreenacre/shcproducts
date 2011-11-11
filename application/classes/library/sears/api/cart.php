@@ -166,10 +166,23 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
      */
     public function add($quantity = 1, $catalog_id = NULL, $catentry_id = NULL)
     {
+        $quantity = ($quantity <= 1) ? 1 : $quantity;
+
         if ($catentry_id === NULL)
         {
             if ($this->_parent)
             {
+                /*
+                $post = new Model_Products();
+                $post->param('catentryid', $this->_parent->catentryid)
+                    ->load();
+
+                if ($post->loaded())
+                {
+                    $this->products_to_add['IndicatorA'][] = $post->detail->arrivalmethod->arrivalmethod[0];
+                }
+                */
+
                 $this->products_to_add['catalogId'][] = $this->_parent->catalogid;
                 $this->products_to_add['catentry_id'][] = $this->_parent->catentryid;
                 $this->products_to_add['quantity'][] = $quantity;
@@ -181,6 +194,17 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
         }
         else
         {
+            /*
+            $post = new Model_Products();
+            $post->param('catentryid', $catentry_id)
+                ->load();
+
+            if ($post->loaded())
+            {
+                $this->products_to_add['IndicatorA'][] = $post->detail->arrivalmethod->arrivalmethod[0];
+            }
+            */
+
             $catalog_id = ( ! $catalog_id) ? SHCP::config('cart.defaults.catalog_id') : $catalog_id;
             $this->products_to_add['catalogId'][] = $catalog_id;
             $this->products_to_add['catentry_id'][] = $catentry_id;
