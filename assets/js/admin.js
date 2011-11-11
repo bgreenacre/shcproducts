@@ -28,10 +28,26 @@ jQuery(document).ready(function($) {
 
     // attach loading div functionality
     $("#ajax_loading").bind("ajaxSend", function(){
-      $(this).show();
+        $('#ajax_loading_overlay').show();
+        $(this).show();
     })
     .bind("ajaxComplete", function(){
-      $(this).hide();
+        $('#ajax_loading_overlay').hide();
+        $(this).hide();
+    });
+    
+    // remove default search text on focus, put it back on blur
+    $('.search_terms').live({
+        focus: function() {
+            if($(this).val() == 'Enter search terms') {
+                $(this).val('');
+            }
+        },
+        blur: function() {
+            if($(this).val() == '') {
+                $(this).val('Enter search terms');
+            }
+        }
     });
 
 });
@@ -132,7 +148,7 @@ function import_callback() {
     // activate import all products button
   jQuery('#save_all_products').click(function(e) {
       e.preventDefault();
-      save_all_products(jQuery(this), jQuery('#keyword_form'), jQuery('#vertical_form'));
+      save_all_products(jQuery(this));
   });  
 
   // activate save_products button
@@ -173,36 +189,40 @@ function save_products() {
 
  var import_table = jQuery("#shcp_import_table");
  var items = [];
-
+ var data;
+ 
+ data = jQuery('#shcp_category').serialize();
+ data += '&action=action_save';
+ 
  import_table.find('tbody tr').each(function(index) {
     if(jQuery(this).find("input[name='import_single[]']").is(":checked")) {
       items.push(index);
+      // don't send entire form, only values from those rows which are selected
+      data += "&" + jQuery('#row_' + index).find('input').serialize();
     }
   });
-
-  data = jQuery('#shcp_import_form').serialize();
 
   jQuery.ajax({
     type: 'post',
     dataType: 'json',
-    url: shcp_ajax.ajaxurl+'?action=action_save',
+    url: shcp_ajax.ajaxurl,
     data: data,
     success: function(response) {
-      
       for(var i in items) {
         row = jQuery("#row_" + items[i]);
-        
         var show_error = false;
         var show_error_text = '';
         
         var partnumber = row.find('input[name="partnumber[]"]').val();
         
-        jQuery(response.errors).each(function() {
-          if(typeof(this.detail) != 'undefined' && this.detail.partnumber == partnumber) {
-            show_error_text = this.detail.empty;
-            show_error = true;
-          }
-        });
+        if(response) {
+            jQuery(response.errors).each(function() {
+              if(typeof(this.detail) != 'undefined' && this.detail.partnumber == partnumber) {
+                show_error_text = this.detail.empty;
+                show_error = true;
+              }
+            });
+        }
         
         if(show_error == true) {
           row.css({ background : '#FCCFD4' }).addClass('disable');
@@ -219,6 +239,10 @@ function save_products() {
       }
       
       import_callback(this);
+    },
+    error:function (xhr, ajaxOptions, thrownError){
+        alert(xhr.status);
+        alert(thrownError);
     }
   });
 }
@@ -232,6 +256,7 @@ function save_all_products(el) {
   var vertical_terms    = jQuery("#search_terms_vertical").val();
   var category_terms    = jQuery("#search_categories option:selected").val();
   var subcategory_terms = jQuery("#search_subcategories option:selected").val();
+  var assigned_category = jQuery('#shcp_import_form option:selected').val();
 
   keyword_terms         = keyword_terms != "Enter keywords" ? keyword_terms : '';
   vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
@@ -239,29 +264,42 @@ function save_all_products(el) {
   subcategory_terms     = subcategory_terms != "Choose Subategory" ? subcategory_terms : '';
   
   data = {
-    "method": method,
+    "action"            : 'action_save_all',
+    "method"            : method,
     "product_count"     : product_count,
     "keyword_terms"     : keyword_terms,
     "vertical_terms"    : vertical_terms,
     "category_terms"    : category_terms,
-    "subcategory_terms" : subcategory_terms
+    "subcategory_terms" : subcategory_terms,
+    "assigned_category" : assigned_category
   };
-  
+    
   jQuery.ajax({
     type: 'post',
-    dataType: 'json',
-    url: shcp_ajax.ajaxurl+'?action=action_save_all',
+    url: shcp_ajax.ajaxurl,
     data: data,
+    dataType: 'json',
     success: function(response) {
       var response_text = '';
-      jQuery(response.errors).each(function() {
-        if(typeof(this.detail) != 'undefined') {
-          response_text += '<p class="error">' + this.detail + '</p>';
-        }
-      });      
-      response_text += '<p>All products imported</p>';
+      if(response) {
+          jQuery(response.errors).each(function() {
+            if(typeof(this.detail) != 'undefined') {
+              response_text += '<p class="error"><strong>' + this.detail.partnumber + '</strong>' + this.detail.empty + '</p>';
+            }
+            if(typeof(this.post_title) != 'undefined') {
+                response_text += '<p class="error"><strong>' + this.post_title.partnumber + '</strong>' + this.post_title.empty + '</p>';
+            }
+          });      
+      }
+      if(response.errors == null) {
+          response_text += '<p>All products imported</p>';
+      }
       jQuery('#shcp_import_list').html(response_text);
       import_callback(this);
+    },
+    error:function (xhr, ajaxOptions, thrownError){
+        alert(xhr.status);
+        alert(thrownError);
     }
   });
 }

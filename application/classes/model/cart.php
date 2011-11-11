@@ -107,7 +107,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
             foreach ($this->OrderItems->OrderItem as $item)
             {
                 $product = new Model_Products();
-                $product->meta('partnumber', '=', $item->DisplayPartNumber)->load();
+                $product->meta('partnumber', '=', (string) $item->DisplayPartNumber)->load();
 
                 if ($product->loaded())
                 {
