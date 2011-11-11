@@ -39,6 +39,8 @@ class Controller_Front_Cart {
      */
     public $cart;
 
+    public $ajax_response = TRUE;
+
     public function __construct()
     {
         add_action('wp_ajax_cartaction_mini', array(&$this, 'action_mini'));
@@ -117,7 +119,10 @@ class Controller_Front_Cart {
             throw new Exception($e);
         }
 
-        $this->ajax_response();
+        if ($this->ajax_response)
+        {
+            $this->ajax_response();
+        }
     }
 
     /**
@@ -138,7 +143,10 @@ class Controller_Front_Cart {
             }
         }
 
-        $this->ajax_response();
+        if ($this->ajax_response)
+        {
+            $this->ajax_response();
+        }
     }
 
     /**
@@ -163,7 +171,11 @@ class Controller_Front_Cart {
         }
 
         $this->cart->view()->load();
-        $this->ajax_response();
+
+        if ($this->ajax_response)
+        {
+            $this->ajax_response();
+        }
     }
 
     /**
@@ -181,7 +193,10 @@ class Controller_Front_Cart {
             ->view()
             ->load();
 
-        $this->ajax_response();
+        if ($this->ajax_response)
+        {
+            $this->ajax_response();
+        }
     }
 
     /**
