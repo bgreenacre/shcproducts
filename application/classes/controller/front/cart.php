@@ -111,7 +111,7 @@ class Controller_Front_Cart {
 
         try
         {
-            $this->cart->load();
+            $this->cart->load(); //var_dump($this->cart);
             $this->cart->view()->load();
         }
         catch(Exception $e)
