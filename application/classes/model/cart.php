@@ -73,10 +73,11 @@ class Model_Cart extends Library_Sears_Api_Cart {
         }
 
         parent::_load();
-
+        
         // Set the session key in the cookies.
         if (self::session() != SHCP::get($_COOKIE, 'sessionKey'))
         {
+            $_COOKIE['sessionKey'] = self::session();
             setcookie('sessionKey', self::session(), time()+3600, '/');
         }
 
