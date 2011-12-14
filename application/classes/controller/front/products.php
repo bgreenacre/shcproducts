@@ -158,6 +158,7 @@ class Controller_Front_Products {
             'categories'    => $categories,
             'selected'      => get_query_var('category_name'),
         ));
+
         echo SHCP::view('front/product/grid', $data);
     }
 
