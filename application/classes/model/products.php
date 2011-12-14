@@ -62,7 +62,7 @@ class Model_Products extends Model_SHCP {
 
         if ($key === 'detail' && is_string($value))
         {
-            $value = unserialize($value);
+            $this->detail = $value = unserialize($value);
         }
         elseif (is_object($this->detail) AND isset($this->detail->current()->{$key}) === TRUE)
         {
