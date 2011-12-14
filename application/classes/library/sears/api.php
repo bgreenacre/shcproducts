@@ -499,7 +499,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             {
                 $qs .= $param . '=' . urlencode($value) . '&';
             }
-            
+
             $url .= rtrim($qs, '&');
             unset($qs);
         }
@@ -516,21 +516,24 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     protected function _request()
     {
         // Require the endpoint property.
-        if ($this->endpoint === NULL)
+        if ($this->endpoint === NULL AND $this->_url === NULL)
         {
             throw new Exception('No endpoint provided for Sears API request');
         }
 
-        // Set global params for all requests to Sears API.
-        $this
-            ->param('store', $this->store)
-            ->param('contentType', $this->content_type)
-            ->param('apikey', $this->apikey)
-            ->param('authID', $this->authid)
-            ->param('appID', $this->appid);
+        if ($this->_url === NULL)
+        {
+            // Set global params for all requests to Sears API.
+            $this
+                ->param('store', $this->store)
+                ->param('contentType', $this->content_type)
+                ->param('apikey', $this->apikey)
+                ->param('authID', $this->authid)
+                ->param('appID', $this->appid);
 
-        // Get the complete url.
-        $this->_url = $this->build_url();
+            // Get the complete url.
+            $this->_url = $this->build_url();
+        }
 
         if (SHCP::$profiling)
         {
@@ -730,7 +733,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     {
         $this->load();
 
-        foreach (array('_object', '_url', '_params', '_request_made') as $var)
+        foreach (array('endpoint', 'authid', 'appid', 'apikey', 'content_type', 'store', '_object', '_url', '_params', '_request_made') as $var)
         {
             $data[$var] = $this->{$var};
         }
