@@ -43,6 +43,8 @@ class Controller_Front_Products {
         add_shortcode('shcp_products', array(&$this, 'action_grid'));
         add_shortcode('shcp_product', array(&$this, 'action_detail'));
         add_shortcode('shcp_quickview', array(&$this, 'action_quickview'));
+        add_action('wp_ajax_product_action_grid', array(&$this, 'action_grid'));
+        add_action('wp_ajax_nopriv_product_action_grid', array(&$this, 'action_grid'));
         add_action('wp_ajax_product_action_quickview', array(&$this, 'action_quickview'));
         add_action('wp_ajax_nopriv_product_action_quickview', array(&$this, 'action_quickview'));
         add_action('wp_ajax_product_action_cartconfirm', array(&$this, 'action_cartconfirm'));
@@ -249,6 +251,11 @@ class Controller_Front_Products {
      */
     public function parse_attrs($attrs = NULL)
     {
+        if ( ! is_array($attrs))
+        {
+            $attrs = (array) $attrs;
+        }
+
         if (isset($attrs[0]))
         {
             unset($attrs[0]);

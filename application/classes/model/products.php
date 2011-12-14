@@ -60,9 +60,14 @@ class Model_Products extends Model_SHCP {
     {
         $value = parent::__get($key);
 
-        if ($key === 'detail' && is_string($value))
+        if ($key === 'detail' AND is_string($value))
         {
-            $this->detail = $value = unserialize($value);
+            $value = unserialize($value);
+
+            if (is_object($this->current()))
+            {
+                $this->current()->detail = $value;
+            }
         }
         elseif (is_object($this->detail) AND isset($this->detail->current()->{$key}) === TRUE)
         {
