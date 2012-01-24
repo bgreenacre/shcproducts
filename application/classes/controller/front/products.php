@@ -151,7 +151,7 @@ class Controller_Front_Products {
         $this->parse_attrs($attrs);
 
         $data = array(
-            'products'      => $this->products,
+            'products'      => $this->products->load(),
         );
 
         $categories = get_categories(array('child_of' => 0, 'hide_empty' => FALSE));
@@ -162,6 +162,14 @@ class Controller_Front_Products {
         ));
 
         echo SHCP::view('front/product/grid', $data);
+
+        if (SHCP::$is_ajax)
+        {
+            echo paginate_links(array(
+                'total' => count($products)
+            ));
+            exit;
+        }
     }
 
     /**
