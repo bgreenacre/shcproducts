@@ -104,7 +104,7 @@ class Model_Cart extends Library_Sears_Api_Cart {
             $this->cart->total_price = (double) preg_replace('/[^0-9\.]+/', '', (string) $this->Summary->EstimatedPreTaxTotal);
             $this->cart->total_discounts = (double) preg_replace('/[^0-9\.]+/', '', (string) $this->Summary->TotalSavings);
         }
-        
+
         $this->cart->item_count = 0;
         $this->cart->items = array();
 
