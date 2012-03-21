@@ -528,6 +528,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             ->param('apikey', $this->apikey)
             ->param('authID', $this->authid)
             ->param('appID', $this->appid);
+            //->param('apiVersion', 'v2');
 
         // Get the complete url.
         $this->_url = $this->build_url();
