@@ -33,6 +33,9 @@ return array(
         'cart_enabled'    => array(
             'label' => 'Enable the front-end javascript cart?'
         ),
+        'forceupdate' => array (
+            'label' => 'Force Update All Products (Will be slow!)'
+        ),
         'widgets'   => array(
             'label' => 'Available Widgets'
             ),
