@@ -27,6 +27,10 @@ return array(
             'name'      => 'cart_enabled',
             'default'   => TRUE,
         ),
+        'force_update' => array(
+            'name'      => 'forceupdate',
+            'default'   => 'false'
+        ),
         'widgets'   => array(
             'name'      => 'widgets',
             'default'   => array(
@@ -34,5 +38,5 @@ return array(
                 'related',
                 ),
             ),
-        )
+        ),
 );
