@@ -8,5 +8,6 @@ return array(
         'endpoint'  => 'http://webservices.sears.com/shcapi/',
         'store'     => 'Sears',
         'cache'     => TRUE,
+        'forceupdate' => FALSE
     ),
 );

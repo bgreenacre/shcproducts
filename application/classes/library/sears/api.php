@@ -84,6 +84,14 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      * @var string json OR xml
      */
     protected $content_type = 'json';
+    
+    
+    /**
+     * Version of the API to use
+     * 
+     * @var string 'v2'
+     */
+    protected $apiVersion = 'v2';
 
     /**
      * Array of CURL options to set for the curl request.
@@ -527,8 +535,8 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             ->param('contentType', $this->content_type)
             ->param('apikey', $this->apikey)
             ->param('authID', $this->authid)
-            ->param('appID', $this->appid);
-            //->param('apiVersion', 'v2');
+            ->param('appID', $this->appid)
+            ->param('apiVersion', $this->apiVersion);
 
         // Get the complete url.
         $this->_url = $this->build_url();
