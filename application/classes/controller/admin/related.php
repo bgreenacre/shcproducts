@@ -67,16 +67,15 @@ class Controller_Admin_Related {
     /**
      * metabox - Adds the large metabox to the post edit form.
      *
+     * Edited by Eddie Moya to include the metabox in pages and products.
+     * 
      * @return void
      */
     public function metabox()
     {
-        add_meta_box(
-            'shcproducts_related',
-            __(SHCP::lang('related', 'section.title'), 'shcproducts_related'),
-            array(&$this, 'action_list'),
-            'post'
-        );
+        add_meta_box('shcproducts_related', __(SHCP::lang('related', 'section.title'), 'shcproducts_related'), array(&$this, 'action_list'), 'post' );
+        add_meta_box('shcproducts_related', __(SHCP::lang('related', 'section.title'), 'shcproducts_related'), array(&$this, 'action_list'), 'page' );
+        add_meta_box('shcproducts_related', __(SHCP::lang('related', 'section.title'), 'shcproducts_related'), array(&$this, 'action_list'), 'shcproduct' );
     }
 
     /**
@@ -156,54 +155,30 @@ class Controller_Admin_Related {
     }
 
     /**
-     * action_save - Save products from Sears API into posts table.
-     *
-     * @return void
+     * Saves related products on page and shcproduct editors, while properly handling
+     * autosave which would otherwise undo changes periodically.
+     * 
+     * Do not call this function directly, add it to the save_post hook.
+     * 
+     * @author Eddie Moya
+     * 
+     * @param int $id Required. ID of the post (content object) being edited.
+     * @param object $post
+     * 
+     * @return void 
      */
-    public function action_save($post_id = NULL)
-    {
-        $response = SHCP::config('json', 'response');
-        $related = array();
+    function action_save($id, $post) {
 
-        if ($products = (array) SHCP::get($_POST, 'shcp_related_products'))
-        {
-            foreach ($products as $product)
-            {
-                $product = new Model_Products($product);
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+            return;
 
-                if ($product->loaded())
-                {
-                    $related[] = $product->ID;
-                }
-            }
-        }
-        else
-        {
-            $respones['success'] = FALSE;
-            $response['messages']['notices'][] = __('No products were set to import.');
-        }
+        if (!wp_verify_nonce($_POST['shcproducts_noncename'], 'shcproducts_related'))
+            return;
 
-        $related = array_unique($related);
-        update_post_meta($post_id, 'shcp_related_products', $related);
-        unset($related);
+        if ('shcproduct' == $post->post_type || 'page' == $post->post_type || 'post' == $post->post_type) 
+            return;
 
-        /*
-        if (SHCP::$is_ajax)
-        {
-            $response = json_encode($response);
-
-            // Send headers to not cache this result.
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-
-            // Send header for json mimetpye and length of the response json string.
-            header('Content-Type: text/plain');
-            header('Content-Length: '.strlen($response)+1);
-
-            echo $response;
-            exit;
-        }
-        */
+        $related = $_POST['shcp_related_products'];
+        update_post_meta($id, 'shcp_related_products', $related);
     }
-
 }
