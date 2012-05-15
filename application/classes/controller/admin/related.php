@@ -76,6 +76,7 @@ class Controller_Admin_Related {
         add_meta_box('shcproducts_related', __(SHCP::lang('related', 'section.title'), 'shcproducts_related'), array(&$this, 'action_list'), 'post' );
         add_meta_box('shcproducts_related', __(SHCP::lang('related', 'section.title'), 'shcproducts_related'), array(&$this, 'action_list'), 'page' );
         add_meta_box('shcproducts_related', __(SHCP::lang('related', 'section.title'), 'shcproducts_related'), array(&$this, 'action_list'), 'shcproduct' );
+        remove_meta_box('slugdiv', 'shcproduct', 'normal'); 
     }
 
     /**
