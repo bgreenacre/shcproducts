@@ -15,17 +15,22 @@ return array(
             'not_found_in_trash'  => __('No Products found in Trash'),
             'parent_item_colon'   => '',
         ),
-        'public'      => TRUE,
-        'supports'    => array('title', 'custom-fields'),
-        'taxonomies'  => array('category', 'post_tag'),  // this is IMPORTANT
-        'capabilities'  => array(
-            'delete_post'   => TRUE,
-            'edit_post'     => TRUE,
+        'public'            => TRUE,
+        'supports'          => array( 'title', 'thumbnail' ),
+        'taxonomies'        => array( 'category', 'post_tag' ),  // this is IMPORTANT // Duh!
+        'capability_type'   => 'shcproducts',
+        'capabilities'      => array(
+            'delete_shcproduct' => TRUE,
+            'edit_shcproduct'   => TRUE,
+            'read_shcproduct'   => TRUE,
+            'edit_posts'        => TRUE,
+            'edit_others_posts' => TRUE,
+            'publish_posts'     => TRUE
         ),
-        'rewrite' => array(
-            'slug' => 'product',
-            'with_front' => TRUE,
+        'rewrite'           => array(
+            'slug'              => 'product',
+            'with_front'        => TRUE,
         ),
-        'has_archive' => 'products',
+        'has_archive'       => 'products',
     ),
 );
