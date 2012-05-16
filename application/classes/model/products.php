@@ -186,7 +186,7 @@ class Model_Products extends Model_SHCP {
         }
         else
         {
-            $this->delete();
+            $this->trash();
         }
 
         return $this;
