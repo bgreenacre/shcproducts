@@ -24,6 +24,7 @@ return array(
             'edit_shcproduct'   => TRUE,
             'read_shcproduct'   => TRUE,
             'edit_posts'        => TRUE,
+            'delete_posts'      => TRUE,
             'edit_others_posts' => TRUE,
             'publish_posts'     => TRUE
         ),
