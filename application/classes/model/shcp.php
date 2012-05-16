@@ -560,6 +560,20 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         wp_delete_post( (int) $id, TRUE);
     }
 
+    
+    public function trash($id = NULL)
+    {
+        if ($id === NULL AND $this->loaded())
+        {
+            $id = $this->ID;
+        }
+        else
+        {
+            return $this;
+        }
+
+        wp_delete_post( (int) $id, FALSE);
+    }
     /**
      * as_array - Get the current post as an array rather than an object.
      *
