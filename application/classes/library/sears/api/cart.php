@@ -44,7 +44,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
     {
         parent::__construct($group, $parent);
 
-        $this->content_type = 'xml';
+        $this->content_type = 'json';
         $this->cache(FALSE);
     }
 
