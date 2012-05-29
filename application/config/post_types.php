@@ -18,16 +18,7 @@ return array(
         'public'            => TRUE,
         'supports'          => array( 'title', 'thumbnail' ),
         'taxonomies'        => array( 'category', 'post_tag' ),  // this is IMPORTANT // Duh!
-        'capability_type'   => 'shcproducts',
-        'capabilities'      => array(
-            'delete_shcproduct' => TRUE,
-            'edit_shcproduct'   => TRUE,
-            'read_shcproduct'   => TRUE,
-            'edit_posts'        => TRUE,
-            'delete_posts'      => TRUE,
-            'edit_others_posts' => TRUE,
-            'publish_posts'     => TRUE
-        ),
+        'capability_type'      => 'shcproduct',
         'rewrite'           => array(
             'slug'              => 'product',
             'with_front'        => TRUE,
