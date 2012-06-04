@@ -77,7 +77,7 @@ class Controller_Admin_Metaboxes {
       if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
           return;
 
-      if ( 'shcproduct' == $_REQUEST['post_type'] ) 
+      if ( isset($_REQUEST['post_type']) && 'shcproduct' == $_REQUEST['post_type'] ) 
       {
         if ( !current_user_can( 'edit_shcproduct', $post_id ) )
             return;
