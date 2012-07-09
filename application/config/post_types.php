@@ -16,7 +16,7 @@ return array(
             'parent_item_colon'   => '',
         ),
         'public'            => TRUE,
-        'supports'          => array( 'title', 'thumbnail' ),
+        'supports'          => array( 'title', 'thumbnail', 'editor' ),
         'taxonomies'        => array( 'category', 'post_tag' ),  // this is IMPORTANT // Duh!
         'capability_type'      => 'shcproduct',
         'rewrite'           => array(
