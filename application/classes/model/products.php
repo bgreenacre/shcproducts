@@ -31,6 +31,13 @@ class Model_Products extends Model_SHCP {
      * @access protected
      */
     protected $_detail;
+    
+    /**
+     * _is_deleted
+     * @var bool
+     * @access protected
+     */
+    protected $_is_deleted = false;
 
     /**
      * __construct 

@@ -572,7 +572,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             return $this;
         }
 
-        wp_delete_post( (int) $id, TRUE);
+        //wp_delete_post( (int) $id, TRUE);
+        
+        //Instead of deleting post we will set status to 'draft'
+        $args = array('ID' => $id,
+        			  'post_status' => 'draft');
+        
+        wp_update_post($args);
     }
 
     /**
