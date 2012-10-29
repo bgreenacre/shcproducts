@@ -92,6 +92,12 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      * @var string 'v2'
      */
     protected $apiVersion = 'v2';
+    
+    /**
+     * HTTP Code returned from cURL
+     * @var int
+     */
+    public $http_code;
 
     /**
      * Array of CURL options to set for the curl request.
@@ -580,7 +586,8 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         $body = curl_exec($ch);
 
         // Get the response information
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
 
         if ($body === FALSE)
         {
