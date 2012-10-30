@@ -557,7 +557,11 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             return $this;
         }
 
-        wp_delete_post( (int) $id, TRUE);
+        //wp_delete_post( (int) $id, TRUE);
+        
+        //DO NOT delete posts, set them to status 'draft'
+        $args = array('ID' => $id, 'post_status' => 'draft');
+        wp_update_post($args);
     }
 
     
@@ -572,7 +576,11 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             return $this;
         }
 
-        wp_delete_post( (int) $id, FALSE);
+        //wp_delete_post( (int) $id, FALSE);
+        
+        //DO NOT delete posts, set them to status 'draft'
+        $args = array('ID' => $id, 'post_status' => 'draft');
+        wp_update_post($args);
     }
     /**
      * as_array - Get the current post as an array rather than an object.
