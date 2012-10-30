@@ -297,7 +297,7 @@ class Controller_Admin_Options {
         if($settings['forceupdate']){
          
                 $update = new Controller_Crons_Products();
-                $update->action_update();
+                $update->action_update(true);
                 $settings['forceupdate'] = 0;
         }
         
