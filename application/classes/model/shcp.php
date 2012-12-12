@@ -353,7 +353,22 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         {
             if ($this->merge_wp_query)
             {
-                $this->_params = array_merge($wp_query->query, $this->_params);
+                if ( ! $wp_query->query)
+                {
+                    $data = $_GET;
+
+                    if ($_POST)
+                    {
+                        $data = array_merge($data, $_POST);
+                    }
+
+                    $wp_query->parse_query(http_build_query($data));
+                }
+
+                if (is_array($wp_query->query))
+                {
+                    $this->_params = array_merge($wp_query->query, $this->_params);
+                }
             }
 
             if ($this->use_query_posts)
@@ -561,6 +576,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         
         //DO NOT delete posts, set them to status 'draft'
         $args = array('ID' => $id, 'post_status' => 'draft');
+
         wp_update_post($args);
     }
 

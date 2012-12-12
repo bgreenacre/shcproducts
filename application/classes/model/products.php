@@ -54,7 +54,13 @@ class Model_Products extends Model_SHCP {
      * 
      * @var bool
      */
-	public $profile_mode = false;
+    public $profile_mode = false;
+
+     * _is_deleted
+     * @var bool
+     * @access protected
+     */
+    protected $_is_deleted = false;
 
     /**
      * __construct 
@@ -84,9 +90,14 @@ class Model_Products extends Model_SHCP {
     {
         $value = parent::__get($key);
 
-        if ($key === 'detail' && is_string($value))
+        if ($key === 'detail' AND is_string($value))
         {
             $value = unserialize($value);
+
+            if (is_object($this->current()))
+            {
+                $this->current()->detail = $value;
+            }
         }
         elseif (is_object($this->detail) AND isset($this->detail->current()->{$key}) === TRUE)
         {
