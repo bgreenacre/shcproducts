@@ -126,7 +126,7 @@ class Controller_Crons_Products {
 	 * @access protected
 	 * @since Wednesday, October 24 2012
 	 */
-	protected $_fail_threshold_pct = .10;
+	protected $_fail_threshold_pct = .70;
 	
 	/**
 	 * _fail_threshold_cnt - the threshold number of 'deleted' 
@@ -167,6 +167,7 @@ class Controller_Crons_Products {
 		$this->_log_file =  $this->_blog_name . '-' . date('Ymd');
 		$this->_log_dir = $this->_blog_name . DIRECTORY_SEPARATOR;
 		$this->_log_dir_path = $this->_log_root_dir_path . $this->_log_dir;
+		
 	}
 
     public function action_update($force = false)
@@ -181,12 +182,11 @@ class Controller_Crons_Products {
     		}
     		
             $posts = new Model_Products();
+            $posts->param('post_status', array('publish', 'draft'));
             $posts->limit(-1);
             
             $this->set_threshold($posts);
-            
-         
-            
+           
 	        foreach ($posts as $key=>$post)
 	        {
 	        	
@@ -202,7 +202,7 @@ class Controller_Crons_Products {
 	            $model_post->sync_from_api($this->_profile_mode);
 	            
 	            
-	            //Was product deleted?
+	            //Was product deleted?http://localhost/
 	            if($model_post->is_deleted) {
 	            	
 	            	$this->log_delete($post);
@@ -217,6 +217,7 @@ class Controller_Crons_Products {
 	            }
 	            
 	        	
+	           
 	            unset($post);
 	            
 	        }
@@ -326,7 +327,7 @@ class Controller_Crons_Products {
     		
     		$f = fopen($file, 'w');
     		
-    		$log_body = "Job Status: {$this->_status} \n Products Updated: {$this->_num_updated} \n Products Set to Draft: {$this->_num_deleted} \n" . $this->log_to_string($this->_activity_log);
+    		$log_body = "Job Status: {$this->_status} \n Total Products: {$this->_num_posts} \n Products Updated: {$this->_num_updated} \n Products Set to Draft: {$this->_num_deleted} \n" . $this->log_to_string($this->_activity_log);
     		
     		if($this->_profile_mode) {
     			
@@ -351,7 +352,7 @@ class Controller_Crons_Products {
     	
     	$to = 'phpteam@searshc.com';
     	$subject = 'SHC Products Update for ' . $this->_blog_name;
-    	$body = ($this->_activity_log) ? "Product updates for " . $this->_blog_name . ": \n Cron job completed on: " . date('m-d-Y H:i:s') . "\n Products Updated: {$this->_num_updated} \n Products Set to Draft: {$this->_num_deleted} \n Status: ". $this->_status ."\n\n" .  $this->log_to_string($this->_activity_log) : 'No products were updated or set to draft.';
+    	$body = ($this->_activity_log) ? "Product updates for " . $this->_blog_name . ": \n Cron job completed on: " . date('m-d-Y H:i:s a') . " \n Total Products: {$this->_num_posts} \n Products Updated: {$this->_num_updated} \n Products Set to Draft: {$this->_num_deleted} \n Status: ". $this->_status ."\n\n" .  $this->log_to_string($this->_activity_log) : 'No products were updated or set to draft.';
     	
     	if($this->_profile_mode) {
     		
