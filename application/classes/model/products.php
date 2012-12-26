@@ -54,7 +54,7 @@ class Model_Products extends Model_SHCP {
      * 
      * @var bool
      */
-	public $profile_mode = false;
+    public $profile_mode = false;
 
     /**
      * __construct 
