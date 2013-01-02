@@ -56,12 +56,6 @@ class Model_Products extends Model_SHCP {
      */
     public $profile_mode = false;
 
-     * _is_deleted
-     * @var bool
-     * @access protected
-     */
-    protected $_is_deleted = false;
-
     /**
      * __construct 
      * 
@@ -73,7 +67,7 @@ class Model_Products extends Model_SHCP {
     {
         parent::__construct($id);
         $this->param('post_type', 'shcproduct');
-        $this->param('post_status', array('publish', 'draft'));
+        
     }
 
     /**

@@ -116,7 +116,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      * Current position within the object.data
      *
      * @access  protected
-     * @var     int
+     * @var     intarray
      */
     protected $_position = 0;
 
@@ -174,6 +174,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     {
         $this->_initialize();
         $this->fields();
+        
 
         if ($id !== NULL)
         {
@@ -181,6 +182,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             {
                 $this->_id = (int) $id;
                 $this->param('p', $this->_id);
+               
             }
             elseif (is_object($id))
             {
@@ -353,26 +355,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         {
             if ($this->merge_wp_query)
             {
-                if ( ! $wp_query->query)
-                {
-                    $data = $_GET;
-
-                    if ($_POST)
-                    {
-                        $data = array_merge($data, $_POST);
-                    }
-
-                    $wp_query->parse_query(http_build_query($data));
-                }
-
-                if (is_array($wp_query->query))
-                {
-                    $this->_params = array_merge($wp_query->query, $this->_params);
-                }
+                $this->_params = array_merge($wp_query->query, $this->_params);
             }
 
             if ($this->use_query_posts)
             {
+            	
                 $this->_data = query_posts($this->_params);
                 $this->_position = 0;
                 $this->_total_rows = $GLOBALS['wp_query']->found_posts;
@@ -382,19 +370,32 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             }
             else
             {
-                // Instantiate the query object to get posts.
-                $query = new WP_Query($this->_params);
+            	//If we are loading a single product..
+            	if(is_int($this->_id) && $this->_id != 0) {
+            	
+            		$this->_data = array(get_post($this->_id));
+	                $this->_position = 0;
+	                $this->_total_rows = 1;
+	                $this->_total_display = 1;
+	                $this->_posts_per_page = 1;
+	                $this->_max_num_pages = 1;
+            		
+            	} else { //If we are loading multiple products...
+            		
+	                // Instantiate the query object to get posts.
+	               $query = new WP_Query($this->_params);
+	            
+	                // Dump the posts into this object and set the iterator props.
+	                $this->_data = $query->posts;
+	                $this->_position = 0;
+	                $this->_total_rows = count($this->_data);
+	                $this->_total_display = $query->post_count;
+	                $this->_posts_per_page = $query->posts_per_page;
+	                $this->_max_num_pages = $query->max_num_pages;
 
-                // Dump the posts into this object and set the iterator props.
-                $this->_data = $query->posts;
-                $this->_position = 0;
-                $this->_total_rows = count($this->_data);
-                $this->_total_display = $query->post_count;
-                $this->_posts_per_page = $query->posts_per_page;
-                $this->_max_num_pages = $query->max_num_pages;
-
-                // Destroy the query object.
-                unset($query);
+	                // Destroy the query object.
+	                unset($query);
+            	}
             }
 
             $this->_executed = TRUE;
