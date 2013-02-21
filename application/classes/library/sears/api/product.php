@@ -32,7 +32,7 @@ class Library_Sears_Api_Product extends Library_Sears_Api {
 
         if ($this->success())
         {
-            if (isset($this->_object->productdetail->softhardproductdetails))
+            if (isset($this->_object->productdetail->softhardproductdetails) && is_array($this->_object->productdetail->softhardproductdetails))
             {
                 $this->_data =& $this->_object
                     ->productdetail
@@ -208,7 +208,7 @@ class Library_Sears_Api_Product extends Library_Sears_Api {
     /**
      * compare - Compare multiple products. This method can take an arbitrary
      * amount of arguments. Each argument should be either an Library_Sears_Api_Product
-     * object OR a string containing the product number.
+     * object OR a string containing the product number.simba
      *
      *  // Example using only product numbers
      *  $compare = Library_Sears_Api::factory('product')

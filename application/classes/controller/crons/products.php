@@ -319,7 +319,7 @@ class Controller_Crons_Products {
     	//Check if log directory exists, if not create it...
     	if(! is_dir($this->_log_dir_path)) {
     		
-    		mkdir($this->_log_dir_path, 0644);
+    		mkdir($this->_log_dir_path, 0755);
     	}
     	
     	//Create the log file
