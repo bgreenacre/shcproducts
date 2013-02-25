@@ -72,7 +72,7 @@ class Helper_Products {
     {
         $image = urldecode($image);
 
-        if (strpos($image, 'http//') !== FALSE)
+      	if(strpos($image, 'http//') !== FALSE || strpos($image, 'http://') !== FALSE)
         {
             $parts = parse_url($image);
 
