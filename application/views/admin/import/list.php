@@ -41,7 +41,7 @@
         <td>
           <input type="checkbox" name="import_single[]" class="checkbox" value="<?php echo $i; ?>" />
           <input type="hidden" name="post_title[]" value="<?php echo $result->name; ?>" />
-          <input type="hidden" name="imageid[]" value="<?php echo $result->imageid; ?>" />
+          <input type="hidden" name="imageid[]" value="<?php echo $result->imageurl; ?>" />
           <input type="hidden" name="numreview[]" value="<?php echo $result->numreview; ?>" />
           <input type="hidden" name="catentryid[]" value="<?php echo $result->catentryid; ?>" />
           <input type="hidden" name="rating[]" value="<?php echo $result->rating; ?>" />
@@ -49,7 +49,7 @@
           <input type="hidden" name="cutprice[]" value="<?php echo $result->cutprice; ?>" />
           <input type="hidden" name="displayprice[]" value="<?php echo $result->displayprice; ?>" />
         </td>
-        <td class="image"><?php echo Helper_Products::image($result->image); ?></td>
+        <td class="image"><?php echo Helper_Products::image($result->imageurl); ?></td>
         <td class="name"><?php echo $result->name; ?></td>
         <td class="partnumber"><?php echo $result->partnumber; ?></td>
         <td class="cutprice"><?php echo $result->cutprice; ?></td>
