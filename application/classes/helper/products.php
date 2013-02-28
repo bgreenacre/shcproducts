@@ -96,8 +96,8 @@ class Helper_Products {
 
         if (strpos($image, 'http://') === FALSE)
         {
-            $image = 'http://c.shld.net/rpx/i/s/i/spin/image/' . $image;
- 
+            $image = 'http://s.shld.net/is/image/Sears/'.$image;
+
             if ($disable_url_dimensions === FALSE)
                 $image .= '?hei='.$height.'&amp;wid='.$width;
         }
