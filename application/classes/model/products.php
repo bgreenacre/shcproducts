@@ -187,7 +187,7 @@ class Model_Products extends Model_SHCP {
         {
             $search = $search->current();
             $this->post_title = $search->name;
-            $this->imageid = $search->imageid;
+            $this->imageid = $search->imageurl;
             $this->numreview = $search->numreview;
             $this->catentryid = $search->catentryid;
             $this->rating = $search->rating;
