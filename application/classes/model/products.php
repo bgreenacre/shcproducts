@@ -31,11 +31,35 @@ class Model_Products extends Model_SHCP {
      * @access protected
      */
     protected $_detail;
+    
+    /**
+     * is_updated - was product updated?
+     * 
+     * @var bool
+     * @access public
+     */
+   public $is_updated = false;
+    
+    /**
+     * is_deleted -  was product deleted?
+     * 
+     * @var bool
+     * @access public
+     */
+    public $is_deleted = false;
+    
+    /**
+     * profile_mode - Used during CRON update. If true,
+     * no updates/deletes will be performed to Products.
+     * 
+     * @var bool
+     */
+    public $profile_mode = false;
 
     /**
      * __construct 
      * 
-     * @param mixed $id 
+     * @param mixed $id save
      * @access public
      * @return void
      */
@@ -43,6 +67,7 @@ class Model_Products extends Model_SHCP {
     {
         parent::__construct($id);
         $this->param('post_type', 'shcproduct');
+        
     }
 
     /**
@@ -60,9 +85,14 @@ class Model_Products extends Model_SHCP {
     {
         $value = parent::__get($key);
 
-        if ($key === 'detail' && is_string($value))
+        if ($key === 'detail' AND is_string($value))
         {
             $value = unserialize($value);
+
+            if (is_object($this->current()))
+            {
+                $this->current()->detail = $value;
+            }
         }
         elseif (is_object($this->detail) AND isset($this->detail->current()->{$key}) === TRUE)
         {
@@ -141,7 +171,7 @@ class Model_Products extends Model_SHCP {
         }
     }
 
-    public function sync_from_api()
+    public function sync_from_api($profile_mode = false)
     {
         if ( ! $this->loaded())
         {
@@ -176,17 +206,33 @@ class Model_Products extends Model_SHCP {
             }
             else
             {
-                $this->delete();
+            	$this->is_deleted = true;
+            	
+            	if(! $profile_mode) {
+            		
+            		 $this->delete();
+            	}
+              	 
             }
 
             if ($this->check())
             {
-                $this->save();
+            	$this->is_updated = true;
+            	
+            	if(! $profile_mode) {
+            		
+               		 $this->save();
+            	}
             }
         }
         else
         {
-            $this->trash();
+        	$this->is_deleted = true;
+        	
+        	if(! $profile_mode) {
+        		
+           		 $this->trash();
+        	}
         }
 
         return $this;

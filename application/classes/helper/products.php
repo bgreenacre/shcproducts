@@ -72,7 +72,7 @@ class Helper_Products {
     {
         $image = urldecode($image);
 
-        if (strpos($image, 'http//') !== FALSE)
+      	if(strpos($image, 'http//') !== FALSE || strpos($image, 'http://') !== FALSE)
         {
             $parts = parse_url($image);
 
@@ -96,8 +96,8 @@ class Helper_Products {
 
         if (strpos($image, 'http://') === FALSE)
         {
-            $image = 'http://s.shld.net/is/image/Sears/'.$image;
-
+            $image = 'http://c.shld.net/rpx/i/s/i/spin/image/' . $image;
+ 
             if ($disable_url_dimensions === FALSE)
                 $image .= '?hei='.$height.'&amp;wid='.$width;
         }

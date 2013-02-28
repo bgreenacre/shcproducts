@@ -168,11 +168,9 @@ class Controller_Admin_Related {
      * 
      * @return void 
      */
-    function action_save($id, $post="") {
 
-		if ($post == "")
-			return
-
+    function action_save($id) {
+        global $post;
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
             return;
 

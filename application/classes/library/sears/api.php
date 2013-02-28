@@ -92,6 +92,12 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      * @var string 'v2'
      */
     protected $apiVersion = 'v2';
+    
+    /**
+     * HTTP Code returned from cURL
+     * @var int
+     */
+    public $http_code;
 
     /**
      * Array of CURL options to set for the curl request.
@@ -507,7 +513,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             {
                 $qs .= $param . '=' . urlencode($value) . '&';
             }
-            
+
             $url .= rtrim($qs, '&');
             unset($qs);
         }
@@ -524,22 +530,24 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     protected function _request()
     {
         // Require the endpoint property.
-        if ($this->endpoint === NULL)
+        if ($this->endpoint === NULL AND $this->_url === NULL)
         {
             throw new Exception('No endpoint provided for Sears API request');
         }
 
-        // Set global params for all requests to Sears API.
-        $this
-            ->param('store', $this->store)
-            ->param('contentType', $this->content_type)
-            ->param('apikey', $this->apikey)
-            ->param('authID', $this->authid)
-            ->param('appID', $this->appid)
-            ->param('apiVersion', $this->apiVersion);
+        if ($this->_url === NULL)
+        {
+            // Set global params for all requests to Sears API.
+            $this
+                ->param('store', $this->store)
+                ->param('contentType', $this->content_type)
+                ->param('apikey', $this->apikey)
+                ->param('authID', $this->authid)
+                ->param('appID', $this->appid);
 
-        // Get the complete url.
-        $this->_url = $this->build_url();
+            // Get the complete url.
+            $this->_url = $this->build_url();
+        }
 
         if (SHCP::$profiling)
         {
@@ -580,7 +588,8 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         $body = curl_exec($ch);
 
         // Get the response information
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
 
         if ($body === FALSE)
         {
@@ -739,7 +748,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     {
         $this->load();
 
-        foreach (array('_object', '_url', '_params', '_request_made') as $var)
+        foreach (array('endpoint', 'authid', 'appid', 'apikey', 'content_type', 'store', '_object', '_url', '_params', '_request_made') as $var)
         {
             $data[$var] = $this->{$var};
         }

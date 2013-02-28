@@ -1,3 +1,72 @@
+shcp_filter_product_grid_form = function(form) {
+    var $form = jQuery(form);
+
+    jQuery(':input:not([type="hidden"])').each(function() {
+        var $field = jQuery(this);
+
+        if ($field.filter('select').length > 0) {
+            fields = jQuery(':selected:first', $field).data('fields');
+        } else if ($field.filter('[type="radio"], [type="checkbox"]').length > 0) {
+            fields = jQuery(':checked:first', $field).data('fields');
+        } else {
+            fields = $field.data('fields');
+        }
+
+        if (typeof fields == 'string' && fields != '')
+            fields = jQuery.parseJSON(fields);
+        else if (typeof fields != 'object')
+            fields = {};
+
+        for (i in fields) {
+            if (fields[i] == false)
+                jQuery(':input[name="'+i+'"]', $form).remove();
+            else if ($form.find(':input[name="'+i+'"]').length > 0)
+                jQuery(':input[name="'+i+'"]', $form).val(fields[i]);
+            else
+                $form.append('<input type="hidden" name="'+i+'" id="'+i+'" value="'+fields[i]+'" />');
+        }
+    });
+};
+
+shcp_items_init = function(items) {
+    var $items = (typeof items == 'undefined') ? jQuery('.shcp-item') : jQuery(items);
+    var quickview_modal = jQuery('.shcp-quickview a', $items).overlay({
+        left: 'center',
+        closeOnClick: true,
+        onBeforeLoad: function(e) {
+            var id = this.getTrigger().data('post_id'),
+                wrap = this.getOverlay();
+            wrap.find('form').remove();
+            jQuery.ajax({
+                url: shcp_ajax.ajaxurl,
+                data: {action: 'product_action_quickview', p: id},
+                dataType: 'html',
+                type: 'POST',
+                success: function(data) {
+                    wrap.append(data);
+                }
+            });
+        },
+        onLoad: function(e) {
+            jQuery(this.getOverlay()).find('.close').html('Close');
+        }
+    });
+    jQuery('.addtocart', $items).live('click', function(e) {
+        jQuery(this).shcProduct('add');
+        jQuery(this).parents("#shcp_quickview_modal").find('.close').click(); 
+        e.preventDefault();
+    });
+    // show quickview button on product hover
+    $items.hover(
+      function() {
+        jQuery(this).find('.shcp-quickview').show();
+      },
+      function() {
+        jQuery(this).find('.shcp-quickview').hide();
+      }
+    );
+}
+
 jQuery(document).ready(function($) {
     //Get the window height and width
     var winH = jQuery(window).height(),
@@ -19,11 +88,6 @@ jQuery(document).ready(function($) {
     var confirm_modal = $('.addtocart').overlay({
       left: 'center',
       closeOnClick: true,
-//      mask: {
-//          color: '#fff',
-//          loadSpeed: 200,
-//          opacity: 0.5
-//      },
       onBeforeLoad: function(e) {
         var id = this.getTrigger().data('post_id'),
             wrap = this.getOverlay();
@@ -35,9 +99,9 @@ jQuery(document).ready(function($) {
             dataType: 'html',
             type: 'POST',
             success: function(data) {
-                wrap.append(data);            
+                wrap.append(data);
             }
-        });       
+        });
       },
         onLoad: function(e) {
             $(this.getOverlay()).find('.close').html('Close');
@@ -47,63 +111,35 @@ jQuery(document).ready(function($) {
         $(this).closest('#shcp-cartconfirm').data('active_overlay').close();
         e.preventDefault();
     });
-    var quickview_modal = $('.shcp-quickview a').overlay({
-        left: 'center',
-        closeOnClick: true,
-//        mask: {
-//              color: '#fff',
-//              loadSpeed: 200,
-//              opacity: 0.5,
-//              zIndex: 9000,
-//        },
-        onBeforeLoad: function(e) {
-            var id = this.getTrigger().data('post_id'),
-                wrap = this.getOverlay();
-            wrap.find('form').remove();
-            $.ajax({
-                url: shcp_ajax.ajaxurl,
-                data: {action: 'product_action_quickview', p: id},
-                dataType: 'html',
-                type: 'POST',
-                success: function(data) {
-                    wrap.append(data);
-                }
-            });
-        },
-        onLoad: function(e) {
-            $(this.getOverlay()).find('.close').html('Close');
-        }
-    });
-    $('.addtocart').live('click', function(e) {
-        $(this).shcProduct('add');
-        //console.log(confirm_modal);
-        $(this).parents("#shcp_quickview_modal").find('.close').click(); 
-        e.preventDefault();
-    });
-    // show quickview button on product hover
-    $('.shcp-item').hover(
-      function() {
-        $(this).find('.shcp-quickview').show();
-      },
-      function() {
-        $(this).find('.shcp-quickview').hide();
-      }
-    );
     $('.shcp-update-cart').live('click', function(e) {
         e.preventDefault();
         $(this).closest('form.cart').trigger('submit');
-    });
-    $('select#shcp_category').live('change', function(e) {
-        var $form = $(this).closest('form');
-
-        if (this.value)
-            window.location = $form.attr('action') + '/category/' + this.value;
-        else
-            window.location = $form.attr('action');
     });
     $('.shcp-overlay').overlay({
         onLoad: function(e) {
             $(this.getOverlay()).find('.close').html('Close');
         }
     });
+    $('#shcp_grid_filter').bind('submit', function(e) {
+        var $form = $(this);
+        e.preventDefault();
+        shcp_filter_product_grid_form(this);
+
+        $.ajax({
+            url: shcp_ajax.ajaxurl,
+            data: $form.serialize(),
+            type: 'GET',
+            dataType: 'html',
+            success: function(data) {
+                var $grid = $(data).filter('#shcp_items');
+
+                $('#shcp_items').replaceWith($grid);
+                shcp_items_init();
+            }
+        });
+    }).find('select').bind('change', function(e) {
+        $(this).closest('#shcp_grid_filter').trigger('submit');
+    });
+
+    shcp_items_init();
 });
