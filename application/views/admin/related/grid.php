@@ -6,7 +6,7 @@
 <a href="#" class="shcp_trash"><img src="<?php echo SHCP_IMAGES; ?>/trash.png" alt="Remove Product" height="22px" width="20px" /></a>
 <input type="hidden" name="shcp_related_products[]" value="<?php echo $product->ID; ?>" />
 <?php endif; ?>
-<img src="http://s.shld.net/is/image/Sears/<?php echo $products->imageid; ?>?hei=100&amp;wid=100" style="width: 100px;" alt="<?php echo $products->imageid; ?>" />
+<img src="<?php echo $products->imageid; ?>?hei=100&wid=100&op_sharpen=1" style="width: 100px;" alt="<?php echo $products->imageid; ?>" />
 <p>
 <b><?php echo $product->post_title; ?>:</b>
 <?php if ($product->cutprice): ?>
