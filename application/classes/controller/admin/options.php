@@ -84,6 +84,7 @@ class Controller_Admin_Options {
         $this->widgets_field_name = SHCP::config('plugin.options.widgets.name');
         $this->cart_field_name = SHCP::config('plugin.options.cart.name');
         $this->force_update_field_name = SHCP::config('plugin.options.force_update.name');
+        $this->force_update_override_field_name = SHCP::config('plugin.options.force_update_override.name');
         add_action('admin_menu', array(&$this, 'menu'));
         add_action('admin_init', array(&$this, 'init'));
     }
@@ -109,6 +110,7 @@ class Controller_Admin_Options {
         add_settings_field($this->widgets_field_name, '', array(&$this, 'action_widgets_field'), __CLASS__, 'action_widgets_section');
         add_settings_field($this->cart_field_name, '', array(&$this, 'action_cart_field'), __CLASS__, 'action_cart_section');
         add_settings_field($this->force_update_field_name, '', array(&$this, 'action_forceupdate_field'), __CLASS__, 'action_widgets_section');
+        add_settings_field($this->force_update_override_field_name, '', array(&$this, 'action_forceupdate_override_field'), __CLASS__, 'action_widgets_section');
     }
 
     /**
@@ -287,6 +289,18 @@ class Controller_Admin_Options {
             'name'  => SHCP::prefix('options['.$this->force_update_field_name.']'),
             'value' => SHCP::get_option($this->force_update_field_name, SHCP::config('plugins.options.force_update.default')),
             'lang'  => SHCP::lang('plugin', 'options.'.$this->force_update_field_name)
+        );
+
+        echo SHCP::view('admin/options/fields/cart', $data);
+    }
+
+    public function action_forceupdate_override_field()
+    {
+        $data = array(
+            'id'    => $this->force_update_override_field_name,
+            'name'  => SHCP::prefix('options['.$this->force_update_override_field_name.']'),
+            'value' => SHCP::get_option($this->force_update_override_field_name, SHCP::config('plugins.options.force_update.default')),
+            'lang'  => SHCP::lang('plugin', 'options.'.$this->force_update_override_field_name)
         );
 
         echo SHCP::view('admin/options/fields/cart', $data);
