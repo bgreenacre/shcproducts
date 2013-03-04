@@ -676,7 +676,7 @@ class SHCP {
             $file = SHCP_CONFIG . '/' . $group . '.php';
 
             // Load the config group into the cache
-            $config[$group] = array_merge_recursive(self::load($file), $config[$group]);
+            $config[$group] = array_merge_recursive((array)self::load($file), $config[$group]);
         }
 
         if (isset($path))
