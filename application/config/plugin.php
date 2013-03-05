@@ -31,6 +31,10 @@ return array(
             'name'      => 'forceupdate',
             'default'   => 'false'
         ),
+		'force_update_override' => array(
+            'name'      => 'forceupdate_override',
+            'default'   => 'false'
+        ),
         'widgets'   => array(
             'name'      => 'widgets',
             'default'   => array(

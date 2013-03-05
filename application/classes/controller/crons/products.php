@@ -189,9 +189,8 @@ class Controller_Crons_Products {
            
 	        foreach ($posts as $key=>$post)
 	        {
-	        	
 	        	//If the number of 'deletes' equals threshold, fail job.
-	        	if((! $this->_force_update) && ($this->_num_deleted >= $this->_fail_threshold_cnt) && (! $this->_profile_mode)) {
+	        	if((!$this->_force_update && !$this->_forceupdate_override) && ($this->_num_deleted >= $this->_fail_threshold_cnt) && (! $this->_profile_mode)) {
 	        		
 	        		$this->fail_job("\n\n WARNING! -- Maximum number of deletes reached ({$this->_fail_threshold_cnt}). Job aborted.");
 	        		

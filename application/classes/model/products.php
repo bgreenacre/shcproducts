@@ -87,12 +87,25 @@ class Model_Products extends Model_SHCP {
 
         if ($key === 'detail' AND is_string($value))
         {
-            $value = unserialize($value);
+			/*
+				!!!SQUASH ME!!!
 
-            if (is_object($this->current()))
-            {
-                $this->current()->detail = $value;
-            }
+				The following commits are related to the issue we've been seeing with the products plugin.
+				10fd337feea164c0d2dd92881e8d6333e16fee4b
+				97300750473aee9801cf8af1faff3534cfee6079
+				6511bc6134959d7a6353a4fe25d3698c9250a74a
+
+				I have no idea why the following lines completely screwed the products plugin, but adding the following line and commenting out the rest seems to fix the problem
+				
+				Jason
+			*/
+            $this->detail = $value = unserialize($value);
+            // $value = unserialize($value);
+            // 
+            // if (is_object($this->current()))
+            // {
+            //     $this->current()->detail = $value;
+            // }
         }
         elseif (is_object($this->detail) AND isset($this->detail->current()->{$key}) === TRUE)
         {
@@ -187,7 +200,7 @@ class Model_Products extends Model_SHCP {
         {
             $search = $search->current();
             $this->post_title = $search->name;
-            $this->imageid = $search->imageid;
+            $this->imageid = $search->imageurl;
             $this->numreview = $search->numreview;
             $this->catentryid = $search->catentryid;
             $this->rating = $search->rating;
