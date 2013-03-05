@@ -36,6 +36,9 @@ return array(
         'forceupdate' => array (
             'label' => 'Force Update All Products (Will be slow!)'
         ),
+		'forceupdate_override' => array (
+            'label' => 'Ignore fail threshold'
+        ),
         'widgets'   => array(
             'label' => 'Available Widgets'
             ),
