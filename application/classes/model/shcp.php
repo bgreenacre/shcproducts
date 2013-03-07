@@ -432,7 +432,12 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             return;
         }
 
-        $post = (array) SHCP::get($this->_data, $this->_position);
+        //WHAT THE FUCK IS THIS DOING!!!!!  It is always passsing position, forcing an overwrite of the last product saved.  This bug is literally Hitler.
+        if ($this->_position == 0) {
+            $post = (array) SHCP::get($this->_data);
+        } else {
+            $post = (array) SHCP::get($this->_data, $this->_position);
+        }
 
         foreach (array_keys($this->fields()) as $field)
         {
