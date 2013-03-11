@@ -171,7 +171,7 @@ class Controller_Crons_Products {
 	}
 
     public function action_update($force = false)
-    {
+    {set_time_limit(0);
     	//Only proceed if the API server is reachable
     	if($this->is_api_available()) {
     		

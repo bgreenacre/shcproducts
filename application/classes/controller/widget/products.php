@@ -143,7 +143,7 @@ class Controller_Widget_Products extends SHCP_Controller_Widget {
                 {
                     $data_to_import = array(
                         'post_title'    => $search->name,
-                        'imageid'       => $search->imageid,
+                        'imageid'       => $search->imageurl,
                         'numreview'     => $search->numreview,
                         'catentryid'    => $search->catentryid,
                         'rating'        => $search->rating,
