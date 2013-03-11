@@ -338,7 +338,7 @@ class Controller_Admin_Import {
                 $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
                 $product_data['cutprice']       = isset($product->cutprice)     ? $product->cutprice        : '';
                 $product_data['displayprice']   = isset($product->displayprice) ? $product->displayprice    : '';
-                $product_data['imageid']        = isset($product->imageid)      ? $product->imageid         : '';
+                $product_data['imageid']        = isset($product->imageurl)     ? $product->imageurl       : '';
                 $product_data['numreview']      = isset($product->numreview)    ? $product->numreview       : '';
                 $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
                 $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
