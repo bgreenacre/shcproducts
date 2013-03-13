@@ -243,7 +243,6 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         // the new values for the post.
         $this->_values[$key] = $value;
         $this->param($key, $value);
-
         return $this;
     }
 
@@ -256,7 +255,6 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
     public function values(array $values = NULL)
     {
         $this->_values = array_merge($this->_values, $values);
-
         return $this;
     }
 
@@ -435,10 +433,10 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
         //WHAT THE FUCK IS THIS DOING!!!!!  It is always passsing position, forcing an overwrite of the last product saved.  This bug is literally Hitler.
         if ($this->_position == 0) {
             $post = (array) SHCP::get($this->_data);
+			$_ID = $this->_data[0]->ID;
         } else {
             $post = (array) SHCP::get($this->_data, $this->_position);
         }
-
         foreach (array_keys($this->fields()) as $field)
         {
             if (isset($this->_values[$field]) === TRUE)
@@ -447,8 +445,10 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             }
         }
 
-        if (isset($post['ID']) && $post['ID'] > 0)
+		// Hacky bullshit to make sure this is working correctly.  Checking if _ID has something in it and current position post title matches the post title coming from the system.  Otherwise, create a new post.
+        if ($_ID != "" && strstr($this->_data[$this->_position]->post_title, $this->_values["post_title"]))
         {
+			$post["ID"] = $_ID;
             $id = wp_update_post($post);
         }
         else
