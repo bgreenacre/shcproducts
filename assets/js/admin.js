@@ -5,6 +5,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         $('#shcp_categories').html('');
         $('#shcp_subcategories').html('');
+        $('#shcp_filter').html('');
         import_products(jQuery(this), 'keyword', null);
     });
 
@@ -25,6 +26,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         import_products(jQuery(this), 'subcategory', null);
     });
+
 
     // attach loading div functionality
     $("#ajax_loading").bind("ajaxSend", function(){
@@ -60,11 +62,13 @@ function import_products(el, method, page_data) {
   var vertical_terms    = jQuery("#search_terms_vertical").val();
   var category_terms    = jQuery("#search_categories option:selected").val();
   var subcategory_terms = jQuery("#search_subcategories option:selected").val();
+  var filter_terms      = jQuery("#search_terms_filter").val();
 
   keyword_terms         = keyword_terms != "Enter keywords" ? keyword_terms : '';
   vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
   category_terms        = category_terms != "Choose Category" ? category_terms : '';
   subcategory_terms     = subcategory_terms != "Choose Subategory" ? subcategory_terms : '';
+  filter_terms          = filter_terms != "Enter filter terms" ? filter_terms : '';
 
   if(method == 'keyword') {
 
@@ -125,7 +129,8 @@ function import_products(el, method, page_data) {
         product_count     : product_count,
         vertical_terms    : vertical_terms,
         category_terms    : category_terms,
-        subcategory_terms : subcategory_terms
+        subcategory_terms : subcategory_terms,
+        filter_terms      : filter_terms
       },
       function(response) {
         jQuery('#shcp_import_list').html(response);
@@ -175,14 +180,23 @@ function import_callback() {
   // displays a list of subcategories when a category is selected
   jQuery("#search_categories").unbind('change').change(function(e) {
       e.preventDefault();
+      jQuery('#search_terms_filter').val('');
       import_products(jQuery(this), 'category', null);
-  });
+	  });
 
   // displays a list of products when a subcategory is selected
   jQuery("#search_subcategories").unbind('change').change(function(e) {
       e.preventDefault();
+      jQuery('#search_terms_filter').val('');
       import_products(jQuery(this), 'subcategory', null);
   });
+  
+  // displays a list of products when a filter is submitted
+  jQuery("#submit_filter").unbind('click').click(function(e) {
+      e.preventDefault();
+      import_products(jQuery(this), 'subcategory', null);
+  });
+  
 }
 
 function save_products() {
@@ -256,12 +270,14 @@ function save_all_products(el) {
   var vertical_terms    = jQuery("#search_terms_vertical").val();
   var category_terms    = jQuery("#search_categories option:selected").val();
   var subcategory_terms = jQuery("#search_subcategories option:selected").val();
+  var filter_terms      = jQuery("#search_terms_filter").val();
   var assigned_category = jQuery('#shcp_import_form option:selected').val();
 
   keyword_terms         = keyword_terms != "Enter keywords" ? keyword_terms : '';
   vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
   category_terms        = category_terms != "Choose Category" ? category_terms : '';
   subcategory_terms     = subcategory_terms != "Choose Subategory" ? subcategory_terms : '';
+  filter_terms          = filter_terms != "Enter filter terms" ? filter_terms : '';
   
   data = {
     "action"            : 'action_save_all',
@@ -271,6 +287,7 @@ function save_all_products(el) {
     "vertical_terms"    : vertical_terms,
     "category_terms"    : category_terms,
     "subcategory_terms" : subcategory_terms,
+    "filter_terms"      : filter_terms,
     "assigned_category" : assigned_category
   };
     

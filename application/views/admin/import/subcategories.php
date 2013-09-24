@@ -7,3 +7,8 @@
   }
 ?>
 </select>
+<div id="shcp_filter">
+	Filter:<br />
+	<input type="text" name="search_terms" class="search_filter_terms" id="search_terms_filter" value="" />
+	<input type="button" name="submit_filter" id="submit_filter" value="Search" />
+</div>

@@ -52,13 +52,14 @@ class Controller_Admin_Import {
     {
         $num_per_page       = 20;
         $page_range         = 3;
-        $method             = isset($_POST['method'])             ? $_POST['method']            : 'keyword';
-        $search_terms       = isset($_POST['search_terms'])       ? $_POST['search_terms']      : '';
-        $vertical_terms     = isset($_POST['vertical_terms'])     ? $_POST['vertical_terms']    : '';
-        $category_terms     = isset($_POST['category_terms'])     ? $_POST['category_terms']    : '';
-        $subcategory_terms  = isset($_POST['subcategory_terms'])  ? $_POST['subcategory_terms'] : '';
-        $current_page       = isset($_POST['page_number'])        ? $_POST['page_number']       : 1;
-        $product_count      = isset($_POST['product_count'])      ? $_POST['product_count']     : 0;
+        $method             = isset($_POST['method'])              ? $_POST['method']              : 'keyword';
+        $search_terms       = isset($_POST['search_terms'])        ? $_POST['search_terms']        : '';
+        $vertical_terms     = isset($_POST['vertical_terms'])      ? $_POST['vertical_terms']      : '';
+        $category_terms     = isset($_POST['category_terms'])      ? $_POST['category_terms']      : '';
+        $subcategory_terms  = isset($_POST['subcategory_terms'])   ? $_POST['subcategory_terms']   : '';
+        $filter_terms       = isset($_POST['filter_terms'])        ? $_POST['filter_terms']        : '';
+        $current_page       = isset($_POST['page_number'])         ? $_POST['page_number']         : 1;
+        $product_count      = isset($_POST['product_count'])       ? $_POST['product_count']       : 0;
         $next_page      = $current_page + 1;
         $previous_page  = $current_page - 1;
         $start_index    = ($current_page - 1) * $num_per_page + 1;
@@ -84,6 +85,7 @@ class Controller_Admin_Import {
 
             $result = Library_Sears_Api::factory('search')
                 ->category(ucwords($vertical_terms), ucwords($category_terms), ucwords($subcategory_terms))
+				->filter(str_replace('| ', '|',(ucwords(str_replace('|', '| ', $filter_terms)))))
                 ->limit($start_index, $end_index)
                 ->load();
         }
@@ -338,7 +340,7 @@ class Controller_Admin_Import {
                 $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
                 $product_data['cutprice']       = isset($product->cutprice)     ? $product->cutprice        : '';
                 $product_data['displayprice']   = isset($product->displayprice) ? $product->displayprice    : '';
-                $product_data['imageid']        = isset($product->imageurl)     ? $product->imageurl       : '';
+                $product_data['imageid']        = isset($product->imageid)      ? $product->imageid         : '';
                 $product_data['numreview']      = isset($product->numreview)    ? $product->numreview       : '';
                 $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
                 $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
@@ -468,6 +470,7 @@ class Controller_Admin_Import {
             $result = Library_Sears_Api::factory('search')
                 ->category(ucwords(SHCP::get($data, 'vertical_terms')), ucwords(SHCP::get($data, 'category_terms')), ucwords(SHCP::get($data, 'subcategory_terms')))
                 ->limit($limit['lower'], $limit['upper'])
+				->filter(str_replace('| ', '|',(ucwords(str_replace('|', '| ', SHCP::get($data, 'filter_terms'))))))
                 ->load();
         }
         
