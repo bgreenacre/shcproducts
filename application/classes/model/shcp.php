@@ -388,7 +388,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	                $this->_position = 0;
 	                $this->_total_rows = count($this->_data);
 	                $this->_total_display = $query->post_count;
-	                $this->_posts_per_page = $query->posts_per_page;
+	                $this->_posts_per_page = (isset($query->posts_per_page)) ? $query->posts_per_page : false;
 	                $this->_max_num_pages = $query->max_num_pages;
 
 	                // Destroy the query object.

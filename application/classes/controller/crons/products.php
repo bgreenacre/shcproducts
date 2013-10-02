@@ -126,7 +126,7 @@ class Controller_Crons_Products {
 	 * @access protected
 	 * @since Wednesday, October 24 2012
 	 */
-	protected $_fail_threshold_pct = .70;
+	protected $_fail_threshold_pct = .75;
 	
 	/**
 	 * _fail_threshold_cnt - the threshold number of 'deleted' 

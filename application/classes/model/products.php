@@ -94,7 +94,7 @@ class Model_Products extends Model_SHCP {
                 $this->current()->detail = $value;
             }
         }
-        elseif (is_object($this->detail) AND isset($this->detail->current()->{$key}) === TRUE)
+        elseif (isset($this->detail) && is_object($this->detail) AND isset($this->detail->current()->{$key}) === TRUE)
         {
             $value = $this->detail->current()->{$key};
         }
