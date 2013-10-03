@@ -85,7 +85,7 @@ class Controller_Admin_Import {
 
             $result = Library_Sears_Api::factory('search')
                 ->category(ucwords($vertical_terms), ucwords($category_terms), ucwords($subcategory_terms))
-				->filter(str_replace('| ', '|',(ucwords(str_replace('|', '| ', $filter_terms)))))
+				->filter(str_replace('| ', '|',(str_replace('|', '| ', $filter_terms))))
                 ->limit($start_index, $end_index)
                 ->load();
         }
@@ -128,7 +128,7 @@ class Controller_Admin_Import {
             'product_count' => $product_count,
             'method'        => $method,
             'search_terms'  => $search_terms,
-            'pagination'    => $pagination,
+            'pagination'    => (isset($pagination)) ? $pagination : false,
             'dropdown_args' => array( //settings for category dropdown
                 'show_count'    => 1,
                 'hide_empty'    => 0,
@@ -470,7 +470,7 @@ class Controller_Admin_Import {
             $result = Library_Sears_Api::factory('search')
                 ->category(ucwords(SHCP::get($data, 'vertical_terms')), ucwords(SHCP::get($data, 'category_terms')), ucwords(SHCP::get($data, 'subcategory_terms')))
                 ->limit($limit['lower'], $limit['upper'])
-				->filter(str_replace('| ', '|',(ucwords(str_replace('|', '| ', SHCP::get($data, 'filter_terms'))))))
+				->filter(str_replace('| ', '|',(str_replace('|', '| ', SHCP::get($data, 'filter_terms')))))
                 ->load();
         }
         

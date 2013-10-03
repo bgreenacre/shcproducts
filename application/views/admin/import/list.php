@@ -1,12 +1,15 @@
 <div class="product_pagination">
   <div class='products_found'><span class='product_count'><?php echo $product_count; ?></span> products found</div>
-<?php foreach($pagination as $page): ?>
+<?php 
+if(isset($pagination) && is_array($pagination)) {
+	foreach($pagination as $page): ?>
   <?php if($page['number'] == $current_page): ?>
       <span class='current_page'><?php echo $page['number']; ?></span>
     <?php else: ?>
       <a class="product_page_link" href="#" data-product-count="<?php echo $product_count; ?>" data-page-number="<?php echo $page['number']; ?>" data-method="<?php echo $method; ?>"><?php echo $page['message']; ?></a>
 <?php   endif;
-      endforeach; ?>
+      endforeach;
+} ?>
 </div>
 
 <form action="" id="shcp_import_form" method="post">
