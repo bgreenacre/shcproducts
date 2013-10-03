@@ -9,6 +9,15 @@ jQuery(document).ready(function($) {
         import_products(jQuery(this), 'keyword', null);
     });
 
+	// displays products from the api via ajax when form is submitted
+    $("#submit_partnumber").click(function(e) {
+        e.preventDefault();
+        $('#shcp_categories').html('');
+        $('#shcp_subcategories').html('');
+        $('#shcp_filter').html('');
+        import_products(jQuery(this), 'partnumber', null);
+    });
+
     // displays a list of categories when a vertical is selected
     $("#submit_vertical").click(function(e) {
         e.preventDefault();
@@ -51,6 +60,18 @@ jQuery(document).ready(function($) {
             }
         }
     });
+    $('.search_terms_partnumber').live({
+        focus: function() {
+            if($(this).val() == 'Enter part number') {
+                $(this).val('');
+            }
+        },
+        blur: function() {
+            if($(this).val() == '') {
+                $(this).val('Enter part number');
+            }
+        }
+    });
 
 });
 
@@ -63,6 +84,7 @@ function import_products(el, method, page_data) {
   var category_terms    = jQuery("#search_categories option:selected").val();
   var subcategory_terms = jQuery("#search_subcategories option:selected").val();
   var filter_terms      = jQuery("#search_terms_filter").val();
+  var partnumber_terms  = jQuery("#search_terms_partnumber").val();
 
   keyword_terms         = keyword_terms != "Enter keywords" ? keyword_terms : '';
   vertical_terms        = vertical_terms != "Enter vertical name" ? vertical_terms : '';
@@ -78,6 +100,24 @@ function import_products(el, method, page_data) {
         action        : "action_list",
         method        : method,
         search_terms  : keyword_terms,
+        page_number   : page_number,
+        product_count : product_count
+      },
+       function(response) {
+        jQuery('#shcp_import_list').html(response);
+        import_callback(this);
+      }
+    );
+  }
+  
+  if(method == 'partnumber') {
+  	console.log('Searching for part number... '+partnumber_terms);
+  	jQuery.post(
+      shcp_ajax.ajaxurl,
+      {
+        action        : "action_list",
+        method        : method,
+        partnumber	  : partnumber_terms,
         page_number   : page_number,
         product_count : product_count
       },

@@ -1,6 +1,15 @@
 <div class="wrap shcp_wrap">
   <h2>Import Products</h2> 
   <p>To see products select a search method, enter the search terms and click the Search button.</p>
+  <form action="" id="partnumber_form" method="post">
+    <div class="shcp_form_labels">
+      <label for="search_terms">Part Number: </label>
+    </div>
+    <div class="shcp_form_fields">
+      <input type="text" name="search_terms" class="search_terms search_terms_partnumber" id="search_terms_partnumber" value="Enter part number" />
+      <input type="submit" name="submit_partnumber" id="submit_partnumber" value="Search" />
+    </div>
+  </form>
   <form action="" id="keyword_form" method="post">
     <div class="shcp_form_labels">
       <label for="search_terms">Keyword Search: </label>

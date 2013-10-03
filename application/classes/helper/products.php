@@ -38,6 +38,8 @@ class Helper_Products {
      */
     public static function image($image, array $attrs = array(), $disable_url_dimensions = FALSE)
     {
+    	if(empty($image)) return 'No Image';
+    
         $attrs['height']  = SHCP::get($attrs, 'height', 140);
         $attrs['width']   = SHCP::get($attrs, 'width', 140);
         $attrs['alt']     = SHCP::get($attrs, 'alt', '');

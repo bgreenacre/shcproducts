@@ -284,5 +284,19 @@ class Library_Sears_Api_Product extends Library_Sears_Api {
         return Library_Sears_Api::factory('cart', $this->_group, $this->current())
             ->add();
     }
+    
+    
+    /**
+    *	get_product_data - Return product data as an array.
+    *
+    *	@return array 
+    */
+    public function get_product_details() {
+    	if(isset($this->_data) && is_array($this->_data)) {
+    		return $this->_data;
+    	} else {
+    		return false;
+    	}
+    }
 
 }

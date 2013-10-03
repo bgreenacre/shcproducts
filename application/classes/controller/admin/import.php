@@ -60,6 +60,7 @@ class Controller_Admin_Import {
         $filter_terms       = isset($_POST['filter_terms'])        ? $_POST['filter_terms']        : '';
         $current_page       = isset($_POST['page_number'])         ? $_POST['page_number']         : 1;
         $product_count      = isset($_POST['product_count'])       ? $_POST['product_count']       : 0;
+        $partnumber      	= isset($_POST['partnumber'])     	   ? $_POST['partnumber']       : 0;
         $next_page      = $current_page + 1;
         $previous_page  = $current_page - 1;
         $start_index    = ($current_page - 1) * $num_per_page + 1;
@@ -71,6 +72,18 @@ class Controller_Admin_Import {
                 ->$method($search_terms, $subcategory)
                 ->limit($start_index, $end_index)
                 ->load();
+        } else if($method == 'partnumber') 
+        {
+        	$result = Library_Sears_Api::factory('product')
+                ->cache(FALSE)
+                ->get($partnumber)
+                ->param('showSpec', 'false')
+                ->load();
+            $details = $result->get_product_details();
+            if(is_array($details)) {
+            	$details = array_pop($details);
+            }
+            $result = $details;
         }
         else
         {
@@ -139,8 +152,12 @@ class Controller_Admin_Import {
         );
 
         $data = array_merge($args, array('result' => $result));
-
-        $response = SHCP::view('admin/import/list', $data);
+		
+		if($method == 'partnumber') {
+			$response = SHCP::view('admin/import/list_single', $data);
+		} else {
+			$response = SHCP::view('admin/import/list', $data);
+		}
 
         // Send headers to not cache this result.
         header('Cache-Control: no-cache, must-revalidate');
