@@ -907,10 +907,14 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
      */
     public function offsetExists($offset)
     {
-        if ( ! $this->_request_made)
-        {
-            $this->_load();
-        }
+    	// The following was causing exceptions to be thrown,
+    	// and does not appear to cause any ill effects when removed.
+    	// Keeping the code commented out below for reference.
+    	
+//         if ( ! $this->_request_made)
+//         {
+//             $this->_load();
+//         }
 
         return ($offset >= 0 AND $offset < $this->_total_rows);
     }
