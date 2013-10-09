@@ -103,6 +103,20 @@ class Controller_Crons_Products {
 	protected $_num_updated = 0;
 	
 	/**
+	 * _num_draft
+	 * 
+	 * @var int
+	 */
+	protected $_num_draft = 0;
+	
+	/**
+	 * _num_no_action
+	 * 
+	 * @var int
+	 */
+	protected $_num_no_action = 0;
+	
+	/**
 	 * _num_posts - total number of products
 	 * 
 	 * @var int
@@ -173,6 +187,7 @@ class Controller_Crons_Products {
     public function action_update($force = false)
     {set_time_limit(0);
     	//Only proceed if the API server is reachable
+    	    	
     	if($this->is_api_available()) {
     		
     		
@@ -182,8 +197,14 @@ class Controller_Crons_Products {
     		}
     		
             $posts = new Model_Products();
-            $posts->param('post_status', array('publish', 'draft'));
+            // Older versions of WordPress need a string for the post status values:
+            $posts->param('post_status', 'publish,draft');
+            // Order posts in such a way that the last ones updated come first in the list:
+            $posts->param('orderby', 'modified');
+            $posts->param('order', 'ASC');
+            // Grab all of the posts:
             $posts->limit(-1);
+            //$posts->limit(100); // Example of limiting the scope of the update (for testing purposes, etc.)
             
             $this->set_threshold($posts);
            
@@ -200,25 +221,10 @@ class Controller_Crons_Products {
 	            $model_post = new Model_Products($post->ID); 
 	            $model_post->sync_from_api($this->_profile_mode);
 	            
-	            
-	            //Was product deleted?http://localhost/
-	            if($model_post->is_deleted) {
-	            	
-	            	$this->log_delete($post);
-	            	
-	            }
-	            
-	            //Was product updated?
-	            if($model_post->is_updated) {
-	            	
-	            	$this->log_update($post);
-	           
-	            }
-	            
-	        	
-	           
-	            unset($post);
-	            
+	            // Log the outcome (for email report / log file):
+	            $this->log_message($model_post);
+	                   
+	            unset($model_post);    
 	        }
 	        
 	        
@@ -231,7 +237,6 @@ class Controller_Crons_Products {
 	        //Mail report
 	        $this->mail_report();
 	        
-	       
         
          } else {
     		
@@ -296,6 +301,35 @@ class Controller_Crons_Products {
     	
     }
     
+    
+    // Log all types of messages, depending on what was set in the post object, with optional formatting.
+    protected function log_message($post) {
+    	$msg = $post->cron_msg."\n";
+    	if(empty($msg)) return;
+    	if(! $this->_profile_mode) {
+    		
+    		if($post->is_updated) {
+    			$this->_num_updated++;
+    		}
+    		if($post->is_deleted) {
+    			$this->_num_deleted++;
+    			$msg = '<span style="color:#FF0000;"><b>'.$msg.'</b></span>';
+    		} 
+    		if($post->is_draft) {
+    			$this->_num_draft++;
+    			$msg = '<span style="color:#ff6c00;"><b>'.$msg.'</b></span>';
+    		}  
+    		if($post->no_action) {
+    			$this->_num_no_action++;
+    			$msg = '<span style="color:#FF0000;background-color:#FFFF00;"><b>'.$msg.'</b></span>';
+    		}  		
+    		$this->_activity_log[] = $msg;
+    	} else {
+    		$this->_profile_log[] = $msg;
+    	}
+    }
+    
+    
     protected function log_job_fail($reason) {
     	
     	$this->_status = 'Fail';
@@ -326,13 +360,14 @@ class Controller_Crons_Products {
     		
     		$f = fopen($file, 'w');
     		
-    		$log_body = "Job Status: {$this->_status} \n Total Products: {$this->_num_posts} \n Products Updated: {$this->_num_updated} \n Products Set to Draft: {$this->_num_deleted} \n" . $this->log_to_string($this->_activity_log);
+    		$log_body = "Job Status: {$this->_status} \nTotal Products: {$this->_num_posts}\nProducts Updated: {$this->_num_updated} \nProducts Set to Draft: {$this->_num_draft}\nProducts Permanently Deleted: {$this->_num_deleted}\nNo Action Taken: {$this->_num_no_action} \n\n" . $this->log_to_string($this->_activity_log);
     		
     		if($this->_profile_mode) {
     			
     			$log_body .= '\n\n PROFILE MODE -- The following updates were NOT performed: \n\n' . $this->log_to_string($this->_profile_log);
     		}
     		
+    		$log_body = strip_tags($log_body);
     		fwrite($f, $log_body);
     		
     		fclose($f);
@@ -351,14 +386,37 @@ class Controller_Crons_Products {
     	
     	$to = 'phpteam@searshc.com';
     	$subject = 'SHC Products Update for ' . $this->_blog_name;
-    	$body = ($this->_activity_log) ? "Product updates for " . $this->_blog_name . ": \n Cron job completed on: " . date('m-d-Y H:i:s a') . " \n Total Products: {$this->_num_posts} \n Products Updated: {$this->_num_updated} \n Products Set to Draft: {$this->_num_deleted} \n Status: ". $this->_status ."\n\n" .  $this->log_to_string($this->_activity_log) : 'No products were updated or set to draft.';
+    	
+    	$body =  "Product update completed on: " . date('Y-m-d h:i:s a T') ."\n\n";
+    	if($this->_activity_log) {
+    		$status = "Job Status: <b>{$this->_status}</b> \n";
+    		$total = "Total Products: {$this->_num_posts}\n";
+    		$updated = "Products Updated: {$this->_num_updated} \n";
+    		$draft = "Products Set to Draft: {$this->_num_draft}\n";
+    		$deleted = "Products Permanently Deleted: {$this->_num_deleted}\n";
+    		$no_action = "No Action Taken: {$this->_num_no_action} \n";
+    		
+    		if($this->_num_draft > 0) $draft = '<span style="color:#ff6c00;"><b>'.$draft.'</b></span>';
+    		if($this->_num_deleted > 0) $deleted = '<span style="color:#ff0000;"><b>'.$deleted.'</b></span>';
+    		if($this->_num_no_action > 0) $no_action = '<span style="color:#FF0000;background-color:#FFFF00;"><b>'.$no_action.'</b></span>';
+    		
+    		$log_string = $this->log_to_string($this->_activity_log);
+    		
+    		$body .= $status.$total.$updated.$draft.$deleted.$no_action."\n".$log_string;
+    	} else {
+    		$body .= 'No products were updated or set to draft.';
+    	}
     	
     	if($this->_profile_mode) {
     		
     		$body .= "\n CHANGES NEEDED TO BE PERFORMED: \n\n" . $this->log_to_string($this->_profile_log);
     	}
 
-    	wp_mail($to, $subject, $body);
+		// Make it an HTML message with some light formatting (highlight certain errrors, etc):
+		$headers = array();
+		$headers[] = 'Content-Type: text/html';
+		$body = '<div style="font-size:13px;">'.$body.'</div>';
+    	wp_mail($to, $subject, nl2br($body), $headers);
     }
     
     /**
@@ -371,9 +429,11 @@ class Controller_Crons_Products {
     	
     	$out = '';
     	
+    	if(!is_array($log) || empty($log)) return '';
+    	
     	foreach($log as $entry) {
     		
-    		$out .= $entry . ' ';
+    		$out .= $entry;
     	}
     	
     	return $out;
@@ -491,6 +551,9 @@ class Controller_Crons_Products {
     		
     		$this->_num_posts = count($posts);
     		$this->_fail_threshold_cnt = round($this->_num_posts * $this->_fail_threshold_pct);
+    	} else {
+    		// Prevent blank value for Total Products in mail report when initiated via the admin (force update):
+    		$this->_num_posts = count($posts);
     	}
     	
     }

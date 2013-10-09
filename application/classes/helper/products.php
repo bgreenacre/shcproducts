@@ -105,7 +105,9 @@ class Helper_Products {
         // }
         // 
         // return $image;
-		return $image . '?hei='.$height.'&wid='.$width."&op_sharpen=1";
+        
+        $glue_char = (strpos($image, '?') === false) ? '?' : '&';
+		return $image . $glue_char.'hei='.$height.'&wid='.$width."&op_sharpen=1";
     }
 
 	public static function swatch_grabber($image, $height, $width, $disable_url_dimensions = FALSE)

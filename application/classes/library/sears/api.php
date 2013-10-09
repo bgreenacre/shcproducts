@@ -548,6 +548,9 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
             // Get the complete url.
             $this->_url = $this->build_url();
         }
+        
+        // Enable the following to see where API calls are going:
+        // error_log('API URL: '.$this->_url);
 
         if (SHCP::$profiling)
         {
@@ -601,7 +604,11 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
 
         if (isset($error))
         {
-            throw new Exception('Error fetching remote ' . $this->url . ' [ status ' . $code . ' ] ' . $error);
+            // The API request failed -- may have timed out, etc.
+            // Let's just return false here and move on.
+            // error_log('CURL ERROR: '.$error); // Enable this to see what went wrong.
+            $this->success = false;
+            return false;
         }
 
         // Check for the posibility of a fault xml repsponse and
@@ -765,6 +772,11 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
     public function unserialize($data)
     {
         $this->_initialize();
+        
+        $unserialized = unserialize($data);
+        if(!$unserialized) {
+        	return false;
+        }
 
         foreach (unserialize($data) as $name => $var)
         {

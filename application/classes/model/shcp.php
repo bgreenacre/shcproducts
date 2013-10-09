@@ -566,6 +566,24 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
         return $this;
     }
+    
+    
+    // Set a post to "draft" status.
+    public function draft($id = NULL)
+    {
+        if ($id === NULL AND $this->loaded())
+        {
+            $id = $this->ID;
+        }
+        else
+        {
+            return $this;
+        }
+
+        $args = array('ID' => $id, 'post_status' => 'draft');
+
+        wp_update_post($args);
+    }
 
     public function delete($id = NULL)
     {
