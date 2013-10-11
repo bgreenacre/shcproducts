@@ -369,7 +369,7 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
             else
             {
             	//If we are loading a single product..
-            	if(is_int($this->_id) && $this->_id != 0) {
+            	if(is_numeric($this->_id) && $this->_id != 0) {
             	
             		$this->_data = array(get_post($this->_id));
 	                $this->_position = 0;
@@ -582,7 +582,13 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
         $args = array('ID' => $id, 'post_status' => 'draft');
 
-        wp_update_post($args);
+        $outcome = wp_update_post($args);
+        
+        if(!is_numeric($outcome) || $outcome == 0) {
+			return false;
+		} else {
+			return true;
+		}
     }
 
     public function delete($id = NULL)

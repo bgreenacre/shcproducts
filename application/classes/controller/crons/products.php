@@ -187,6 +187,8 @@ class Controller_Crons_Products {
     public function action_update($force = false)
     {set_time_limit(0);
     	//Only proceed if the API server is reachable
+    	
+    	$this->elapsed_time_start = microtime(true);
     	    	
     	if($this->is_api_available()) {
     		
@@ -196,16 +198,10 @@ class Controller_Crons_Products {
     			$this->_force_update = true;
     		}
     		
-            $posts = new Model_Products();
-            // Older versions of WordPress need a string for the post status values:
-            $posts->param('post_status', 'publish,draft');
-            // Order posts in such a way that the last ones updated come first in the list:
-            $posts->param('orderby', 'modified');
-            $posts->param('order', 'ASC');
-            // Grab all of the posts:
-            $posts->limit(-1);
-            //$posts->limit(100); // Example of limiting the scope of the update (for testing purposes, etc.)
-            
+    		global $wpdb;
+    		$sql = "SELECT ID FROM wp_posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
+    		$posts = $wpdb->get_results($sql);
+    		            
             $this->set_threshold($posts);
            
 	        foreach ($posts as $key=>$post)
@@ -217,16 +213,22 @@ class Controller_Crons_Products {
 	        		
 	        	}
 	        	
-	        	//Run update or delete (draft)
-	            $model_post = new Model_Products($post->ID); 
-	            $model_post->sync_from_api($this->_profile_mode);
-	            
-	            // Log the outcome (for email report / log file):
-	            $this->log_message($model_post);
-	                   
-	            unset($model_post);    
+	        	if(isset($post->ID) && !empty($post->ID) && is_numeric($post->ID)) {
+	        	
+					// Run update:
+					$model_post = new Model_Products($post->ID); 
+					$model_post->sync_from_api($this->_profile_mode);
+				
+					// Log the outcome (for email report / log file):
+					$this->log_message($model_post);
+					   
+					unset($model_post);
+				
+					wp_cache_flush();
+	            }
 	        }
 	        
+	        $this->elapsed_time_end = microtime(true);
 	        
 	        //Create Log file
 	        $this->create_log();
@@ -387,7 +389,17 @@ class Controller_Crons_Products {
     	$to = 'phpteam@searshc.com';
     	$subject = 'SHC Products Update for ' . $this->_blog_name;
     	
-    	$body =  "Product update completed on: " . date('Y-m-d h:i:s a T') ."\n\n";
+    	$body =  "Product update completed on: " . date('Y-m-d h:i:s a T') ."\n";
+
+    	$memory_usage = memory_get_peak_usage();
+		$memory_usage = $memory_usage / 1048576;
+		$memory_usage = number_format($memory_usage,3);
+		$body .= "Peak Memory Usage: ".$memory_usage." MB \n";
+			
+		$elapsed_time = $this->elapsed_time_end - $this->elapsed_time_start;
+		$elapsed_time = number_format($elapsed_time,3);
+		$body .= "Elapsed Time: ".$elapsed_time." seconds \n\n";
+		
     	if($this->_activity_log) {
     		$status = "Job Status: <b>{$this->_status}</b> \n";
     		$total = "Total Products: {$this->_num_posts}\n";
@@ -403,6 +415,9 @@ class Controller_Crons_Products {
     		$log_string = $this->log_to_string($this->_activity_log);
     		
     		$body .= $status.$total.$updated.$draft.$deleted.$no_action."\n".$log_string;
+    		
+    		
+    		
     	} else {
     		$body .= 'No products were updated or set to draft.';
     	}

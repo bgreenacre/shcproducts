@@ -309,10 +309,9 @@ class Controller_Admin_Options {
     public function action_settings_save($settings){
 
         if($settings['forceupdate']){
-         
-                $update = new Controller_Crons_Products();
-                $update->action_update(true);
-                $settings['forceupdate'] = 0;
+			$update = new Controller_Crons_Products();
+			$update->action_update(true);
+			$settings['forceupdate'] = 0;
         }
         
         return $settings;

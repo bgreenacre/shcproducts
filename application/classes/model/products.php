@@ -184,8 +184,6 @@ class Model_Products extends Model_SHCP {
 		}
 				
 		if(!is_numeric($outcome) || $outcome == 0) {
-			global $wpdb;
-			$this->cron_msg = 'POST ID #'.$this->ID.' - NO ACTION - Part Number '.$this->partnumber.' - An error occurred while trying to save the post. ['.print_r($wpdb->last_error,true).']';
 			return false;
 		} else {
 			return true;
@@ -249,7 +247,7 @@ class Model_Products extends Model_SHCP {
         {
             return $this;
         }
-
+        
 		if( strlen( $this->partnumber ) > 0 ) {
 
 			$search = Library_Sears_Api::factory('product')
@@ -309,10 +307,15 @@ class Model_Products extends Model_SHCP {
 					 if(!$this->check_product($post, $post_meta) ) {
 						// If anything went wrong in the sanity check,
 						// set the product to draft.
-						$this->is_draft = true;
 						$this->cron_msg = 'POST ID #'.$this->ID.' - DRAFT - Part Number '.$this->partnumber.' ('.$this->post_title.') - Data did not pass our sanity check. API URL: '.$search->url();
 						if(! $profile_mode) {
-							$this->draft();
+							if($this->draft()) {
+								$this->is_draft = true;
+							 } else {
+								global $wpdb;
+								$this->cron_msg = 'POST ID #'.$this->ID.' - NO ACTION - Part Number '.$this->partnumber.' ('.$this->post_title.') - An error occurred while trying to set post to DRAFT. ['.print_r($wpdb->last_error,true).']';
+								$this->no_action = true;
+							 }
 						} else {
 							$this->cron_msg = '*** profile_mode *** '.$this->cron_msg;
 						}
@@ -324,7 +327,8 @@ class Model_Products extends Model_SHCP {
 								$this->is_updated = true;
 								$this->cron_msg = 'POST ID #'.$this->ID.' - UPDATE - Part Number '.$this->partnumber.' ('.$this->post_title.') - Successfully updated.';
 							} else {
-								// Cron msg is set in $this->update_product for now.
+								global $wpdb;
+								$this->cron_msg = 'POST ID #'.$this->ID.' - NO ACTION - Part Number '.$this->partnumber.' - An error occurred while trying to UPDATE the post. ['.print_r($wpdb->last_error,true).']';
 								$this->no_action = true;
 							}
 						} else {
@@ -341,7 +345,13 @@ class Model_Products extends Model_SHCP {
 					$this->cron_msg = 'POST ID #'.$this->ID.' - DELETE - Part Number '.$this->partnumber.' ('.$this->post_title.') - No longer available. API URL: '.$search->url();
 				
 					if(! $profile_mode) {					
-						 $this->really_delete_product();
+						if($this->really_delete_product()) {
+							 $this->is_deleted = true;
+						} else {
+							global $wpdb;
+							$this->cron_msg = 'POST ID #'.$this->ID.' - NO ACTION - Part Number '.$this->partnumber.' - An error occurred while trying to DELETE the post. ['.print_r($wpdb->last_error,true).']';
+							$this->no_action = true;
+						}
 					} else {
 						$this->cron_msg = '*** profile_mode *** '.$this->cron_msg;
 					}
@@ -357,12 +367,18 @@ class Model_Products extends Model_SHCP {
 			}
 			else
 			{
-				$this->is_draft = true;
+				
 							
 				$this->cron_msg = 'POST ID #'.$this->ID.' - DRAFT - Part Number '.$this->partnumber.' ('.$this->post_title.') - Failed to look up product. API URL: '.$search->url();
 			
 				if(! $profile_mode) {
-					 $this->draft();
+					 if($this->draft()) {
+					 	$this->is_draft = true;
+					 } else {
+					 	global $wpdb;
+						$this->cron_msg = 'POST ID #'.$this->ID.' - NO ACTION - Part Number '.$this->partnumber.' ('.$this->post_title.') - An error occurred while trying to set post to DRAFT. ['.print_r($wpdb->last_error,true).']';
+					 	$this->no_action = true;
+					 }
 				} else {
 					$this->cron_msg = '*** profile_mode *** '.$this->cron_msg;
 				}
@@ -375,10 +391,17 @@ class Model_Products extends Model_SHCP {
         	
         	$this->cron_msg = 'POST ID #'.$this->ID.' - DELETE - ('.$this->post_title.') Part Number post meta value was missing.';
                 	
-        	$this->is_deleted = true;
+        	
 					
 			if(! $profile_mode) {
-				 $this->really_delete_product();
+				 if($this->really_delete_product()) {
+					 $this->is_deleted = true;
+				 } else {
+				 	global $wpdb;
+					$this->cron_msg = 'POST ID #'.$this->ID.' - NO ACTION - Part Number '.$this->partnumber.' - An error occurred while trying to DELETE the post. ['.print_r($wpdb->last_error,true).']';
+					$this->no_action = true;
+				 }
+				 
 			} else {
 				$this->cron_msg = '*** profile_mode *** '.$this->cron_msg;
 			}
@@ -389,7 +412,13 @@ class Model_Products extends Model_SHCP {
     
     // Be careful! This will really delete the product!
     public function really_delete_product() {
-    	wp_delete_post( $this->ID, TRUE);
+    	$outcome = wp_delete_post( $this->ID, TRUE);
+    	
+    	if($outcome === false) {
+    		return false;
+    	} else {
+    		return true;
+    	}
     }
     
     
