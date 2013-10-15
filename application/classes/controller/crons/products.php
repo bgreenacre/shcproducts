@@ -169,6 +169,14 @@ class Controller_Crons_Products {
 	
 	
 	/**
+	 * _is_manual_update - Keep track of whether update began via cron job or the admin panel.
+	 * 
+	 * @var bool
+	 */
+	protected $_is_manual_update = false;
+	
+	
+	/**
 	 * Constructor - Sets initial properties
 	 * 
 	 * @param void
@@ -221,7 +229,7 @@ class Controller_Crons_Products {
 				
 					// Log the outcome (for email report / log file):
 					$this->log_message($model_post);
-					   
+										   
 					unset($model_post);
 				
 					wp_cache_flush();
@@ -229,6 +237,7 @@ class Controller_Crons_Products {
 	        }
 	        
 	        $this->elapsed_time_end = microtime(true);
+	        
 	        
 	        //Create Log file
 	        $this->create_log();
@@ -390,6 +399,14 @@ class Controller_Crons_Products {
     	$subject = 'SHC Products Update for ' . $this->_blog_name;
     	
     	$body =  "Product update completed on: " . date('Y-m-d h:i:s a T') ."\n";
+    	
+    	$body .= 'Update mode: ';
+    	if($this->_is_manual_update) {
+    		$body .= 'Manual (admin panel force update)';
+    	} else {
+    		$body .= 'Automatic (cron job)';
+    	}
+    	$body .= "\n";
 
     	$memory_usage = memory_get_peak_usage();
 		$memory_usage = $memory_usage / 1048576;
@@ -537,6 +554,18 @@ class Controller_Crons_Products {
 						            
        return ($search->http_code == '200') ? true : false;
     }
+    
+    
+    /**
+     * is_manual_update -- Set flag to indicate that update began in the admin panel.
+     * 
+     * @param void
+     * @return bool
+     */
+    public function is_manual_update() { 
+    	$this->_is_manual_update = true;
+    }
+    
     
     /**
      * fail_job -- steps to fail job, create log and email notice

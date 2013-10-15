@@ -39,12 +39,22 @@ class Library_Sears_Api_Product extends Library_Sears_Api {
                     ->softhardproductdetails[1];
 
                 $this->_total_rows = 1;
+                     
+				
             }
             elseif ($this->_object->productdetail)
             {
                 $this->_data = array(& $this->_object->productdetail);
+                                
                 $this->_total_rows = 1;
             }
+                                            
+			if(isset($this->_data[0]->otherfbmmerchants)) {
+				// Unset 'otherfbmmerchants' property.
+				// We don't use this for anything, and in certain cases it was returning
+				// 18,000+ rows of garbage and causing problems.
+				unset($this->_data[0]->otherfbmmerchants);
+			}
         }
     }
 

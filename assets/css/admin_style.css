@@ -200,3 +200,6 @@ display: none;
 float:left;
 }
 
+th#modified {
+	width:100px;
+}

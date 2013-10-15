@@ -32,3 +32,26 @@ function shcp_register_post_types()
 }
 
 add_action('init', 'shcp_register_post_types');
+
+
+
+function add_shcproduct_columns($columns) {
+    return array_merge($columns, 
+              array('modified' => __('Last Modified') )
+              );
+}
+add_filter('manage_shcproduct_posts_columns' , 'add_shcproduct_columns');
+
+
+function custom_shcproduct_column( $column, $post_id ) {
+	$post = get_post($post_id);
+
+    switch ( $column ) {
+
+        case 'modified' :
+        	$modified_date = date('Y/m/d H:i:s',strtotime($post->post_modified));
+           echo $modified_date;
+
+    }
+}
+add_action( 'manage_shcproduct_posts_custom_column' , 'custom_shcproduct_column', 10, 2 );

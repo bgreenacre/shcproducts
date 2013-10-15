@@ -165,6 +165,14 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
      */
     protected $_errors;
 
+	/**
+     * Keep track of whether a single post failed to load.
+     *
+     * @var array
+     */
+    protected $_load_failed = false;
+
+
     /**
      * __construct - Call the _initialize method to set the object up.
      *
@@ -367,11 +375,15 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
                 $this->_max_num_pages = $GLOBALS['wp_query']->max_num_pages;
             }
             else
-            {
+            {            	
             	//If we are loading a single product..
             	if(is_numeric($this->_id) && $this->_id != 0) {
-            	
-            		$this->_data = array(get_post($this->_id));
+            		$gotten_post = get_post($this->_id);
+            		if($gotten_post == null) {
+            			// Something went wrong retrieving the post.
+            			$this->_load_failed = true;
+            		}
+            		$this->_data = array($gotten_post);
 	                $this->_position = 0;
 	                $this->_total_rows = 1;
 	                $this->_total_display = 1;
@@ -379,7 +391,6 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 	                $this->_max_num_pages = 1;
             		
             	} else { //If we are loading multiple products...
-            		
 	                // Instantiate the query object to get posts.
 	               $query = new WP_Query($this->_params);
 	            
@@ -661,6 +672,18 @@ class Model_SHCP implements Countable, Iterator, SeekableIterator, ArrayAccess, 
 
         return ($this->_total_rows > 0);
     }
+
+
+	/**
+     * load_failed - Check whether a result has failed to load from the DB.
+     *
+     * @return bool TRUE if failed, FALSE otherwise
+     */
+    public function load_failed()
+    {
+        return $this->_load_failed;
+    }
+
 
     /**
      * param - Add a parameter which will passed to the WP_Query object.
