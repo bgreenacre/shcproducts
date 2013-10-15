@@ -106,6 +106,10 @@ class Helper_Products {
         // 
         // return $image;
         
+        if (strpos($image, 'http://') !== FALSE && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+        	$image = str_replace('http://', 'https://',$image);
+        }
+        
         $glue_char = (strpos($image, '?') === false) ? '?' : '&';
 		return $image . $glue_char.'hei='.$height.'&wid='.$width."&op_sharpen=1";
     }
