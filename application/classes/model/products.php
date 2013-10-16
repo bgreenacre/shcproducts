@@ -80,6 +80,15 @@ class Model_Products extends Model_SHCP {
      * @var bool
      */
     public $profile_mode = false;
+    
+    
+     /**
+     * sanity_check_fail_reason - May be set to contain a message if
+     * a product fails this->check_product()
+     * 
+     * @var string
+     */
+    public $sanity_check_fail_reason = '';
 
     /**
      * __construct 
@@ -200,12 +209,31 @@ class Model_Products extends Model_SHCP {
     	// (Requirements will likely be refined over time, etc.)
 
 		// Necessary for WP to update the post:
-    	if(empty($post['ID']) || !is_numeric($post['ID']) ) return false;
-    	if(empty($post['post_type'])) return false; 
+    	if(empty($post['ID']) || !is_numeric($post['ID']) ) {
+    		$this->sanity_check_fail_reason = 'ID was missing';
+    		return false;
+    	}
+    	if(empty($post['post_type'])) {
+    		$this->sanity_check_fail_reason = 'post_type was missing';
+    		return false;
+    	}
     	// Require title, image, and price:
-    	if(empty($post['post_title']) || $post['post_title'] == ' ') return false; 
-    	if(empty($post_meta['imageid'])) return false;
-    	if(empty($post_meta['displayprice']) && empty($post_meta['cutprice'])) return false;
+    	if(empty($post['post_title']) || $post['post_title'] == ' ') {
+    		$this->sanity_check_fail_reason = 'post_title was missing';
+    		return false;
+    	}
+    	if(empty($post_meta['imageid'])) {
+    		$this->sanity_check_fail_reason = 'imageid was missing';
+    		return false;
+    	}
+    	if(empty($post_meta['displayprice']) && empty($post_meta['cutprice'])) {
+    		$this->sanity_check_fail_reason = 'price was missing';
+    		return false;
+    	}
+    	if(intval($post_meta['webstatus']) == 0 ) {
+    		$this->sanity_check_fail_reason = 'webstatus = 0, product not available';
+    		return false;
+    	}
     	return true;
     }
 
@@ -315,13 +343,14 @@ class Model_Products extends Model_SHCP {
 						'rating' => $search->rating,
 						'displayprice' => $search->regularprice,
 						'cutprice' => $search->saleprice,
+						'webstatus' => $search->webstatus,
 						'detail' => serialize($search)
 					);
 													
 					 if(!$this->check_product($post, $post_meta) ) {
 						// If anything went wrong in the sanity check,
 						// set the product to draft.
-						$this->cron_msg = 'POST ID #'.$this->ID.' - DRAFT - Part Number '.$this->partnumber.' ('.$this->post_title.') - Data did not pass our sanity check. API URL: '.$search->url();
+						$this->cron_msg = 'POST ID #'.$this->ID.' - DRAFT - Part Number '.$this->partnumber.' ('.$this->post_title.') - Data did not pass our sanity check ['.$this->sanity_check_fail_reason.']. API URL: '.$search->url();
 						if(! $profile_mode) {
 							if($this->draft()) {
 								$this->is_draft = true;
