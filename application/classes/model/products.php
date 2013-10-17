@@ -234,6 +234,14 @@ class Model_Products extends Model_SHCP {
     		$this->sanity_check_fail_reason = 'webstatus = 0, product not available';
     		return false;
     	}
+    	if(strpos($post_meta['imageid'], 'src=http%') !== FALSE) {
+    		$this->sanity_check_fail_reason = 'invalid src in image URL';
+    		return false;
+    	}
+    	if(strpos($post_meta['imageid'], 'shld.net') === FALSE) {
+    		$this->sanity_check_fail_reason = 'invalid external image URL';
+    		return false;
+    	}
     	return true;
     }
 
