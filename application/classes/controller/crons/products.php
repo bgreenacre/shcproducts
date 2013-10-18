@@ -229,6 +229,8 @@ class Controller_Crons_Products {
 				
 					// Log the outcome (for email report / log file):
 					$this->log_message($model_post);
+					
+					//error_log($model_post->cron_msg);
 										   
 					unset($model_post);
 				

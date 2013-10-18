@@ -8,5 +8,8 @@
 <?php settings_fields(SHCP::prefix('options')); ?>
 <?php do_settings_sections($classname); ?>
 </table>
-<p class="submit"><input type="submit" class="button-primary" value="<?php echo $lang['submit']; ?>" /></p>
+<p class="submit">
+	<input type="submit" class="button-primary" value="<?php echo $lang['submit']; ?>" />
+	<a href="<?php echo admin_url('options-general.php?page=SHCP_options&force_update_all=yes'); ?>" class="button">Force Update All Products</a>
+</p>
 </form>

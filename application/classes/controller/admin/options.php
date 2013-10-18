@@ -87,6 +87,8 @@ class Controller_Admin_Options {
         $this->force_update_override_field_name = SHCP::config('plugin.options.force_update_override.name');
         add_action('admin_menu', array(&$this, 'menu'));
         add_action('admin_init', array(&$this, 'init'));
+        
+        add_action('wp_ajax_update_single_product', array(&$this, 'ajax_update_single_product'));
     }
 
     /**
@@ -109,8 +111,8 @@ class Controller_Admin_Options {
         add_settings_field($this->auth_id_field_name, '', array(&$this, 'action_auth_id_field'), __CLASS__, 'action_cart_section');
         add_settings_field($this->widgets_field_name, '', array(&$this, 'action_widgets_field'), __CLASS__, 'action_widgets_section');
         add_settings_field($this->cart_field_name, '', array(&$this, 'action_cart_field'), __CLASS__, 'action_cart_section');
-        add_settings_field($this->force_update_field_name, '', array(&$this, 'action_forceupdate_field'), __CLASS__, 'action_widgets_section');
-        add_settings_field($this->force_update_override_field_name, '', array(&$this, 'action_forceupdate_override_field'), __CLASS__, 'action_widgets_section');
+       // add_settings_field($this->force_update_field_name, '', array(&$this, 'action_forceupdate_field'), __CLASS__, 'action_widgets_section');
+      //  add_settings_field($this->force_update_override_field_name, '', array(&$this, 'action_forceupdate_override_field'), __CLASS__, 'action_widgets_section');
     }
 
     /**
@@ -139,8 +141,17 @@ class Controller_Admin_Options {
             'classname' => __CLASS__,
             'lang'      => SHCP::lang('plugin', 'options')
             );
-
-        echo SHCP::view('admin/options/page', $data);
+		if(isset($_GET['force_update_all']) && $_GET['force_update_all'] == 'yes') {
+			global $wpdb;
+    		$sql = "SELECT ID FROM wp_posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
+    		$products = $wpdb->get_results($sql);
+    		
+    		$data['products'] = json_encode($products);
+    		
+        	echo SHCP::view('admin/options/force_update', $data);
+        } else {
+       		echo SHCP::view('admin/options/page', $data);
+       	}
     }
 
     /**
@@ -316,5 +327,46 @@ class Controller_Admin_Options {
         }
         
         return $settings;
+    }
+    
+    public function ajax_update_single_product() {
+    	$response = array(
+    		'success' => false,
+    		'updated' => 0,
+    		'deleted' => 0,
+    		'draft' => 0,
+    		'no_action' => 0
+    	);
+    	if(isset($_POST['post_id'])) {
+    		$post_id = $_POST['post_id'];
+    		$response['message'] = 'Updating product '.$post_id;
+    		
+    		$model_post = new Model_Products($post_id); 
+			$model_post->sync_from_api($this->_profile_mode);
+			
+			$response['cron_msg'] = $model_post->cron_msg;
+			
+			if($model_post->is_updated) {
+    			$response['updated'] = 1;
+    		}
+    		if($model_post->is_deleted) {
+    			$response['deleted'] = 1;
+    			$response['cron_msg'] = '<span style="color:#FF0000;"><b>'.$response['cron_msg'].'</b></span>';
+    		} 
+    		if($model_post->is_draft) {
+    			$response['draft'] = 1;
+    			$response['cron_msg'] = '<span style="color:#ff8800;"><b>'.$response['cron_msg'].'</b></span>';
+    		}  
+    		if($model_post->no_action) {
+    			$response['no_action'] = 1;
+    			$response['cron_msg'] = '<span style="color:#FF0000;background-color:#FFFF00;"><b>'.$response['cron_msg'].'</b></span>';
+    		}
+    		
+    		$response['success'] = true;
+    	} else {
+    		$response['error'] = 'Post ID not found.';
+    	}
+    	echo json_encode($response);
+    	die();
     }
 }
