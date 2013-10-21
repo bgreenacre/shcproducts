@@ -45,7 +45,11 @@ if ( ! defined('SHCP_START_TIME'))
  */
 if ( ! defined('SHCP_START_MEMORY'))
 {
-    define('SHCP_START_MEMORY', memory_get_usage());
+	if( function_exists('memory_get_usage') ) {
+    	define('SHCP_START_MEMORY', memory_get_usage());
+    } else {
+    	define('SHCP_START_MEMORY', 0);
+    }
 }
 
 require_once SHCP_PATH . '/application/bootstrap.php';

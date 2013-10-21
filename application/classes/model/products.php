@@ -289,11 +289,6 @@ class Model_Products extends Model_SHCP {
         
         	$this->cron_msg = 'POST ID #'.$this->_id.' - NO ACTION - Failed to load product. ['.print_r($wpdb->last_error,true).']';
         	
-        	$memory_usage = memory_get_peak_usage();
-			$memory_usage = $memory_usage / 1048576;
-			$memory_usage = number_format($memory_usage,3);
-			$this->cron_msg .= ' ['.$memory_usage.' MB]';
-        	
 			$this->no_action = true;
         	return $this;
         }
@@ -457,11 +452,6 @@ class Model_Products extends Model_SHCP {
 				$this->cron_msg = '*** profile_mode *** '.$this->cron_msg;
 			}
         }
-        
-        $memory_usage = memory_get_peak_usage();
-		$memory_usage = $memory_usage / 1048576;
-		$memory_usage = number_format($memory_usage,3);
-		$this->cron_msg .= ' ['.$memory_usage.' MB]';
 
         return $this;
     }

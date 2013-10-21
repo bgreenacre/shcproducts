@@ -409,11 +409,6 @@ class Controller_Crons_Products {
     		$body .= 'Automatic (cron job)';
     	}
     	$body .= "\n";
-
-    	$memory_usage = memory_get_peak_usage();
-		$memory_usage = $memory_usage / 1048576;
-		$memory_usage = number_format($memory_usage,3);
-		$body .= "Peak Memory Usage: ".$memory_usage." MB \n";
 			
 		$elapsed_time = $this->elapsed_time_end - $this->elapsed_time_start;
 		$elapsed_time = number_format($elapsed_time,3);

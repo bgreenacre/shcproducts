@@ -58,7 +58,7 @@ class SHCP_Profiler {
 
             // Start the benchmark
             'start_time'   => microtime(TRUE),
-            'start_memory' => memory_get_usage(),
+            'start_memory' => (function_exists('memory_get_usage')) ? memory_get_usage() : 0,
 
             // Set the stop keys without values
             'stop_time'    => FALSE,
@@ -80,7 +80,7 @@ class SHCP_Profiler {
     {
         // Stop the benchmark
         self::$_marks[$token]['stop_time']   = microtime(TRUE);
-        self::$_marks[$token]['stop_memory'] = memory_get_usage();
+        self::$_marks[$token]['stop_memory'] = (function_exists('memory_get_usage')) ? memory_get_usage() : 0;
     }
 
     /**
