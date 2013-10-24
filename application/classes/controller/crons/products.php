@@ -441,11 +441,8 @@ class Controller_Crons_Products {
     		$body .= "\n CHANGES NEEDED TO BE PERFORMED: \n\n" . $this->log_to_string($this->_profile_log);
     	}
 
-		// Make it an HTML message with some light formatting (highlight certain errrors, etc):
 		$headers = array();
-		$headers[] = 'Content-Type: text/html';
-		$body = '<div style="font-size:13px;">'.$body.'</div>';
-    	wp_mail($to, $subject, nl2br($body), $headers);
+    	wp_mail($to, $subject, strip_tags($body), $headers);
     }
     
     /**

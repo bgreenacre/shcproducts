@@ -242,6 +242,16 @@ class Model_Products extends Model_SHCP {
     		$this->sanity_check_fail_reason = 'invalid external image URL';
     		return false;
     	}
+    	// Experimental - possible way of checking for products with missing variations (API V1).
+// 		$search = unserialize($post_meta['detail']);
+// 		$main_sku_list = $search->skulist->sku[1];
+// 		$variant_sku_list = $search->productvariants->prodlist[1][0]->product[1][0]->prodvarlist->prodvar->skulist->sku[1];
+// 		$main_sku_count = count($main_sku_list);
+// 		$variant_sku_count = count($variant_sku_list);
+// 		if($main_sku_count > 1 && $main_sku_count !== $variant_sku_count) {
+// 			$this->sanity_check_fail_reason = 'API error - sku lists do not match';
+//     		return false;
+// 		}
     	return true;
     }
 
@@ -319,8 +329,6 @@ class Model_Products extends Model_SHCP {
 				// Possible response codes:
 				//		0 = Success
 				//		1 = Product no longer available
-				//	For further details, see: http://developer.sears.com/documentation/product-details-v21-api
-				//	Other, secret response codes (shh, don't tell the documentation):
 				//		2 = Time out occurred while processing
 				if( !empty($status_data) && isset($status_data->responsecode) && $status_data->responsecode == 0 )
 				{
@@ -352,7 +360,7 @@ class Model_Products extends Model_SHCP {
 													
 					 if(!$this->check_product($post, $post_meta) ) {
 						// If anything went wrong in the sanity check,
-						// set the product to draft.
+						// set the product to draft.						
 						$this->cron_msg = 'POST ID #'.$this->ID.' - DRAFT - Part Number '.$this->partnumber.' ('.$this->post_title.') - Data did not pass our sanity check ['.$this->sanity_check_fail_reason.']. API URL: '.$search->url();
 						if(! $profile_mode) {
 							if($this->draft()) {
