@@ -12,7 +12,7 @@
  * @since Wed 15 Jun 2011 07:32:09 PM
  */
 /*
-Plugin Name: SHC Products - TEMPORARY GEAR VERSION
+Plugin Name: SHC Products
 Plugin URI: http://wordpress.org/#
 Description:    Provides the ability to import products via the Sears API and
                 storing in wordpress as custom post type.
@@ -20,14 +20,14 @@ Author: Brian Greenacre and Kyla Klein
 Version: 0.1
 */
 
-define('SHCP_PATH', WP_PLUGIN_DIR.'/gear-shcproducts');
+define('SHCP_PATH', WP_PLUGIN_DIR.'/shcproducts');
 define('SHCP_CONFIG', SHCP_PATH.'/application/config');
 define('SHCP_CLASS', SHCP_PATH.'/application/classes');
 define('SHCP_VIEW', SHCP_PATH.'/application/views');
 define('SHCP_FUNCTIONS', SHCP_PATH.'/application/functions');
 define('SHCP_LANG', SHCP_PATH . '/application/messages');
 define('SHCP_CACHE', SHCP_PATH.'/application/cache');
-define('SHCP_URL', plugins_url('/gear-shcproducts'));
+define('SHCP_URL', plugins_url('/shcproducts'));
 define('SHCP_CSS', SHCP_URL . '/assets/css');
 define('SHCP_IMAGES', SHCP_URL . '/assets/images');
 define('SHCP_JS', SHCP_URL . '/assets/js');
