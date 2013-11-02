@@ -207,7 +207,7 @@ class Controller_Crons_Products {
     		}
     		
     		global $wpdb;
-    		$sql = "SELECT ID FROM wp_posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
+    		$sql = "SELECT ID FROM ".$wpdb->prefix."posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
     		$posts = $wpdb->get_results($sql);
     		            
             $this->set_threshold($posts);

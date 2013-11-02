@@ -143,7 +143,7 @@ class Controller_Admin_Options {
             );
 		if(isset($_GET['force_update_all']) && $_GET['force_update_all'] == 'yes') {
 			global $wpdb;
-    		$sql = "SELECT ID FROM wp_posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
+    		$sql = "SELECT ID FROM ".$wpdb->prefix."posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
     		$products = $wpdb->get_results($sql);
     		
     		$data['products'] = json_encode($products);
