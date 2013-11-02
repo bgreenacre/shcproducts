@@ -174,7 +174,7 @@ class Controller_Admin_Related {
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
             return;
 
-        if (!wp_verify_nonce($_POST['shcproducts_noncename'], 'shcproducts_related'))
+        if (!isset($_POST['shcproducts_noncename']) || !wp_verify_nonce($_POST['shcproducts_noncename'], 'shcproducts_related'))
             return;
 
         if ('shcproduct' == $post->post_type || 'page' == $post->post_type || 'post' == $post->post_type) 

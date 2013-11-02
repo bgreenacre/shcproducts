@@ -93,9 +93,10 @@ class Controller_Admin_Metaboxes {
       
       foreach((array) $metaboxes as $metabox){
           foreach((array) $metabox['fields'] as $field){
-          
-          $value = $_POST[$field['id']];
-          update_post_meta($post_id, $field['id'], $value); 
+          	if(isset($_POST[$field['id']])) {
+			  $value = $_POST[$field['id']];
+			  update_post_meta($post_id, $field['id'], $value); 
+			}
           }
           
       }
