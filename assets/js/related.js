@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
     // Make products draggable in post editor.
     $('.shcp_product')
         .live('update', function() {
-            $(this).draggable('destroy').draggable({
+            $(this).draggable({
                 scope: 'shcp',
                 containment: '#shcproducts_related .inside',
                 cursor: 'move',
