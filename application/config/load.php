@@ -11,7 +11,8 @@
 return array(
     'functions'     => array(
         'register_post_types', 
-        'register_taxonomy'
+        'register_taxonomy',
+        'template_tags'
         ),
     
     'controllers'   => array(
