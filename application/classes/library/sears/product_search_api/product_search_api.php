@@ -91,17 +91,26 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	function make_request() {
+		// The line below will make the CURL request and save the output to
+		// $this->raw_response (with any xml/json already decoded)
 		parent::make_request();
 		
-		if($this->request_success) {
-			if($this->args['return_type'] == 'json') {
-				$this->raw_response = json_decode($this->raw_response);
-			} else {
-				$this->raw_response = simplexml_load_string($this->raw_response);
-			}
-		} else {
-		
+		// Initialize the result object depending on which version we're using:
+		switch($this->args['api_version']) {
+			case 'v1':
+				// Coming soon.
+				break;
+			case 'v2.1':
+				$this->result_object = new Search_Api_Result_V2($this->raw_response);
+				break;
 		}
+		
+		// If the result object was successfully created, standardize the response data.
+		if(is_object($this->result_object) && $this->result_object instanceof Api_Result) {
+			$this->result_object->standardize_data();
+		}
+		
+		return $this->result_object;
 	}
 	
 	/**

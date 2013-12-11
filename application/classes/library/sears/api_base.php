@@ -74,6 +74,11 @@ class Sears_Api_Base {
             return false;
         }
         
+		if($this->args['return_type'] == 'json') {
+			$this->raw_response = json_decode($this->raw_response);
+		} else if($this->args['return_type'] == 'xml') {
+			$this->raw_response = simplexml_load_string($this->raw_response);
+		}
         return true;
 	}
 

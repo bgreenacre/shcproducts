@@ -188,6 +188,13 @@ class SHCP {
         			break;
         		case 'Product_Search_Api':
         			$location = SHCP_CLASS . '/library/sears/product_search_api/product_search_api.php';
+        			break;
+        		case 'Search_Api_Result_V2':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_v2.php';
+        			break;
+        		case 'Api_Result':
+        			$location = SHCP_CLASS . '/interface/api_result.php';
+        			break;
         	}
         	if (is_file($location)) {
                 require $location;
