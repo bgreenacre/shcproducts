@@ -178,8 +178,28 @@ class SHCP {
      */
     public static function autoload($class)
     {
-        try
-        {
+    	//error_log('Attempting to autoload '.$class);
+        try {
+        	// Specify the exact directory locations of certain classes.
+        	$location = '';
+        	switch($class){
+        		case 'Sears_Api_Base':
+        			$location = SHCP_CLASS . '/library/sears/api_base.php';
+        			break;
+        		case 'Product_Search_Api':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/product_search_api.php';
+        	}
+        	if (is_file($location)) {
+                require $location;
+                return TRUE;
+            } else {
+            	if(!empty($location)) {
+            		error_log('Failed to load class '.$class.' - directory not found ['.$location.']');
+            	}
+            }
+        	
+        	// Old version is below:
+        
             $file = str_replace('_', '/', strtolower($class));
 
             $themepath = get_stylesheet_directory() . '/application/classes/' . $file . '.php';
