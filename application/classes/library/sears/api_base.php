@@ -3,9 +3,30 @@
 
 class Sears_Api_Base {
 
-	// Variables for holding plugin options (api key, etc.):
+	/**
+	* Variables for holding plugin options (api key, etc.):
+	*/
 	protected $api_key = '';
 	protected $store = '';
+	
+	/**
+	* Array of CURL options to set for the curl request.
+	*
+	* @var array
+	*/
+    protected $curl_options = array(
+        CURLOPT_RETURNTRANSFER  => 1,
+        CURLOPT_CONNECTTIMEOUT => 300,          // timeout on connect 
+        CURLOPT_TIMEOUT        => 300,          // timeout on response
+        //CURLOPT_HTTPHEADER      => array('X-SHCMMR-Client-Id: app_ui'),
+    );
+    
+	/**
+	* Request Success - set this to false in the event that a CURL request fails.
+	*
+	* @var bool
+	*/
+    protected $request_success = true;
 
 	function __construct(){
 		$this->init();
@@ -18,6 +39,42 @@ class Sears_Api_Base {
 		$this->api_key = $options['apikey'];
 		$this->store = $options['store'];
     	//error_log('$options = '.print_r($options,true));
+	}
+	
+	
+	function make_request() {
+		// Init the curl resource.
+        $ch = curl_init($this->request_url);
+
+        // Set connection options
+        if ( ! curl_setopt_array($ch, $this->curl_options))
+        {
+            throw new Exception('Failed to set CURL options, check CURL documentation.');
+        }
+
+        // Get the response body
+        $this->raw_response = curl_exec($ch);
+
+        // Get the response information
+        $this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+
+        if ($this->raw_response === FALSE)
+        {
+            $this->error = curl_error($ch);
+        }
+
+        // Close the connection
+        curl_close($ch);
+
+        if (isset($error))
+        {
+            // error_log('CURL ERROR: '.$error); // Enable this to see what went wrong.
+            $this->request_success = false;
+            return false;
+        }
+        
+        return true;
 	}
 
 }

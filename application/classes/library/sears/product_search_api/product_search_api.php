@@ -91,7 +91,17 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	function make_request() {
+		parent::make_request();
 		
+		if($this->request_success) {
+			if($this->args['return_type'] == 'json') {
+				$this->raw_response = json_decode($this->raw_response);
+			} else {
+				$this->raw_response = simplexml_load_string($this->raw_response);
+			}
+		} else {
+		
+		}
 	}
 	
 	/**
