@@ -28,6 +28,9 @@ class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_
 		// Standardize product count:
 		$this->_standardize_product_count();
 		
+		// Standardize filters:
+		$this->_standardize_filters();
+		
 		// Get rid of the raw response:
 		 unset($this->raw_response);
 	}
@@ -69,8 +72,6 @@ class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_
 					}
 				}
 			}
-		} else {
-			error_log('_standardize_categories - Variable not found.');
 		}
 	}
 	
@@ -84,8 +85,39 @@ class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_
 		$r = $this->raw_response;
 		if(isset($r->mercadoresult->productcount)) {
 			$this->product_count = $r->mercadoresult->productcount;
-		} else {
-			error_log('_standardize_product_count - Variable not found.');
+		}
+	}
+	
+	
+	
+	/**
+	* _standardize_filters 
+	*
+	* @return void
+	*/
+	function _standardize_filters() {
+		$r = $this->raw_response;
+		if(isset($r->mercadoresult->filterproducts->filterproduct[1])) {
+			$f = $r->mercadoresult->filterproducts->filterproduct[1];
+			if(is_array($f)) {
+				foreach($f as $filter) {
+					$filter_name = (isset($filter->name)) ? $filter->name : '';
+					$filter_values = array();
+					if(isset($filter->filtervalues->filtervalue[1])) {
+						$f_values = $filter->filtervalues->filtervalue[1];
+						if(is_array($f_values)) {
+							foreach($f_values as $f_value) {
+								if(isset($f_value->name) && isset($f_value->contentcount)) {
+									$filter_values[$f_value->name] = $f_value->contentcount;
+								} 
+							}
+						}
+					}
+					if(!empty($filter_values)) {
+						$this->available_filters[$filter_name] = $filter_values;
+					}
+				}
+			}
 		}
 	}
 	

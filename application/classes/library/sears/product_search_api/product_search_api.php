@@ -9,7 +9,7 @@ class Product_Search_Api extends Sears_Api_Base {
 	* Allowed Arguments (required):
 	* These are the arguments that are allowed to be passed to set_up_request.
 	* Additional optional args:
-	*	'search_keyword' => (string) - allows vertical/category/subcategory to be separated by |
+	*	'search_keyword' => (string) - v2 allows vertical/category/subcategory to be separated by |
 	*	'category_search' => (array)
 	*				'vertical' => (string),
 	*				'category' => (string),
@@ -284,6 +284,8 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	public function get_subcategories($vertical_name, $category_name) {
+		// Note - using API v1 for this because v2 seems to be unreliable
+		// when it comes to delivering subcategories (sometimes).
 		$args = array(
 			'api_version' => 'v1',
 			'search_type' => 'category',
@@ -297,4 +299,29 @@ class Product_Search_Api extends Sears_Api_Base {
 		$this->set_up_request($args);
 		return $this->make_request();
 	}
+	
+	/**
+	* Get Available Filters 
+	*
+	* @return void
+	*/
+	public function get_available_filters($vertical_name, $category_name, $subcategory_name) {
+		$args = array(
+			'api_version' => 'v2.1',
+			'search_type' => 'product',
+			'return_type' => 'json',
+			'category_search' => array(
+				'vertical' => $vertical_name,
+				'category' => $category_name,
+				'subcategory' => $subcategory_name
+			)
+		);
+		error_log('get_available_filters - $args = '.print_r($args,true));
+		// To use API v1, change the following:
+		// $args['api_version'] = 'v1';
+		// $args['search_type'] = 'category';
+		$this->set_up_request($args);
+		return $this->make_request();
+	}
+	
 }

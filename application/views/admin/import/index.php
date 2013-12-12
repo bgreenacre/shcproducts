@@ -37,3 +37,30 @@
     <div id="ajax_loading"></div>
   </div>
 </div>
+
+<?php
+
+// $obj = new Product_Search_Api();
+// 
+// $args = array(
+// 	'api_version' => 'v2.1',
+// 	'search_type' => 'product',
+// 	'return_type' => 'json',
+// 	//'search_keyword' => 'Hat'
+// 	'category_search' => array(
+// 		'vertical' => 'Clothing',
+// 		'category' => 'Boys',
+// 		'subcategory' => 'Activewear'
+// 	)
+// );
+// 
+// $obj->set_up_request($args);
+// $result = $obj->make_request();
+// error_log(print_r($result,true));
+
+
+
+echo get_verticals_dropdown();
+
+
+?>
