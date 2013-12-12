@@ -2,6 +2,16 @@
 
 interface Api_Result {
 	
-	public function standardize_data();
+	function standardize_data();
+	
+}
+
+
+
+interface Search_Api_Result extends Api_Result {
+	
+	function _standardize_verticals();
+	function _standardize_categories();
+	function _standardize_product_count();
 	
 }
