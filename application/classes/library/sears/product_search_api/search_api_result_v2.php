@@ -3,28 +3,7 @@
 
 
 
-class Search_Api_Result_V2 implements Api_Result {
-
-	/**
-	* Raw API Response
-	*
-	* @var array
-	*/
-	protected $raw_response;
-	
-	/**
-	* Verticals
-	*
-	* @var array
-	*/
-	public $verticals = array();
-	
-	/**
-	* Categories
-	*
-	* @var array
-	*/
-	public $categories = array();
+class Search_Api_Result_V2 extends Search_Api_Result_Base implements Search_Api_Result {
 	
 	/**
 	* __construct 
@@ -41,8 +20,29 @@ class Search_Api_Result_V2 implements Api_Result {
 	* @return void
 	*/
 	function standardize_data(){
-		error_log('Standardizing data...');
+
+		// Standardize Verticals:
+		$this->_standardize_verticals();
 		
+		// Standardize categories:
+		$this->_standardize_categories();
+				
+		// Standardize product count:
+		$this->_standardize_product_count();
+		
+		// Standardize available filters:
+		$this->_standardize_filters();
+		
+		// Get rid of the raw response:
+		 unset($this->raw_response);
+	}
+	
+	/**
+	* _standardize_verticals 
+	*
+	* @return void
+	*/
+	function _standardize_verticals() {
 		$r = $this->raw_response;
 		
 		// Standardize verticals:
@@ -57,6 +57,15 @@ class Search_Api_Result_V2 implements Api_Result {
 				}
 			}
 		}
+	}
+	
+	/**
+	* _standardize_categories 
+	*
+	* @return void
+	*/
+	function _standardize_categories() {
+		$r = $this->raw_response;
 		
 		// Standardize categories:
 		if(isset($r->SearchResults->NavGroups[0]->ShopByCategories)) {
@@ -71,9 +80,56 @@ class Search_Api_Result_V2 implements Api_Result {
 				}
 			}
 		}
-		
-		// Get rid of the raw response:
-		unset($this->raw_response);
 	}
+	
+	
+	/**
+	* _standardize_product_count 
+	*
+	* @return void
+	*/
+	function _standardize_product_count() {
+		$r = $this->raw_response;
+		
+		// Standardize product count:
+		if(isset($r->SearchResults->ProductCount)){
+			$this->product_count = $r->SearchResults->ProductCount;
+		}
+	}
+	
+	
+	/**
+	* _standardize_filters 
+	*
+	* @return void
+	*/
+	function _standardize_filters() {
+		$r = $this->raw_response;
+		if(isset($r->SearchResults->FilterProducts)) {
+			$f = $r->SearchResults->FilterProducts;
+			if(is_array($f)) {
+				foreach($f as $filter) {
+					$filter_name = (isset($filter->FilterKey)) ? $filter->FilterKey : '';
+					if(!in_array($filter_name, $this->ignore_filters)) {
+						$filter_values = array();
+						if(isset($filter->FilterValues) && is_array($filter->FilterValues)) {
+							foreach($filter->FilterValues as $f_value) {
+								if(isset($f_value->Name) && isset($f_value->ContentCount)) {
+									$filter_values[$f_value->Name] = $f_value->ContentCount;
+								}
+							}
+						}
+						if(!empty($filter_values)) {
+							$this->available_filters[$filter_name] = $filter_values;
+						}
+					}
+				}
+			}
+			//error_log('$f = '.print_r($f,true));
+		} else {
+			//error_log('not found etc. etc.');
+		}
+	}
+	
 	
 }

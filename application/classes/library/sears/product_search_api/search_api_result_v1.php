@@ -3,35 +3,7 @@
 
 
 
-class Search_Api_Result_V1 implements Search_Api_Result {
-
-	/**
-	* Raw API Response
-	*
-	* @var array
-	*/
-	protected $raw_response;
-	
-	/**
-	* Verticals
-	*
-	* @var array
-	*/
-	public $verticals = array();
-	
-	/**
-	* Categories - can contain either categories or subcategories depending on what was searched.
-	*
-	* @var array
-	*/
-	public $categories = array();
-	
-	/**
-	* Product Count
-	*
-	* @var int
-	*/
-	public $product_count = 0;
+class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_Result {
 	
 	/**
 	* __construct 
