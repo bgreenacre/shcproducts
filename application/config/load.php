@@ -12,7 +12,8 @@ return array(
     'functions'     => array(
         'register_post_types', 
         'register_taxonomy',
-        'template_tags'
+        'template_tags',
+        'verticals_browser'
         ),
     
     'controllers'   => array(

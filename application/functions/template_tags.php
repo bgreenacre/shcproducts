@@ -5,8 +5,6 @@ Template Tags functions.
 Based on functions that were originally contained in their own "SHC Products Template Tags" plugin.
 */
 
-error_log('Template tags loaded.');
-
 
 // ============== HARDLINES / CORE PRODUCT TEMPLATE TAGS ==================//
 
@@ -1385,3 +1383,4 @@ function related_products($number_of_products, $post_id = null, $template = 'pro
     }
     
 }
+
