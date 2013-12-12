@@ -9,7 +9,11 @@ class Product_Search_Api extends Sears_Api_Base {
 	* Allowed Arguments (required):
 	* These are the arguments that are allowed to be passed to set_up_request.
 	* Additional optional args:
-	*	'search_keyword' => (string)
+	*	'search_keyword' => (string) - allows vertical/category/subcategory to be separated by |
+	*	'category_search' => (array)
+	*				'vertical' => (string),
+	*				'category' => (string),
+	*				'subcategory' => (string)
 	*
 	* @var array
 	*/
@@ -18,7 +22,7 @@ class Product_Search_Api extends Sears_Api_Base {
 			'v1',
 			'v2.1'
 		),
-		'type' => array(
+		'search_type' => array(
 			'keyword',
 			'category',
 			'product'
@@ -98,7 +102,7 @@ class Product_Search_Api extends Sears_Api_Base {
 		// Initialize the result object depending on which version we're using:
 		switch($this->args['api_version']) {
 			case 'v1':
-				// Coming soon.
+				$this->result_object = new Search_Api_Result_V1($this->raw_response);
 				break;
 			case 'v2.1':
 				$this->result_object = new Search_Api_Result_V2($this->raw_response);
@@ -124,24 +128,28 @@ class Product_Search_Api extends Sears_Api_Base {
 				$this->build_url_v1();
 				break;
 			case 'v2.1':
-				$this->build_url_v2point1();
+				$this->build_url_v2();
 				break;
 		}
 	}
 	
 	/**
-	* build_url_v2point1
 	* Build the URL for making v 2.1 API requests. 
 	*
 	* @return void
 	*/
-	function build_url_v2point1() {
+	function build_url_v2() {
 		$url = 'http://api.developer.sears.com/v2.1/products/';
-		$type = $this->args['type'];
+		$type = $this->args['search_type'];
 		if($type == 'keyword') {
-			$url .= 'search/keyword/';
+			$url .= 'search/';
 			$url .= $this->store.'/';
-			$url .= $this->args['return_type'].'?';
+			$url .= $this->args['return_type'].'/';
+			$url .= 'keyword/';
+			if(isset($this->args['search_keyword']) && !empty($this->args['search_keyword'])) {
+				$url .= urlencode($this->args['search_keyword']);
+			}
+			$url .= '?';
 		} else {
 			$url .= 'browse/';
 			if($type == 'category') {
@@ -151,14 +159,50 @@ class Product_Search_Api extends Sears_Api_Base {
 			}
 			$url .= $this->store.'/';
 			$url .= $this->args['return_type'].'?';
-			$url .= 'category='.$this->args['search_keyword'];
+			if(isset($this->args['search_keyword']) && !empty($this->args['search_keyword'])) {
+				$url .= 'category='.urlencode($this->args['search_keyword']);
+			} else if(isset($this->args['category_search']) && !empty($this->args['category_search'])) {
+				$url .= 'category='.urlencode(implode('|',$this->args['category_search']));
+			} else {
+				$url .= 'category=';
+			}
 		}
 		$url .= '&apikey='.$this->api_key;
 		$this->request_url = $url;
 	}
 	
+	/**
+	* Build the URL for making v1 API requests. 
+	*
+	* @return void
+	*/
 	function build_url_v1() {
-		// Coming soon.
+		$url = 'http://webservices.sears.com/shcapi/productsearch?';
+// 		protected $api_key = '';
+// 		protected $store = '';
+// 		protected $app_id = '';
+// 		protected $auth_id = '';
+		$url_params = array(
+			'appID' => $this->app_id,
+			'authID' => $this->auth_id,
+			'apikey' => $this->api_key,
+			'contentType' => $this->args['return_type'],
+			'store' => $this->store,
+		);
+		if(isset($this->args['category_search']['vertical'])) {
+			$url_params['verticalName'] = $this->args['category_search']['vertical'];
+			$url_params['searchType'] = 'vertical';
+		}
+		if(isset($this->args['category_search']['category'])) {
+			$url_params['categoryName'] = $this->args['category_search']['category'];
+			$url_params['searchType'] = 'category';
+		}
+		if(isset($this->args['category_search']['subcategory'])) {
+			$url_params['subCategoryName'] = $this->args['category_search']['subcategory'];
+			$url_params['searchType'] = 'subcategory';
+		}
+		$url .= http_build_query($url_params);
+		$this->request_url = $url;
 	}
 	
 	
@@ -192,5 +236,65 @@ class Product_Search_Api extends Sears_Api_Base {
 		}
 	}
 	
+	
+	/***********************************
+	*   Shortcut functions 
+	************************************/
+	
+	/**
+	* Get Verticals 
+	*
+	* @return void
+	*/
+	public function get_verticals() {
+		$args = array(
+			'api_version' => 'v2.1',
+			'search_type' => 'category',
+			'return_type' => 'json'
+		);
 
+		$this->set_up_request($args);
+		return $this->make_request();
+	}
+	
+	
+	/**
+	* Get Categories 
+	*
+	* @return void
+	*/
+	public function get_categories($vertical_name) {
+		$args = array(
+			'api_version' => 'v2.1',
+			'search_type' => 'category',
+			'return_type' => 'json',
+			'category_search' => array(
+				'vertical' => $vertical_name
+			)
+		);
+
+		$this->set_up_request($args);
+		return $this->make_request();
+	}
+	
+	
+	/**
+	* Get Subcategories 
+	*
+	* @return void
+	*/
+	public function get_subcategories($vertical_name, $category_name) {
+		$args = array(
+			'api_version' => 'v1',
+			'search_type' => 'category',
+			'return_type' => 'json',
+			'category_search' => array(
+				'vertical' => $vertical_name,
+				'category' => $category_name
+			)
+		);
+
+		$this->set_up_request($args);
+		return $this->make_request();
+	}
 }

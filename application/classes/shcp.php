@@ -189,6 +189,9 @@ class SHCP {
         		case 'Product_Search_Api':
         			$location = SHCP_CLASS . '/library/sears/product_search_api/product_search_api.php';
         			break;
+        		case 'Search_Api_Result_V1':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_v1.php';
+        			break;
         		case 'Search_Api_Result_V2':
         			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_v2.php';
         			break;
