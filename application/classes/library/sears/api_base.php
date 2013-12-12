@@ -4,10 +4,12 @@
 class Sears_Api_Base {
 
 	/**
-	* Variables for holding plugin options (api key, etc.):
+	* Variables for holding plugin options set on options page.
 	*/
 	protected $api_key = '';
 	protected $store = '';
+	protected $app_id = '';
+	protected $auth_id = '';
 	
 	/**
 	* Array of CURL options to set for the curl request.
@@ -38,11 +40,15 @@ class Sears_Api_Base {
 		// Set plugin options:
 		$this->api_key = $options['apikey'];
 		$this->store = $options['store'];
+		$this->app_id = $options['appid'];
+		$this->auth_id = $options['authid'];
     	//error_log('$options = '.print_r($options,true));
 	}
 	
 	
 	function make_request() {
+		error_log('Making request - API URL: '.$this->request_url);
+	
 		// Init the curl resource.
         $ch = curl_init($this->request_url);
 
