@@ -102,19 +102,21 @@ class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_
 			if(is_array($f)) {
 				foreach($f as $filter) {
 					$filter_name = (isset($filter->name)) ? $filter->name : '';
-					$filter_values = array();
-					if(isset($filter->filtervalues->filtervalue[1])) {
-						$f_values = $filter->filtervalues->filtervalue[1];
-						if(is_array($f_values)) {
-							foreach($f_values as $f_value) {
-								if(isset($f_value->name) && isset($f_value->contentcount)) {
-									$filter_values[$f_value->name] = $f_value->contentcount;
-								} 
+					if(!in_array($filter_name, $this->ignore_filters)) {
+						$filter_values = array();
+						if(isset($filter->filtervalues->filtervalue[1])) {
+							$f_values = $filter->filtervalues->filtervalue[1];
+							if(is_array($f_values)) {
+								foreach($f_values as $f_value) {
+									if(isset($f_value->name) && isset($f_value->contentcount)) {
+										$filter_values[$f_value->name] = $f_value->contentcount;
+									} 
+								}
 							}
 						}
-					}
-					if(!empty($filter_values)) {
-						$this->available_filters[$filter_name] = $filter_values;
+						if(!empty($filter_values)) {
+							$this->available_filters[$filter_name] = $filter_values;
+						}
 					}
 				}
 			}

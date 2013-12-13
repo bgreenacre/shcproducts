@@ -47,19 +47,23 @@ class Search_Api_Result_Base {
 	*/
 	public $ignore_filters = array(
 		'clearance',
+		'delivery',
 		'discount',
-		'freeShipping',
+		'Flex Spending Eligible',
 		'freeDelivery',
+		'freeShipping',
 		'has991',
-		'layAway',
 		'international_shipping',
+		'layAway',
 		'new',
 		'offer',
 		'sale',
+		'sears_international',
+		'shipping',
 		'shipVantage',
 		'spuEligible',
 		'storeOrigin',
-		'sears_international'
+		'trustedSeller'
 	);
 
 }

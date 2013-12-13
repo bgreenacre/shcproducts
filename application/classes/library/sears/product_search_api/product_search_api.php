@@ -162,7 +162,7 @@ class Product_Search_Api extends Sears_Api_Base {
 			if(isset($this->args['search_keyword']) && !empty($this->args['search_keyword'])) {
 				$url .= 'category='.urlencode($this->args['search_keyword']);
 			} else if(isset($this->args['category_search']) && !empty($this->args['category_search'])) {
-				$url .= 'category='.urlencode(implode('|',$this->args['category_search']));
+				$url .= 'category='.urlencode(stripslashes(implode('|',$this->args['category_search'])));
 			} else {
 				$url .= 'category=';
 			}
@@ -178,10 +178,6 @@ class Product_Search_Api extends Sears_Api_Base {
 	*/
 	function build_url_v1() {
 		$url = 'http://webservices.sears.com/shcapi/productsearch?';
-// 		protected $api_key = '';
-// 		protected $store = '';
-// 		protected $app_id = '';
-// 		protected $auth_id = '';
 		$url_params = array(
 			'appID' => $this->app_id,
 			'authID' => $this->auth_id,
@@ -200,6 +196,9 @@ class Product_Search_Api extends Sears_Api_Base {
 		if(isset($this->args['category_search']['subcategory'])) {
 			$url_params['subCategoryName'] = $this->args['category_search']['subcategory'];
 			$url_params['searchType'] = 'subcategory';
+		}
+		foreach($url_params as $key => $url_param) {
+			$url_params[$key] = stripslashes($url_param);
 		}
 		$url .= http_build_query($url_params);
 		$this->request_url = $url;
@@ -306,9 +305,15 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	public function get_available_filters($vertical_name, $category_name, $subcategory_name) {
+		// To use API v1, use:
+		// 		$args['api_version'] = 'v1';
+		// 		$args['search_type'] = 'category';
+		// To use API v2, use:
+		// 		$args['api_version'] = 'v2.1';
+		// 		$args['search_type'] = 'product';
 		$args = array(
-			'api_version' => 'v2.1',
-			'search_type' => 'product',
+			'api_version' => 'v1',
+			'search_type' => 'category',
 			'return_type' => 'json',
 			'category_search' => array(
 				'vertical' => $vertical_name,
@@ -317,9 +322,7 @@ class Product_Search_Api extends Sears_Api_Base {
 			)
 		);
 		error_log('get_available_filters - $args = '.print_r($args,true));
-		// To use API v1, change the following:
-		// $args['api_version'] = 'v1';
-		// $args['search_type'] = 'category';
+		
 		$this->set_up_request($args);
 		return $this->make_request();
 	}
