@@ -100,9 +100,7 @@ function ajax_get_verticals_filter() {
 		$output .= '<select name="filter" id="filter">';
 		$output .= '<option value="">-- Select Filter --</option>';
 		foreach($result->available_filters as $filter_name => $filter_options) {
-			$filter_id = strtolower(str_replace(' ','', $filter_name));
-			$filter_id = str_replace('&','',$filter_id);
-			$filter_id = str_replace('/','',$filter_id);
+			$filter_id = strtolower(preg_replace('/[^a-zA-Z0-9]/','',$filter_name));
 			$filter_name_pretty = preg_split('/(?=[A-Z][a-z])/', $filter_name);
 			$filter_name_pretty = implode(' ', $filter_name_pretty);
 			$filter_name_pretty = str_replace('_', ' ', $filter_name_pretty);
