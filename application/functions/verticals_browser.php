@@ -5,6 +5,7 @@
 */
 add_action('wp_ajax_get_verticals_category', 'ajax_get_verticals_category');
 add_action('wp_ajax_get_verticals_filter', 'ajax_get_verticals_filter');
+add_action('wp_ajax_get_verticals_products', 'ajax_verticals_preview_products');
 /*
 * Return the HTML for a dropdown menu containing Verticals from the Sears API,
 * with ajaxified categories / subcategories / filters that appear when a Vertical is selected.
@@ -29,6 +30,7 @@ function get_verticals_dropdown() {
 	$output .= '<div id="category_holder"></div>';
 	$output .= '<div id="subcategory_holder"></div>';
 	$output .= '<div id="filter_holder"></div>';
+	$output .= '<div id="products_holder"></div>';
 	
 	return $output;
 }
@@ -87,7 +89,6 @@ function ajax_get_verticals_filter() {
 	$category = (isset($category_search['category'])) ? $category_search['category'] : '';
 	$subcategory = (isset($category_search['subcategory'])) ? $category_search['subcategory'] : '';
 	
-	
 	error_log('$category_search = '.print_r($category_search,true));
 	
 	$search_obj = new Product_Search_Api();
@@ -126,6 +127,79 @@ function ajax_get_verticals_filter() {
 	echo $output;
 	echo $filter_option_output;
 		
+	die();
+}
+
+
+
+function ajax_verticals_preview_products(){
+	error_log('$_POST = '.print_r($_POST,true));
+
+	// Set up the variables needed to retrieve the products:
+		// Category search (array):
+		$category_search = $_POST['category_search'];
+		// Pull specific values from the category search array:
+		$vertical = (isset($category_search['vertical'])) ? $category_search['vertical'] : '';
+		$category = (isset($category_search['category'])) ? $category_search['category'] : '';
+		$subcategory = (isset($category_search['subcategory'])) ? $category_search['subcategory'] : '';
+		// Set the filter if applicable:
+		$filter_name = (isset($category_search['filter_name'])) ? $category_search['filter_name'] : '';
+		$filter_value = (isset($category_search['filter_value'])) ? $category_search['filter_value'] : '';
+		$filter = array(
+			$filter_name => $filter_value
+		);
+		// Set the start and end index if applicable:
+		$start_index = (isset($_POST['start_index'])) ? $_POST['start_index'] : 1;
+		$end_index = (isset($_POST['end_index'])) ? $_POST['end_index'] : 20;
+		$start_end = array(
+			'start_index' => $start_index,
+			'end_index' => $end_index
+		);
+	
+	// Retrieve the products:
+	$search_obj = new Product_Search_Api();
+	$result = $search_obj->get_products($vertical, $category, $subcategory, $filter, $start_end);
+	
+	// Set up the output.
+	$s = ($result->product_count != 1) ? 's' : '';
+	$result_count_output = '<p><b><span id="result_count">'.$result->product_count.'</span></b> product'.$s.' found.</p>';
+	
+	if(isset($result->products) && is_array($result->products) && !empty($result->products)) {
+		//$output .= '<ul id="product_preview_list" class="product_preview_list">';
+		$list_output = '';
+		foreach($result->products as $product){
+			$list_output .= '<li>
+				<a href="http://www.sears.com/search='.$product['part_number'].'" target="_blank">
+					<img src="'.$product['image_url'].'?hei=140&wid=140&op_sharpen=1" width="100" height="100" />
+					<br/>
+					'.$product['name'].'
+				</a>
+				<br/>
+				'.$product['price'].' <span class="part_number">&bull; '.$product['part_number'].'</span>
+				
+			</li>';
+		}
+		//$output .= '</ul>';
+	}
+	
+	// Optional: Set the 'list_items_only' $_POST value to true to avoid re-initializing the list or displaying product count.
+	if(isset($_POST['list_items_only']) && $_POST['list_items_only'] == true) {
+		$output = $list_output;
+	} else {
+		$output = $result_count_output;
+		$output .= '<ul id="product_preview_list" class="product_preview_list">';
+		$output .= $list_output;
+		$output .= '</ul>';
+		if($result->product_count > $end_index) {
+			$output .= '<div class="load_more_products"><a href="javascript:void(0)" onclick="view_more_products()" class="button">Load More Products</a></div>';
+		}
+	}
+	
+	echo $output;
+
+	
+	//error_log('$result = '.print_r($result,true));
+	
 	die();
 }
 

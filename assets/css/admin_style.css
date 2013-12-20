@@ -348,3 +348,32 @@ th#modified {
 	border-top-right-radius: 20px;
 	border-bottom-right-radius: 20px;
 }
+
+/* Verticals browser section */
+
+.product_preview_list li {
+	display:block;
+	float:left;
+	border:1px solid #CCC;
+	padding:7px;
+	width:150px;
+	height:150px;
+	text-align:center;
+	font-size:10px;
+	line-height:11px;
+	margin:4px;
+	overflow:hidden;
+}
+
+.product_preview_list li span.part_number {
+	color:#AAA;
+}
+
+.product_preview_list li a {
+	text-decoration:none;
+}
+
+.load_more_products {
+	padding:15px;
+	clear:both;
+}

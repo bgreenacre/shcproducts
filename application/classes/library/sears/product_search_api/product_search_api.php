@@ -79,8 +79,13 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	function set_up_request($args) {
-		// Merge the given args with the defaults:
-		$args = array_merge($this->default_args, $args);
+		if(!empty($this->args)) {
+			// If any args are already set, merge with these instead of the defaults:
+			$args = array_merge($this->args, $args);
+		} else {
+			// Otherwise, merge the given args with the defaults:
+			$args = array_merge($this->default_args, $args);
+		}
 		
 		// Validation is intended to protect against coding errors.
 		// If it fails, the script will die with an error message.
@@ -152,7 +157,7 @@ class Product_Search_Api extends Sears_Api_Base {
 	*
 	* @return void
 	*/
-	function build_url_v2() {
+	function build_url_v2() {	
 		$url = 'http://api.developer.sears.com/v2.1/products/';
 		$url_params = array();
 		$type = $this->args['search_type'];
@@ -288,7 +293,7 @@ class Product_Search_Api extends Sears_Api_Base {
 		return $this->make_request();
 	}
 	
-	
+
 	/**
 	* Get Categories 
 	*

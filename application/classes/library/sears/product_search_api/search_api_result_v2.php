@@ -128,7 +128,11 @@ class Search_Api_Result_V2 extends Search_Api_Result_Base implements Search_Api_
 					}
 				}
 			}
-			//error_log('$f = '.print_r($f,true));
+		}
+		// List of filters to ignore is no longer necessary:
+		unset($this->ignore_filters);
+	}
+	
 	
 	/**
 	* _standardize_products 
