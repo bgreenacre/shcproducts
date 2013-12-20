@@ -13,5 +13,6 @@ interface Search_Api_Result extends Api_Result {
 	function _standardize_verticals();
 	function _standardize_categories();
 	function _standardize_product_count();
+	function _standardize_products();
 	
 }

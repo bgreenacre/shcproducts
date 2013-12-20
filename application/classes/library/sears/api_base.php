@@ -83,7 +83,7 @@ class Sears_Api_Base {
 		if($this->args['return_type'] == 'json') {
 			$this->raw_response = json_decode($this->raw_response);
 		} else if($this->args['return_type'] == 'xml') {
-			$this->raw_response = simplexml_load_string($this->raw_response);
+			$this->raw_response = simplexml_load_string($this->raw_response, null, LIBXML_NOCDATA);
 		}
         return true;
 	}

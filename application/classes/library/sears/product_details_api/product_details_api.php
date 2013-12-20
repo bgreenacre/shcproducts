@@ -181,7 +181,7 @@ class Product_Details_Api extends Sears_Api_Base {
 	function get_product($part_number) {
 		$args = array(
 			'api_version' => 'v1',
-			'return_type' => 'xml',
+			'return_type' => 'json',
 			'part_number' => $part_number
 		);
 		$this->set_up_request($args);

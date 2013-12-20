@@ -43,15 +43,18 @@
 // $obj = new Product_Search_Api();
 // 
 // $args = array(
-// 	'api_version' => 'v2.1',
+// 	'api_version' => 'v1',
 // 	'search_type' => 'product',
 // 	'return_type' => 'json',
 // 	//'search_keyword' => 'Hat'
 // 	'category_search' => array(
-// 		'vertical' => 'Clothing',
-// 		'category' => 'Boys',
-// 		'subcategory' => 'Activewear'
-// 	)
+// 		'vertical' => 'Fitness & Sports',
+// 		'category' => 'Treadmills',
+// 		'subcategory' => 'Treadmills',
+// 	),
+// // 	'filter' => array(
+// // 		'Sport' => 'Hiking'
+// // 	)
 // );
 // 
 // $obj->set_up_request($args);
@@ -60,7 +63,16 @@
 
 
 
-echo get_verticals_dropdown();
+//echo get_verticals_dropdown();
+
+//$test = new Product_Model('3ZZVA55174312P');
+//$test = new Product_Model('015W001553543000P');
+//error_log('New product model = '.print_r($test,true));
+
+
+$test = new Product_Details_Api();
+$result = $test->get_product('007VA54248712P');
+error_log('Product details api = '.print_r($test,true));
 
 
 ?>

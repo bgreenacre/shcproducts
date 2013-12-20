@@ -38,7 +38,6 @@ class Product_Model {
 	*/
 	function initialize_product(){
 		// If the product has already been imported, this will initialize the post.
-		//$myquery = new WP_Query( "post_type=player&meta_key=player_team&meta_value=$teamname&order=ASC" );
 		$query_args = array(
 			'post_type' => 'shcproduct',
 			'meta_key' => 'partnumber',
@@ -47,8 +46,6 @@ class Product_Model {
 		$init_query = new WP_Query($query_args);
 		
 		$this->post = $init_query->post;
-		
-		//$this->query = $init_query;
 	}
 	
 	
