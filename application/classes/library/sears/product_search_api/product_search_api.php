@@ -14,6 +14,10 @@ class Product_Search_Api extends Sears_Api_Base {
 	*				'vertical' => (string),
 	*				'category' => (string),
 	*				'subcategory' => (string)
+	*	'filter' => (array)
+					(filter name) => (filter value)
+	*	'start_index' => (int) - defaults to 1
+	*	'end_index'	  => (int) - defaults to 25
 	*
 	* @var array
 	*/
@@ -87,6 +91,16 @@ class Product_Search_Api extends Sears_Api_Base {
 		
 		// Build the URL:
 		$this->build_url();
+	}
+	
+	/**
+	* set_start_end_index 
+	*
+	* @return void
+	*/
+	function set_start_end_index($start, $end) {
+		$this->args['start_index'] = $start;
+		$this->args['end_index'] = $end;
 	}
 	
 	/**
@@ -210,6 +224,10 @@ class Product_Search_Api extends Sears_Api_Base {
 		if(isset($this->args['category_search']['subcategory'])) {
 			$url_params['subCategoryName'] = $this->args['category_search']['subcategory'];
 			$url_params['searchType'] = 'subcategory';
+		}
+		if(isset($this->args['start_index']) && isset($this->args['end_index'])) {
+			$url_params['startIndex'] = $this->args['start_index'];
+			$url_params['endIndex'] = $this->args['end_index'];
 		}
 		foreach($url_params as $key => $url_param) {
 			$url_params[$key] = stripslashes($url_param);
