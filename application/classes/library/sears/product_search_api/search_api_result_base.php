@@ -34,6 +34,13 @@ class Search_Api_Result_Base {
 	public $available_filters = array();
 	
 	/**
+	* Products
+	*
+	* @var array
+	*/
+	public $products = array();
+	
+	/**
 	* Product Count
 	*
 	* @var int

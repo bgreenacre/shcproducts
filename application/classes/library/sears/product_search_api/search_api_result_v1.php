@@ -31,6 +31,9 @@ class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_
 		// Standardize filters:
 		$this->_standardize_filters();
 		
+		// Standardize products:
+		$this->_standardize_products();
+		
 		// Get rid of the raw response:
 		 unset($this->raw_response);
 	}
@@ -121,6 +124,44 @@ class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_
 				}
 			}
 		}
+	
+	/**
+	* _standardize_products 
+	*
+	* @return void
+	*/
+	function _standardize_products() {
+		$r = $this->raw_response;
+		
+		if(isset($r->mercadoresult->products->product[1])) {
+ 			$raw_products = $r->mercadoresult->products->product[1];
+ 			error_log('$raw_products = '.print_r($raw_products,true));
+ 			if(is_array($raw_products)) {
+ 				foreach($raw_products as $rp) {
+ 					$product = array();
+ 					$product['part_number'] = (isset($rp->partnumber)) ? $rp->partnumber : '';
+ 					$product['name'] = (isset($rp->name)) ? $rp->name : '';
+ 					$product['image_url'] = (isset($rp->imageurl)) ? $rp->imageurl : '';
+ 					$product['rating'] = (isset($rp->rating)) ? $rp->rating : '';
+ 					$product['brand'] = (isset($rp->brandname)) ? $rp->brandname : '';
+ 					$product['review_count'] = (isset($rp->numreview)) ? $rp->numreview : '';
+ 					$product['price'] = (isset($rp->displayprice)) ? $rp->displayprice : '';
+ 					$product['has_variants'] = 0;
+					if(isset($rp->pbtype)) {
+						if($rp->pbtype == 'VARIATION') {
+							$product['has_variants'] = 1;
+						}
+					}
+ 					
+ 					$this->products[$product['part_number']] = $product;
+ 				}
+ 			}
+			///error_log('FOUND');
+		} else {
+			//error_log('Variable not found');
+		}
+		
+		error_log('$this->products = '.print_r($this->products,true));
 	}
 	
 }
