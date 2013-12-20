@@ -140,6 +140,7 @@ class Product_Search_Api extends Sears_Api_Base {
 	*/
 	function build_url_v2() {
 		$url = 'http://api.developer.sears.com/v2.1/products/';
+		$url_params = array();
 		$type = $this->args['search_type'];
 		if($type == 'keyword') {
 			$url .= 'search/';
@@ -149,7 +150,6 @@ class Product_Search_Api extends Sears_Api_Base {
 			if(isset($this->args['search_keyword']) && !empty($this->args['search_keyword'])) {
 				$url .= urlencode($this->args['search_keyword']);
 			}
-			$url .= '?';
 		} else {
 			$url .= 'browse/';
 			if($type == 'category') {
@@ -158,16 +158,30 @@ class Product_Search_Api extends Sears_Api_Base {
 				$url .= 'products/';
 			}
 			$url .= $this->store.'/';
-			$url .= $this->args['return_type'].'?';
+			$url .= $this->args['return_type'];
+			// Basic URL structure complete. Begin adding query string parameters.
 			if(isset($this->args['search_keyword']) && !empty($this->args['search_keyword'])) {
-				$url .= 'category='.urlencode($this->args['search_keyword']);
+				$url_params['category'] = $this->args['search_keyword'];
 			} else if(isset($this->args['category_search']) && !empty($this->args['category_search'])) {
-				$url .= 'category='.urlencode(stripslashes(implode('|',$this->args['category_search'])));
+				$url_params['category'] = stripslashes(implode('|',$this->args['category_search']));
 			} else {
-				$url .= 'category=';
+				$url_params['category'] = '';
 			}
 		}
-		$url .= '&apikey='.$this->api_key;
+		if(isset($this->args['filter']) && is_array($this->args['filter'])) {
+			foreach($this->args['filter'] as $filter_name => $filter_value) {
+				if(!empty($filter_name) && !empty($filter_value)) {
+					$filter = $filter_name.'|'.$filter_value;
+				}
+				$url_params['filter'] = $filter;
+			}
+		}
+		if(isset($this->args['start_index']) && isset($this->args['end_index'])) {
+			$url_params['startIndex'] = $this->args['start_index'];
+			$url_params['endIndex'] = $this->args['end_index'];
+		}
+		$url_params['apikey'] = $this->api_key;
+		$url .= '?'.http_build_query($url_params);
 		$this->request_url = $url;
 	}
 	
