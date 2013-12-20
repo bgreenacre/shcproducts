@@ -327,4 +327,30 @@ class Product_Search_Api extends Sears_Api_Base {
 		return $this->make_request();
 	}
 	
+	/**
+	* Get Products 
+	*
+	* @return void
+	*/
+	public function get_products($vertical_name, $category_name, $subcategory_name, $filter=false, $start_end=false) {
+		$args = array(
+			'api_version' => 'v1',
+			'search_type' => 'product',
+			'return_type' => 'json',
+			'category_search' => array(
+				'vertical' => $vertical_name,
+				'category' => $category_name,
+				'subcategory' => $subcategory_name
+			),
+			'filter' => $filter
+		);
+		if(is_array($start_end) && isset($start_end['start_index']) && isset($start_end['end_index']) ) {
+			$args['start_index'] = $start_end['start_index'];
+			$args['end_index'] = $start_end['end_index'];
+		}
+
+		$this->set_up_request($args);
+		return $this->make_request();
+	}
+	
 }
