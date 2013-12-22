@@ -94,6 +94,30 @@ class Product_Details_Api extends Sears_Api_Base {
 		// The line below will make the CURL request and save the output to
 		// $this->raw_response (with any xml/json already decoded)
 		parent::make_request();
+		
+		// Initialize the result object depending on which version and response type we're using.
+		if($this->args['api_version'] == 'v1') {
+			
+			if($this->args['return_type'] == 'xml') 
+			{ // Version 1 XML:
+				$this->result_object = new Details_Api_Result_V1xml($this->raw_response);
+			} else if($this->args['return_type'] == 'json') 
+			{ // Version 1 JSON:
+			
+			}
+			
+		} else if($this->args['api_version'] == 'v2.1') {
+		
+		}
+		
+		// If the result object was successfully created, standardize the response data and return.
+		if(isset($this->result_object) && is_object($this->result_object) && $this->result_object instanceof Api_Result) {
+			$this->result_object->standardize_data();
+			return $this->result_object;
+		} else {
+			return false;
+		}
+		
 	}
 	
 	
@@ -181,7 +205,7 @@ class Product_Details_Api extends Sears_Api_Base {
 	function get_product($part_number) {
 		$args = array(
 			'api_version' => 'v1',
-			'return_type' => 'json',
+			'return_type' => 'xml',
 			'part_number' => $part_number
 		);
 		$this->set_up_request($args);

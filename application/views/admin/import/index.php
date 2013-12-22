@@ -72,7 +72,8 @@
 
 $test = new Product_Details_Api();
 $result = $test->get_product('007VA54248712P');
-error_log('Product details api = '.print_r($test,true));
+//error_log('Product details api = '.print_r($test,true));
+error_log('$result = '.print_r($result,true));
 
 
 ?>

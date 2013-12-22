@@ -3,7 +3,7 @@
 
 
 
-class Search_Api_Result_V1xml {
+class Details_Api_Result_V1xml implements Api_Result {
 
 	/**
 	* Raw API Response
