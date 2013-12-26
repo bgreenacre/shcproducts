@@ -40,7 +40,7 @@
 
 <?php
 
-// $obj = new Product_Search_Api();
+$obj = new Product_Search_Api();
 // 
 // $args = array(
 // 	'api_version' => 'v1',
@@ -62,18 +62,20 @@
 // error_log(print_r($result,true));
 
 
+echo get_verticals_dropdown();
 
-//echo get_verticals_dropdown();
+//$result = $obj->get_verticals();
+//error_log(print_r($result,true));
+
 
 //$test = new Product_Model('3ZZVA55174312P');
 //$test = new Product_Model('015W001553543000P');
 //error_log('New product model = '.print_r($test,true));
 
-
-$test = new Product_Details_Api();
-$result = $test->get_product('007VA54248712P');
-//error_log('Product details api = '.print_r($test,true));
-error_log('$result = '.print_r($result,true));
+// Product Details Testing:
+// $test = new Product_Details_Api();
+// $result = $test->get_product('007VA54248712P');
+// error_log('$result = '.print_r($result,true));
 
 
 ?>
