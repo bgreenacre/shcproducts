@@ -3,7 +3,7 @@
 
 
 
-class Search_Api_Result_V1 extends Search_Api_Result_Base implements Search_Api_Result {
+class Search_Api_Result_V1json extends Search_Api_Result_Base implements Search_Api_Result {
 	
 	/**
 	* __construct 

@@ -121,6 +121,15 @@ class Product_Search_Api extends Sears_Api_Base {
 		// Initialize the result object depending on which version and response type we're using.
 		if($this->args['api_version'] == 'v1') {
 		
+			if($this->args['return_type'] == 'xml') 
+			{ // Version 1 XML:
+				$this->result_object = new Search_Api_Result_V1xml($this->raw_response);
+				
+			} else if($this->args['return_type'] == 'json') 
+			{ // Version 1 JSON:
+				$this->result_object = new Search_Api_Result_V1json($this->raw_response);
+			}
+		
 		} else if($this->args['api_version'] == 'v2.1') {
 		
 			if($this->args['return_type'] == 'xml') 
@@ -313,7 +322,7 @@ class Product_Search_Api extends Sears_Api_Base {
 		$args = array(
 			'api_version' => 'v2.1',
 			'search_type' => 'category',
-			'return_type' => 'json',
+			'return_type' => 'xml',
 			'category_search' => array(
 				'vertical' => $vertical_name
 			)
@@ -330,12 +339,12 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	public function get_subcategories($vertical_name, $category_name) {
-		// Note - using API v1 for this because v2 seems to be unreliable
+		// Note - use API v1 for this because v2 seems to be unreliable
 		// when it comes to delivering subcategories (sometimes).
 		$args = array(
-			'api_version' => 'v1',
+			'api_version' => 'v2.1',
 			'search_type' => 'category',
-			'return_type' => 'json',
+			'return_type' => 'xml',
 			'category_search' => array(
 				'vertical' => $vertical_name,
 				'category' => $category_name
@@ -381,7 +390,7 @@ class Product_Search_Api extends Sears_Api_Base {
 	*/
 	public function get_products($vertical_name, $category_name, $subcategory_name, $filter=false, $start_end=false) {
 		$args = array(
-			'api_version' => 'v1',
+			'api_version' => 'v2.1',
 			'search_type' => 'product',
 			'return_type' => 'json',
 			'category_search' => array(

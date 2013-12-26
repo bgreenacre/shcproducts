@@ -51,21 +51,14 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 		// Standardize verticals:
 		if(isset($r->Verticals->Vertical)) {
 			foreach($r->Verticals->Vertical as $vertical) {
-//				error_log('$vertical = '.print_r($vertical,true));
 				$vertical_name = (string)$vertical->VerticalName;
 				$group_id = (string)$vertical->CatGroupId;
 				$this->verticals[$vertical_name] = array(
 					'vertical_name' => $vertical_name,
 					'group_id' => $group_id
 				);
-//				error_log('$vertical_name = '.print_r($vertical_name,true));
-// 				$this->verticals[$vertical->VerticalName] = array(
-// 					'vertical_name' => $vertical->VerticalName,
-// 					'group_id' => $vertical->CatGroupId
-// 				);
 			}
-				
-			
+					
 		}
 	}
 	
@@ -78,18 +71,20 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 		$r = $this->raw_response;
 		
 		// Standardize categories:
-		if(isset($r->SearchResults->NavGroups[0]->ShopByCategories)) {
-			$categories = $r->SearchResults->NavGroups[0]->ShopByCategories;
-			if(is_array($categories) && !empty($categories)) {
-				foreach($categories as $category) {
-					$this->categories[$category->CategoryName] = array(
-						'category_name' => $category->CategoryName,
-						'product_count' => $category->AggProdCount,
-						'group_id' => $category->CatGroupId
-					);
-				}
+		if(isset($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory)) {
+			foreach($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory as $category) {
+				error_log('$category = '.print_r($category,true));
+				$category_name = (string)$category->CategoryName;
+				$product_count = (string)$category->AggProdCount;
+				$group_id = (string)$category->CatGroupId;
+				$this->categories[$category_name] = array(
+					'category_name' => $category_name,
+					'product_count' => $product_count,
+					'group_id' => $group_id
+				);
 			}
 		}
+
 	}
 	
 	
