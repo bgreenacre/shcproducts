@@ -41,41 +41,12 @@
 <?php
 
 $obj = new Product_Search_Api();
-// 
-// $args = array(
-// 	'api_version' => 'v1',
-// 	'search_type' => 'product',
-// 	'return_type' => 'json',
-// 	//'search_keyword' => 'Hat'
-// 	'category_search' => array(
-// 		'vertical' => 'Fitness & Sports',
-// 		'category' => 'Treadmills',
-// 		'subcategory' => 'Treadmills',
-// 	),
-// // 	'filter' => array(
-// // 		'Sport' => 'Hiking'
-// // 	)
-// );
-// 
-// $obj->set_up_request($args);
-// $result = $obj->make_request();
-// error_log(print_r($result,true));
+$r = $obj->get_categories('Fitness & Sports');
+error_log(print_r($r,true));
 
 
-echo get_verticals_dropdown();
 
-//$result = $obj->get_verticals();
-//error_log(print_r($result,true));
-
-
-//$test = new Product_Model('3ZZVA55174312P');
-//$test = new Product_Model('015W001553543000P');
-//error_log('New product model = '.print_r($test,true));
-
-// Product Details Testing:
-// $test = new Product_Details_Api();
-// $result = $test->get_product('007VA54248712P');
-// error_log('$result = '.print_r($result,true));
+//echo get_verticals_dropdown();
 
 
 ?>

@@ -149,8 +149,8 @@ class Product_Search_Api extends Sears_Api_Base {
 		}
 		
 		// For debugging:
-		error_log('Raw Response: '.print_r($this->raw_response,true));
-		error_log('Result Object: '.print_r($this->result_object,true));
+		//error_log('Raw Response: '.print_r($this->raw_response,true));
+		//error_log('Result Object: '.print_r($this->result_object,true));
 		
 		return $this->result_object;
 	}
@@ -305,7 +305,7 @@ class Product_Search_Api extends Sears_Api_Base {
 		$args = array(
 			'api_version' => 'v2.1',
 			'search_type' => 'category',
-			'return_type' => 'xml'
+			'return_type' => 'json'
 		);
 
 		$this->set_up_request($args);
@@ -322,7 +322,7 @@ class Product_Search_Api extends Sears_Api_Base {
 		$args = array(
 			'api_version' => 'v2.1',
 			'search_type' => 'category',
-			'return_type' => 'xml',
+			'return_type' => 'json',
 			'category_search' => array(
 				'vertical' => $vertical_name
 			)

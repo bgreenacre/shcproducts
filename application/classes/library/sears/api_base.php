@@ -47,7 +47,7 @@ class Sears_Api_Base {
 	
 	
 	function make_request() {
-		error_log('Making request - API URL: '.$this->request_url);
+		//error_log('Making request - API URL: '.$this->request_url);
 	
 		// Init the curl resource.
         $ch = curl_init($this->request_url);
