@@ -166,7 +166,7 @@ class Search_Api_Result_V1json extends Search_Api_Result_Base implements Search_
 			//error_log('Variable not found');
 		}
 		
-		error_log('$this->products = '.print_r($this->products,true));
+		//error_log('$this->products = '.print_r($this->products,true));
 	}
 	
 }

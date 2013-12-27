@@ -35,7 +35,7 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 		$this->_standardize_products();
 		
 		// Get rid of the raw response:
-		 unset($this->raw_response);
+		unset($this->raw_response);
 	}
 	
 	
@@ -56,24 +56,16 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_categories(){
 		$r = $this->raw_response;
-		if(isset($r->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1])) {
-			$categories = $r->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1];
-			if(is_array($categories)) {
-				foreach($categories as $category) {
-					if(isset($category->subcategory)) {
-						$this->categories[$category->subcategory] = array(
-							'category_name' => $category->subcategory,
-							'product_count' => $category->aggcount,
-							'group_id' => '' // Not returned by V1 of the API.
-						);
-					} else if(isset($category->category)) {
-						$this->categories[$category->category] = array(
-							'category_name' => $category->category,
-							'product_count' => $category->aggcount,
-							'group_id' => '' // Not returned by V1 of the API.
-						);
-					}
-				}
+		if(isset($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory)) {
+			foreach( $r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory as $category ) {
+				$category_name = (string)$category->Category;
+				$product_count = (string)$category->AggCount;
+				$group_id = ''; // Not returned by version 1 of the API.
+				$this->categories[$category_name] = array(
+					'category_name' => $category_name,
+					'product_count' => $product_count,
+					'group_id' => $group_id
+				);
 			}
 		}
 	}
@@ -166,7 +158,7 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 			//error_log('Variable not found');
 		}
 		
-		error_log('$this->products = '.print_r($this->products,true));
+		//error_log('$this->products = '.print_r($this->products,true));
 	}
 	
 }
