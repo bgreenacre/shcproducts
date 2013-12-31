@@ -92,27 +92,21 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_filters() {
 		$r = $this->raw_response;
-		if(isset($r->mercadoresult->filterproducts->filterproduct[1])) {
-			$f = $r->mercadoresult->filterproducts->filterproduct[1];
-			if(is_array($f)) {
-				foreach($f as $filter) {
-					$filter_name = (isset($filter->name)) ? $filter->name : '';
-					if(!in_array($filter_name, $this->ignore_filters)) {
-						$filter_values = array();
-						if(isset($filter->filtervalues->filtervalue[1])) {
-							$f_values = $filter->filtervalues->filtervalue[1];
-							if(is_array($f_values)) {
-								foreach($f_values as $f_value) {
-									if(isset($f_value->name) && isset($f_value->contentcount)) {
-										$filter_values[$f_value->name] = $f_value->contentcount;
-									} 
-								}
-							}
-						}
-						if(!empty($filter_values)) {
-							$this->available_filters[$filter_name] = $filter_values;
+		if(isset($r->FilterProducts->FilterProduct[0])) {
+			foreach($r->FilterProducts->FilterProduct as $filter) {
+				$filter_name = (string)$filter->FilterKey;
+				$filter_values = array();
+				if(!in_array($filter_name, $this->ignore_filters)) {
+					if(isset($filter->FilterValues->FilterValue) && $filter->FilterValues->FilterValue instanceof SimpleXMLElement) {
+						foreach($filter->FilterValues->FilterValue as $fvalue) {
+							$filter_value_name = (string)$fvalue->Name;
+							$filter_value_count = (string)$fvalue->ContentCount;
+							$filter_values[$filter_value_name] = $filter_value_count;
 						}
 					}
+				}
+				if(!empty($filter_values)) {
+					$this->available_filters[$filter_name] = $filter_values;
 				}
 			}
 		}
@@ -132,7 +126,7 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 		
 		if(isset($r->mercadoresult->products->product[1])) {
  			$raw_products = $r->mercadoresult->products->product[1];
- 			error_log('$raw_products = '.print_r($raw_products,true));
+ 			//error_log('$raw_products = '.print_r($raw_products,true));
  			if(is_array($raw_products)) {
  				foreach($raw_products as $rp) {
  					$product = array();

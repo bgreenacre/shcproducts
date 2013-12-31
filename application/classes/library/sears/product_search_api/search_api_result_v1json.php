@@ -140,7 +140,7 @@ class Search_Api_Result_V1json extends Search_Api_Result_Base implements Search_
 		
 		if(isset($r->mercadoresult->products->product[1])) {
  			$raw_products = $r->mercadoresult->products->product[1];
- 			error_log('$raw_products = '.print_r($raw_products,true));
+ 			//error_log('$raw_products = '.print_r($raw_products,true));
  			if(is_array($raw_products)) {
  				foreach($raw_products as $rp) {
  					$product = array();

@@ -110,24 +110,24 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_filters() {
 		$r = $this->raw_response;
-		if(isset($r->SearchResults->FilterProducts)) {
-			$f = $r->SearchResults->FilterProducts;
-			if(is_array($f)) {
-				foreach($f as $filter) {
-					$filter_name = (isset($filter->FilterKey)) ? $filter->FilterKey : '';
-					if(!in_array($filter_name, $this->ignore_filters)) {
-						$filter_values = array();
-						if(isset($filter->FilterValues) && is_array($filter->FilterValues)) {
-							foreach($filter->FilterValues as $f_value) {
-								if(isset($f_value->Name) && isset($f_value->ContentCount)) {
-									$filter_values[$f_value->Name] = $f_value->ContentCount;
-								}
-							}
-						}
-						if(!empty($filter_values)) {
-							$this->available_filters[$filter_name] = $filter_values;
+		//error_log('Standardizing filters...');
+		//error_log('$r = '.print_r($r,true));
+		if(isset($r->FilterProducts->FilterProduct[0])) {
+			foreach($r->FilterProducts->FilterProduct as $filter) {
+				$filter_name = (string)$filter->FilterKey;
+				$filter_values = array();
+				if(!in_array($filter_name, $this->ignore_filters)) {
+					if(isset($filter->FilterValues->FilterValue) && $filter->FilterValues->FilterValue instanceof SimpleXMLElement) {
+						foreach($filter->FilterValues->FilterValue as $fvalue) {
+							//error_log('$fvalue = '.print_r($fvalue,true));
+							$filter_value_name = (string)$fvalue->Name;
+							$filter_value_count = (string)$fvalue->ContentCount;
+							$filter_values[$filter_value_name] = $filter_value_count;
 						}
 					}
+				}
+				if(!empty($filter_values)) {
+					$this->available_filters[$filter_name] = $filter_values;
 				}
 			}
 		}

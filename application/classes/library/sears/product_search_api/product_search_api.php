@@ -339,8 +339,8 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	public function get_subcategories($vertical_name, $category_name) {
-		// Note - use API v1 for this because v2 seems to be unreliable
-		// when it comes to delivering subcategories (sometimes).
+		// Upon testing, certain versions of the API fail to retrieve certain subcategories.
+		// For this functionality, we will try a couple of different methods.
 		$args = array(
 			'api_version' => 'v2.1',
 			'search_type' => 'category',
@@ -350,9 +350,23 @@ class Product_Search_Api extends Sears_Api_Base {
 				'category' => $category_name
 			)
 		);
-
 		$this->set_up_request($args);
-		return $this->make_request();
+		$result = $this->make_request();
+		// If we got valid data, go ahead and return it.
+		if(isset($result->categories) && !empty($result->categories)) return $result;
+		// Otherwise, let's try again using another API version:
+		$args = array(
+			'api_version' => 'v1',
+			'search_type' => 'category',
+			'return_type' => 'json',
+			'category_search' => array(
+				'vertical' => $vertical_name,
+				'category' => $category_name
+			)
+		);
+		$this->set_up_request($args);
+		$result = $this->make_request();	
+		return $result;
 	}
 	
 	/**
@@ -377,10 +391,25 @@ class Product_Search_Api extends Sears_Api_Base {
 				'subcategory' => $subcategory_name
 			)
 		);
-		error_log('get_available_filters - $args = '.print_r($args,true));
-		
 		$this->set_up_request($args);
-		return $this->make_request();
+		$result = $this->make_request();
+		// If we got valid data, go ahead and return it.
+		if(isset($result->available_filters) && !empty($result->available_filters)) return $result;
+		// Otherwise, let's try again with another API version:
+		$args = array(
+			'api_version' => 'v2.1',
+			'search_type' => 'product',
+			'return_type' => 'xml',
+			'category_search' => array(
+				'vertical' => $vertical_name,
+				'category' => $category_name,
+				'subcategory' => $subcategory_name
+			)
+		);
+		$this->set_up_request($args);
+		$result = $this->make_request();
+		
+		return $result;
 	}
 	
 	/**
