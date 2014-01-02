@@ -31,7 +31,7 @@ class ApiTestFilters_V2xml extends SHC_API_Test_Parent {
 		
 		$args = array(
 			'api_version' => 'v2.1',
-			'search_type' => 'category',
+			'search_type' => 'product',
 			'return_type' => 'xml',
 			'category_search' => array(
 				'vertical' => $vertical_name,
