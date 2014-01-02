@@ -87,7 +87,7 @@ class Search_Api_Result_V1json extends Search_Api_Result_Base implements Search_
 	function _standardize_product_count(){
 		$r = $this->raw_response;
 		if(isset($r->mercadoresult->productcount)) {
-			$this->product_count = $r->mercadoresult->productcount;
+			$this->product_count = intval($r->mercadoresult->productcount);
 		}
 	}
 	
@@ -157,8 +157,11 @@ class Search_Api_Result_V1json extends Search_Api_Result_Base implements Search_
 							$product['has_variants'] = 1;
 						}
 					}
- 					
- 					$this->products[$product['part_number']] = $product;
+ 					// Validate the product search result -- make sure it has required fields, etc.
+					// Method defined in parent class Search_Api_Result_Base.
+					if($this->validate_product_search_result($product)) {
+						$this->products[$product['part_number']] = $product;
+					}
  				}
  			}
 			///error_log('FOUND');

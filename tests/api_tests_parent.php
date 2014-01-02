@@ -148,6 +148,12 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 	
 	public function check_product_search_results($result_object) {
 		$message = ' API URL = '.$result_object->api_url;
+		// If the result object indicates that there were legitimately 0 products in the search result,
+		// stop here and don't make any further requirements of the data.
+		if($result_object->product_count === 0) {
+			$this->markTestIncomplete('Zero products were found for this category. API URL = '.$result_object->api_url);
+			return;
+		}
 		// Make sure the products property is set as expected:
 		$this->assertTrue( isset($result_object->products), '$result_object->products is not set.'.$message );
 		// Make sure the products property is an array:
