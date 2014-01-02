@@ -146,6 +146,39 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 			}
 		}
 	}
+	
+	
+	public function check_product_search_results($result_object) {
+		$message = ' API URL = '.$result_object->api_url;
+		// Make sure the products property is set as expected:
+		$this->assertTrue( isset($result_object->products), '$result_object->products is not set.'.$message );
+		// Make sure the products property is an array:
+		$this->assertInternalType('array', $result_object->products, '$result_object->products is not an array.'.$message);
+		// Make sure the products property isn't empty:
+		$this->assertFalse( empty($result_object->products), '$result_object->products is empty.'.$message );
+		// Loop through and check the values:
+		foreach($result_object->products as $key => $product) {
+			// Each individual product should also be an array:
+			$this->assertInternalType('array', $product);
+			// All of the following things should be set:
+			$this->assertTrue( isset($product['part_number']), 'Part number not set for product '.$key.'.'.$message );
+			$this->assertTrue( isset($product['name']), 'Product name not set for product '.$key.'.'.$message );
+			$this->assertTrue( isset($product['brand']), 'Brand not set for product '.$key.'.'.$message );
+			$this->assertTrue( isset($product['image_url']), 'Image URL not set for product '.$key.'.'.$message );
+			$this->assertTrue( isset($product['rating']), 'Rating not set for product '.$key.'.'.$message );
+			$this->assertTrue( isset($product['review_count']), 'Review Count not set for product '.$key.'.'.$message );
+			$this->assertTrue( isset($product['price']), 'Price not set for product '.$key.'.'.$message );
+			$this->assertTrue( isset($product['has_variants']), 'has_variants not set for product '.$key.'.'.$message );
+			// The following fields are mandatory:
+			$this->assertFalse( empty($product['part_number']), 'Part number empty for product '.$key.'.'.$message );
+			$this->assertFalse( empty($product['name']), 'Product name empty for product '.$key.'.'.$message );
+			$this->assertFalse( empty($product['image_url']), 'Image URL empty for product '.$key.'.'.$message );
+			$this->assertFalse( empty($product['price']), 'Price empty for product '.$key.'.'.$message );
+			// The array key should match the part number field:
+			$this->assertEquals( $key, $product['part_number'], 'Array key does not match part number.'.$message );
+		}
+	}
+	
 		
 
 	

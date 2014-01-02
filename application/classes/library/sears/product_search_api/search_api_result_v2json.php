@@ -166,7 +166,11 @@ class Search_Api_Result_V2json extends Search_Api_Result_Base implements Search_
 							$product['has_variants'] = 1;
 						}
 					}
-					$this->products[$product['part_number']] = $product;
+					// Validate the product search result -- make sure it has required fields, etc.
+					// Method defined in parent class Search_Api_Result_Base.
+					if($this->validate_product_search_result($product)) {
+						$this->products[$product['part_number']] = $product;
+					}
 					//error_log('$raw_product = '.print_r($rp,true));
 				}
 			} 
