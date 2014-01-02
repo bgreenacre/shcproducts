@@ -148,6 +148,9 @@ class Product_Search_Api extends Sears_Api_Base {
 			$this->result_object->standardize_data();
 		}
 		
+		// Include the API URL in the result object for reference and debugging purposes:
+		$this->result_object->set_api_url($this->request_url);
+		
 		// For debugging:
 		//error_log('Raw Response: '.print_r($this->raw_response,true));
 		//error_log('Result Object: '.print_r($this->result_object,true));

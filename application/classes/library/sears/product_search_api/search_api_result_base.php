@@ -12,6 +12,14 @@ class Search_Api_Result_Base {
 	*/
 	protected $raw_response;
 	
+	
+	/**
+	* API Url
+	*
+	* @var string
+	*/
+	public $api_url;
+	
 	/**
 	* Verticals
 	*
@@ -72,5 +80,25 @@ class Search_Api_Result_Base {
 		'storeOrigin',
 		'trustedSeller'
 	);
+	
+	
+	/**
+	* Set API URL to the given input.
+	*/
+	public function set_api_url($api_url) {
+		$this->api_url = $api_url;
+	}
+	
+	
+	
+	/**
+	*	Validate the given product (from search API result). 
+	*	Return true if ok, false otherwise.
+	*/
+	public function validate_product_search_result($product) {
+		if(!is_array($product)) return false;
+		if(!isset($product['price']) || empty($product['price'])) return false;
+		return true;
+	}
 
 }
