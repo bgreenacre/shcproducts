@@ -59,7 +59,7 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
     	Randomly reduce the provided parameters to the specified number.
     	Allows a random sample to be taken.
     */
-	private function _reduce_parameters($parameters_array, $max = 20) {
+	private function _reduce_parameters($parameters_array, $max = 100) {
 		if( count($parameters_array) <= $max ) return $parameters_array;
 		$return_array = array();
 		for($i = 0; $i < $max; $i++) {
@@ -102,7 +102,7 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 		// In rare cases, there may be categories that come back as empty from the API.
 		// Mark the test incomplete for these.
 		if( empty($result_object->categories) ) {
-			$this->markTestIncomplete('No categories were found.');
+			$this->markTestIncomplete('No categories were found. API URL = '.$result_object->api_url);
 			return;
 		}
 		// Loop through and check the values inside:
@@ -134,16 +134,14 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 		// For the purposes of unit testing, we won't consider it an error
 		// and will not examine the data any further if this is the case.
 		if(empty($result_object->available_filters)) {
-			$this->markTestIncomplete('No filters are available for this category.');
+			$this->markTestIncomplete('No filters are available for this category. API URL = '.$result_object->api_url);
 			return;
 		}
-		// If the available_filters property is an array, loop through and check the values inside:
-		if(is_array($result_object->available_filters)) {
-			foreach($result_object->available_filters as $filter_name => $filter_values) {
-				$this->assertInternalType('string', $filter_name);
-				$this->assertInternalType('array', $filter_values);
-				$this->assertFalse( empty($filter_values) );
-			}
+		// Loop through and check the values inside:
+		foreach($result_object->available_filters as $filter_name => $filter_values) {
+			$this->assertInternalType('string', $filter_name);
+			$this->assertInternalType('array', $filter_values);
+			$this->assertFalse( empty($filter_values) );
 		}
 	}
 	
