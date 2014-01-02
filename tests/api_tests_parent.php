@@ -59,7 +59,7 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
     	Randomly reduce the provided parameters to the specified number.
     	Allows a random sample to be taken.
     */
-	private function _reduce_parameters($parameters_array, $max = 100) {
+	private function _reduce_parameters($parameters_array, $max = 20) {
 		if( count($parameters_array) <= $max ) return $parameters_array;
 		$return_array = array();
 		for($i = 0; $i < $max; $i++) {
@@ -151,9 +151,11 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 		// If the result object indicates that there were legitimately 0 products in the search result,
 		// stop here and don't make any further requirements of the data.
 		if($result_object->product_count === 0) {
-			$this->markTestIncomplete('Zero products were found for this category. API URL = '.$result_object->api_url);
+			$this->markTestIncomplete('No valid products were found for this category. API URL = '.$result_object->api_url);
 			return;
 		}
+		// Make sure the product count is set properly:
+		$this->assertTrue( is_numeric($result_object->product_count), 'Non-numeric product count received.'.$message);
 		// Make sure the products property is set as expected:
 		$this->assertTrue( isset($result_object->products), '$result_object->products is not set.'.$message );
 		// Make sure the products property is an array:
@@ -300,8 +302,11 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 	*/
 	public function provider_subcategories() {
 		include('input_subcategories.php');
-		$subcategories = $this->_reduce_parameters($subcategories);
-		return $subcategories;
+		$rval = $this->_reduce_parameters($subcategories);
+		// Include the required subcategories every time:
+		include('input_subcategories_required.php');
+		$rval = array_merge($rval, $subcategories);
+		return $rval;
 		// Use the code below to regenerate this input from the API:
 		//return $this->generate_categories(true);
 	}

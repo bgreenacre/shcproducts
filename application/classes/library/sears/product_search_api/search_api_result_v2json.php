@@ -170,6 +170,9 @@ class Search_Api_Result_V2json extends Search_Api_Result_Base implements Search_
 					// Method defined in parent class Search_Api_Result_Base.
 					if($this->validate_product_search_result($product)) {
 						$this->products[$product['part_number']] = $product;
+					} else {
+						// Decrement the product count by 1, since this result is invalid in some way.
+						$this->product_count--;
 					}
 					//error_log('$raw_product = '.print_r($rp,true));
 				}

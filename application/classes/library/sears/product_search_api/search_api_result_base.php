@@ -53,7 +53,7 @@ class Search_Api_Result_Base {
 	*
 	* @var int
 	*/
-	public $product_count = 0;
+	public $product_count = false;
 	
 	/**
 	* Ignore Filters
@@ -98,6 +98,7 @@ class Search_Api_Result_Base {
 	public function validate_product_search_result($product) {
 		if(!is_array($product)) return false;
 		if(!isset($product['price']) || empty($product['price'])) return false;
+		if(!isset($product['image_url']) || empty($product['image_url'])) return false;
 		return true;
 	}
 

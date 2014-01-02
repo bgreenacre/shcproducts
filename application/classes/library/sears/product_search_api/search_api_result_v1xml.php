@@ -35,7 +35,7 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 		$this->_standardize_products();
 		
 		// Get rid of the raw response:
-		unset($this->raw_response);
+		//unset($this->raw_response);
 	}
 	
 	
@@ -78,9 +78,7 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_product_count(){
 		$r = $this->raw_response;
-		if(isset($r->mercadoresult->productcount)) {
-			$this->product_count = $r->mercadoresult->productcount;
-		}
+		$this->product_count = (int)$r->ProductCount;
 	}
 	
 	
@@ -123,36 +121,30 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_products() {
 		$r = $this->raw_response;
-		
-		if(isset($r->mercadoresult->products->product[1])) {
- 			$raw_products = $r->mercadoresult->products->product[1];
- 			//error_log('$raw_products = '.print_r($raw_products,true));
- 			if(is_array($raw_products)) {
- 				foreach($raw_products as $rp) {
- 					$product = array();
- 					$product['part_number'] = (isset($rp->partnumber)) ? $rp->partnumber : '';
- 					$product['name'] = (isset($rp->name)) ? $rp->name : '';
- 					$product['image_url'] = (isset($rp->imageurl)) ? $rp->imageurl : '';
- 					$product['rating'] = (isset($rp->rating)) ? $rp->rating : '';
- 					$product['brand'] = (isset($rp->brandname)) ? $rp->brandname : '';
- 					$product['review_count'] = (isset($rp->numreview)) ? $rp->numreview : '';
- 					$product['price'] = (isset($rp->displayprice)) ? $rp->displayprice : '';
- 					$product['has_variants'] = 0;
-					if(isset($rp->pbtype)) {
-						if($rp->pbtype == 'VARIATION') {
-							$product['has_variants'] = 1;
-						}
-					}
- 					
- 					$this->products[$product['part_number']] = $product;
- 				}
- 			}
-			///error_log('FOUND');
-		} else {
-			//error_log('Variable not found');
+		if(isset($r->Products->Product[0])) {
+			foreach($r->Products->Product as $p) {
+				$product['part_number'] = (string)$p->PartNumber;
+				$product['name'] = (string)$p->Name;
+				$product['image_url'] = (string)$p->ImageURL;
+				$product['rating'] = (string)$p->Rating;
+				$product['brand'] = (string)$p->BrandName;
+				$product['review_count'] = (string)$p->NumReview;
+				$product['price'] = (string)$p->DisplayPrice;
+				$product['has_variants'] = 0;
+				$type = (string)$p->PbType;
+				if($type == 'VARIATION') {
+					$product['has_variants'] = 1;
+				}
+				// Validate the product search result -- make sure it has required fields, etc.
+				// Method defined in parent class Search_Api_Result_Base.
+				if($this->validate_product_search_result($product)) {
+					$this->products[$product['part_number']] = $product;
+				} else {
+					// Decrement the product count by 1, since this result is invalid in some way.
+					$this->product_count--;
+				}
+			}
 		}
-		
-		//error_log('$this->products = '.print_r($this->products,true));
 	}
 	
 }

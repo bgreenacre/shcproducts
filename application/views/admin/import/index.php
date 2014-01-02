@@ -40,13 +40,13 @@
 
 <?php
 
-$obj = new Product_Search_Api();
-$r = $obj->get_categories('Fitness & Sports');
-error_log(print_r($r,true));
+//$obj = new Product_Search_Api();
+//$r = $obj->get_categories('Fitness & Sports');
+//error_log(print_r($r,true));
 
 
 
-//echo get_verticals_dropdown();
+echo get_verticals_dropdown();
 
 
 ?>

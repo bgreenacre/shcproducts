@@ -438,7 +438,15 @@ class Product_Search_Api extends Sears_Api_Base {
 		}
 
 		$this->set_up_request($args);
-		return $this->make_request();
+		$result = $this->make_request();
+		// If we got valid data, return it:
+		if(!empty($result->products)) return $result;
+		// Otherwise, try again with another version of the API:
+		$args['api_version'] = 'v1';
+		$this->set_up_request($args);
+		$result = $this->make_request();
+		
+		return $result;
 	}
 	
 }
