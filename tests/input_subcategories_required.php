@@ -10,6 +10,7 @@
 */
 
 $subcategories = array (
+	
 	// As of 2014-01-02, this category contained a single product which will be
 	// rejected by our validation methods due to a missing price field.
 	0 => array (
