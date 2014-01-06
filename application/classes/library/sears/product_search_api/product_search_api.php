@@ -148,9 +148,12 @@ class Product_Search_Api extends Sears_Api_Base {
 			$this->result_object->standardize_data();
 		}
 		
+		// Include the API URL in the result object for reference and debugging purposes:
+		$this->result_object->set_api_url($this->request_url);
+		
 		// For debugging:
-		error_log('Raw Response: '.print_r($this->raw_response,true));
-		error_log('Result Object: '.print_r($this->result_object,true));
+		//error_log('Raw Response: '.print_r($this->raw_response,true));
+		//error_log('Result Object: '.print_r($this->result_object,true));
 		
 		return $this->result_object;
 	}
@@ -305,7 +308,7 @@ class Product_Search_Api extends Sears_Api_Base {
 		$args = array(
 			'api_version' => 'v2.1',
 			'search_type' => 'category',
-			'return_type' => 'xml'
+			'return_type' => 'json'
 		);
 
 		$this->set_up_request($args);
@@ -322,7 +325,7 @@ class Product_Search_Api extends Sears_Api_Base {
 		$args = array(
 			'api_version' => 'v2.1',
 			'search_type' => 'category',
-			'return_type' => 'xml',
+			'return_type' => 'json',
 			'category_search' => array(
 				'vertical' => $vertical_name
 			)
@@ -339,8 +342,8 @@ class Product_Search_Api extends Sears_Api_Base {
 	* @return void
 	*/
 	public function get_subcategories($vertical_name, $category_name) {
-		// Note - use API v1 for this because v2 seems to be unreliable
-		// when it comes to delivering subcategories (sometimes).
+		// Upon testing, certain versions of the API fail to retrieve certain subcategories.
+		// For this functionality, we will try a couple of different methods.
 		$args = array(
 			'api_version' => 'v2.1',
 			'search_type' => 'category',
@@ -350,9 +353,23 @@ class Product_Search_Api extends Sears_Api_Base {
 				'category' => $category_name
 			)
 		);
-
 		$this->set_up_request($args);
-		return $this->make_request();
+		$result = $this->make_request();
+		// If we got valid data, go ahead and return it.
+		if(isset($result->categories) && !empty($result->categories)) return $result;
+		// Otherwise, let's try again using another API version:
+		$args = array(
+			'api_version' => 'v1',
+			'search_type' => 'category',
+			'return_type' => 'json',
+			'category_search' => array(
+				'vertical' => $vertical_name,
+				'category' => $category_name
+			)
+		);
+		$this->set_up_request($args);
+		$result = $this->make_request();	
+		return $result;
 	}
 	
 	/**
@@ -377,10 +394,25 @@ class Product_Search_Api extends Sears_Api_Base {
 				'subcategory' => $subcategory_name
 			)
 		);
-		error_log('get_available_filters - $args = '.print_r($args,true));
-		
 		$this->set_up_request($args);
-		return $this->make_request();
+		$result = $this->make_request();
+		// If we got valid data, go ahead and return it.
+		if(isset($result->available_filters) && !empty($result->available_filters)) return $result;
+		// Otherwise, let's try again with another API version:
+		$args = array(
+			'api_version' => 'v2.1',
+			'search_type' => 'product',
+			'return_type' => 'xml',
+			'category_search' => array(
+				'vertical' => $vertical_name,
+				'category' => $category_name,
+				'subcategory' => $subcategory_name
+			)
+		);
+		$this->set_up_request($args);
+		$result = $this->make_request();
+		
+		return $result;
 	}
 	
 	/**
@@ -406,7 +438,15 @@ class Product_Search_Api extends Sears_Api_Base {
 		}
 
 		$this->set_up_request($args);
-		return $this->make_request();
+		$result = $this->make_request();
+		// If we got valid data, return it:
+		if(!empty($result->products)) return $result;
+		// Otherwise, try again with another version of the API:
+		$args['api_version'] = 'v1';
+		$this->set_up_request($args);
+		$result = $this->make_request();
+		
+		return $result;
 	}
 	
 }

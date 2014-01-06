@@ -162,7 +162,11 @@ function ajax_verticals_preview_products(){
 	
 	// Set up the output.
 	$s = ($result->product_count != 1) ? 's' : '';
-	$result_count_output = '<p><b><span id="result_count">'.$result->product_count.'</span></b> product'.$s.' found.</p>';
+	if( empty($result->product_count) && $result->product_count !== 0) { 
+		$result_count_output = '<p><b><span id="result_count">No products found.</span></b> An error may have occurred.</p>';
+	} else {
+		$result_count_output = '<p><b><span id="result_count">'.$result->product_count.'</span></b> product'.$s.' found.</p>';
+	}
 	
 	if(isset($result->products) && is_array($result->products) && !empty($result->products)) {
 		//$output .= '<ul id="product_preview_list" class="product_preview_list">';

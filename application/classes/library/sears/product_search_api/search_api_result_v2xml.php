@@ -73,7 +73,7 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 		// Standardize categories:
 		if(isset($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory)) {
 			foreach($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory as $category) {
-				error_log('$category = '.print_r($category,true));
+				//error_log('$category = '.print_r($category,true));
 				$category_name = (string)$category->CategoryName;
 				$product_count = (string)$category->AggProdCount;
 				$group_id = (string)$category->CatGroupId;
@@ -95,11 +95,7 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_product_count() {
 		$r = $this->raw_response;
-		
-		// Standardize product count:
-		if(isset($r->SearchResults->ProductCount)){
-			$this->product_count = $r->SearchResults->ProductCount;
-		}
+		$this->product_count = (int)$r->ProductCount;
 	}
 	
 	
@@ -110,24 +106,22 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_filters() {
 		$r = $this->raw_response;
-		if(isset($r->SearchResults->FilterProducts)) {
-			$f = $r->SearchResults->FilterProducts;
-			if(is_array($f)) {
-				foreach($f as $filter) {
-					$filter_name = (isset($filter->FilterKey)) ? $filter->FilterKey : '';
-					if(!in_array($filter_name, $this->ignore_filters)) {
-						$filter_values = array();
-						if(isset($filter->FilterValues) && is_array($filter->FilterValues)) {
-							foreach($filter->FilterValues as $f_value) {
-								if(isset($f_value->Name) && isset($f_value->ContentCount)) {
-									$filter_values[$f_value->Name] = $f_value->ContentCount;
-								}
-							}
-						}
-						if(!empty($filter_values)) {
-							$this->available_filters[$filter_name] = $filter_values;
+
+		if(isset($r->FilterProducts->FilterProduct[0])) {
+			foreach($r->FilterProducts->FilterProduct as $filter) {
+				$filter_name = (string)$filter->FilterKey;
+				$filter_values = array();
+				if(!in_array($filter_name, $this->ignore_filters)) {
+					if(isset($filter->FilterValues->FilterValue) && $filter->FilterValues->FilterValue instanceof SimpleXMLElement) {
+						foreach($filter->FilterValues->FilterValue as $fvalue) {
+							$filter_value_name = (string)$fvalue->Name;
+							$filter_value_count = (string)$fvalue->ContentCount;
+							$filter_values[$filter_value_name] = $filter_value_count;
 						}
 					}
+				}
+				if(!empty($filter_values)) {
+					$this->available_filters[$filter_name] = $filter_values;
 				}
 			}
 		}
@@ -143,31 +137,29 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_products() {
 		$r = $this->raw_response;
-		if(isset($r->SearchResults->Products)) {
-			$raw_products = $r->SearchResults->Products;
-			if(is_array($raw_products)) {
-				foreach($raw_products as $rp) {
-					$product = array();
-					$product['part_number'] = (isset($rp->Id->PartNumber)) ? $rp->Id->PartNumber : '';
-					$product['name'] = (isset($rp->Description->Name)) ? $rp->Description->Name : '';
-					$product['brand'] = (isset($rp->Description->BrandName)) ? $rp->Description->BrandName : '';
-					$product['image_url'] = (isset($rp->Description->ImageURL)) ? $rp->Description->ImageURL : '';
-					$product['rating'] = (isset($rp->Description->ReviewRating->Rating)) ? $rp->Description->ReviewRating->Rating : '';
-					$product['review_count'] = (isset($rp->Description->ReviewRating->NumReview)) ? $rp->Description->ReviewRating->NumReview : '';
-					$product['price'] = (isset($rp->Price->DisplayPrice)) ? $rp->Price->DisplayPrice : '';
-					$product['has_variants'] = 0;
-					if(isset($rp->Description->PbType)) {
-						if($rp->Description->PbType == 'VARIATION') {
-							$product['has_variants'] = 1;
-						}
-					}
-					$this->products[$product['part_number']] = $product;
-					//error_log('$raw_product = '.print_r($rp,true));
+		if(isset($r->Products->Product[0])) {
+			foreach($r->Products->Product as $p) {
+				$product['part_number'] = (string)$p->Id->PartNumber;
+				$product['name'] = (string)$p->Description->Name;
+				$product['image_url'] = (string)$p->Description->ImageURL;
+				$product['rating'] = (string)$p->Description->ReviewRating;
+				$product['brand'] = (string)$p->Description->BrandName;
+				$product['review_count'] = (string)$p->NumReview;
+				$product['price'] = (string)$p->Price->DisplayPrice;
+				$product['has_variants'] = 0;
+				$type = (string)$p->Description->PbType;
+				if($type == 'VARIATION') {
+					$product['has_variants'] = 1;
 				}
-			} 
-			///error_log('FOUND');
-		} else {
-			//error_log('Variable not found');
+				// Validate the product search result -- make sure it has required fields, etc.
+				// Method defined in parent class Search_Api_Result_Base.
+				if($this->validate_product_search_result($product)) {
+					$this->products[$product['part_number']] = $product;
+				} else {
+					// Decrement the product count by 1, since this result is invalid in some way.
+					$this->product_count--;
+				}
+			}
 		}
 	}
 	

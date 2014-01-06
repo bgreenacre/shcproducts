@@ -35,7 +35,7 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 		$this->_standardize_products();
 		
 		// Get rid of the raw response:
-		 unset($this->raw_response);
+		//unset($this->raw_response);
 	}
 	
 	
@@ -56,24 +56,16 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_categories(){
 		$r = $this->raw_response;
-		if(isset($r->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1])) {
-			$categories = $r->mercadoresult->navgroups->navgroup[1][0]->shopbycategories->shopbycategory[1];
-			if(is_array($categories)) {
-				foreach($categories as $category) {
-					if(isset($category->subcategory)) {
-						$this->categories[$category->subcategory] = array(
-							'category_name' => $category->subcategory,
-							'product_count' => $category->aggcount,
-							'group_id' => '' // Not returned by V1 of the API.
-						);
-					} else if(isset($category->category)) {
-						$this->categories[$category->category] = array(
-							'category_name' => $category->category,
-							'product_count' => $category->aggcount,
-							'group_id' => '' // Not returned by V1 of the API.
-						);
-					}
-				}
+		if(isset($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory)) {
+			foreach( $r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory as $category ) {
+				$category_name = (string)$category->Category;
+				$product_count = (string)$category->AggCount;
+				$group_id = ''; // Not returned by version 1 of the API.
+				$this->categories[$category_name] = array(
+					'category_name' => $category_name,
+					'product_count' => $product_count,
+					'group_id' => $group_id
+				);
 			}
 		}
 	}
@@ -86,9 +78,7 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_product_count(){
 		$r = $this->raw_response;
-		if(isset($r->mercadoresult->productcount)) {
-			$this->product_count = $r->mercadoresult->productcount;
-		}
+		$this->product_count = (int)$r->ProductCount;
 	}
 	
 	
@@ -100,27 +90,21 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_filters() {
 		$r = $this->raw_response;
-		if(isset($r->mercadoresult->filterproducts->filterproduct[1])) {
-			$f = $r->mercadoresult->filterproducts->filterproduct[1];
-			if(is_array($f)) {
-				foreach($f as $filter) {
-					$filter_name = (isset($filter->name)) ? $filter->name : '';
-					if(!in_array($filter_name, $this->ignore_filters)) {
-						$filter_values = array();
-						if(isset($filter->filtervalues->filtervalue[1])) {
-							$f_values = $filter->filtervalues->filtervalue[1];
-							if(is_array($f_values)) {
-								foreach($f_values as $f_value) {
-									if(isset($f_value->name) && isset($f_value->contentcount)) {
-										$filter_values[$f_value->name] = $f_value->contentcount;
-									} 
-								}
-							}
-						}
-						if(!empty($filter_values)) {
-							$this->available_filters[$filter_name] = $filter_values;
+		if(isset($r->FilterProducts->FilterProduct[0])) {
+			foreach($r->FilterProducts->FilterProduct as $filter) {
+				$filter_name = (string)$filter->FilterKey;
+				$filter_values = array();
+				if(!in_array($filter_name, $this->ignore_filters)) {
+					if(isset($filter->FilterValues->FilterValue) && $filter->FilterValues->FilterValue instanceof SimpleXMLElement) {
+						foreach($filter->FilterValues->FilterValue as $fvalue) {
+							$filter_value_name = (string)$fvalue->Name;
+							$filter_value_count = (string)$fvalue->ContentCount;
+							$filter_values[$filter_value_name] = $filter_value_count;
 						}
 					}
+				}
+				if(!empty($filter_values)) {
+					$this->available_filters[$filter_name] = $filter_values;
 				}
 			}
 		}
@@ -137,36 +121,30 @@ class Search_Api_Result_V1xml extends Search_Api_Result_Base implements Search_A
 	*/
 	function _standardize_products() {
 		$r = $this->raw_response;
-		
-		if(isset($r->mercadoresult->products->product[1])) {
- 			$raw_products = $r->mercadoresult->products->product[1];
- 			error_log('$raw_products = '.print_r($raw_products,true));
- 			if(is_array($raw_products)) {
- 				foreach($raw_products as $rp) {
- 					$product = array();
- 					$product['part_number'] = (isset($rp->partnumber)) ? $rp->partnumber : '';
- 					$product['name'] = (isset($rp->name)) ? $rp->name : '';
- 					$product['image_url'] = (isset($rp->imageurl)) ? $rp->imageurl : '';
- 					$product['rating'] = (isset($rp->rating)) ? $rp->rating : '';
- 					$product['brand'] = (isset($rp->brandname)) ? $rp->brandname : '';
- 					$product['review_count'] = (isset($rp->numreview)) ? $rp->numreview : '';
- 					$product['price'] = (isset($rp->displayprice)) ? $rp->displayprice : '';
- 					$product['has_variants'] = 0;
-					if(isset($rp->pbtype)) {
-						if($rp->pbtype == 'VARIATION') {
-							$product['has_variants'] = 1;
-						}
-					}
- 					
- 					$this->products[$product['part_number']] = $product;
- 				}
- 			}
-			///error_log('FOUND');
-		} else {
-			//error_log('Variable not found');
+		if(isset($r->Products->Product[0])) {
+			foreach($r->Products->Product as $p) {
+				$product['part_number'] = (string)$p->PartNumber;
+				$product['name'] = (string)$p->Name;
+				$product['image_url'] = (string)$p->ImageURL;
+				$product['rating'] = (string)$p->Rating;
+				$product['brand'] = (string)$p->BrandName;
+				$product['review_count'] = (string)$p->NumReview;
+				$product['price'] = (string)$p->DisplayPrice;
+				$product['has_variants'] = 0;
+				$type = (string)$p->PbType;
+				if($type == 'VARIATION') {
+					$product['has_variants'] = 1;
+				}
+				// Validate the product search result -- make sure it has required fields, etc.
+				// Method defined in parent class Search_Api_Result_Base.
+				if($this->validate_product_search_result($product)) {
+					$this->products[$product['part_number']] = $product;
+				} else {
+					// Decrement the product count by 1, since this result is invalid in some way.
+					$this->product_count--;
+				}
+			}
 		}
-		
-		error_log('$this->products = '.print_r($this->products,true));
 	}
 	
 }

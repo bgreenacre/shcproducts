@@ -55,7 +55,7 @@ class Search_Api_Result_V2json extends Search_Api_Result_Base implements Search_
 				foreach($verticals as $vertical) {
 					$this->verticals[$vertical->VerticalName] = array(
 						'vertical_name' => $vertical->VerticalName,
-						'group_id' => $vertical->CatGroupId
+						'group_id' => (string)$vertical->CatGroupId
 					);
 				}
 			}
@@ -75,10 +75,17 @@ class Search_Api_Result_V2json extends Search_Api_Result_Base implements Search_
 			$categories = $r->SearchResults->NavGroups[0]->ShopByCategories;
 			if(is_array($categories) && !empty($categories)) {
 				foreach($categories as $category) {
+					$group_id = '';
+					if(isset($category->CatGroupId)) {
+						$group_id = (string)$category->CatGroupId;
+					} else {
+						// Sometimes, CatGroupId is not included in the response.
+						//error_log('$category->CatGroupId not found. $category = '.print_r($category,true));
+					}
 					$this->categories[$category->CategoryName] = array(
 						'category_name' => $category->CategoryName,
 						'product_count' => $category->AggProdCount,
-						'group_id' => $category->CatGroupId
+						'group_id' => $group_id
 					);
 				}
 			}
@@ -159,7 +166,14 @@ class Search_Api_Result_V2json extends Search_Api_Result_Base implements Search_
 							$product['has_variants'] = 1;
 						}
 					}
-					$this->products[$product['part_number']] = $product;
+					// Validate the product search result -- make sure it has required fields, etc.
+					// Method defined in parent class Search_Api_Result_Base.
+					if($this->validate_product_search_result($product)) {
+						$this->products[$product['part_number']] = $product;
+					} else {
+						// Decrement the product count by 1, since this result is invalid in some way.
+						$this->product_count--;
+					}
 					//error_log('$raw_product = '.print_r($rp,true));
 				}
 			} 

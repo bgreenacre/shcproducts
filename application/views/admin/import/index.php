@@ -40,42 +40,26 @@
 
 <?php
 
-$obj = new Product_Search_Api();
-// 
-// $args = array(
-// 	'api_version' => 'v1',
-// 	'search_type' => 'product',
-// 	'return_type' => 'json',
-// 	//'search_keyword' => 'Hat'
-// 	'category_search' => array(
-// 		'vertical' => 'Fitness & Sports',
-// 		'category' => 'Treadmills',
-// 		'subcategory' => 'Treadmills',
-// 	),
-// // 	'filter' => array(
-// // 		'Sport' => 'Hiking'
-// // 	)
-// );
-// 
-// $obj->set_up_request($args);
-// $result = $obj->make_request();
-// error_log(print_r($result,true));
+//$obj = new Product_Search_Api();
+//$r = $obj->get_categories('Fitness & Sports');
+//error_log(print_r($r,true));
 
 
-echo get_verticals_dropdown();
+$obj = new Product_Details_Api();
+//$r = $obj->get_product('007VA58000212P'); // Sweatpants (soft line) - multiple sizes, 1 color
+//$r = $obj->get_product('007VA65853512P'); // Athletic shirt (soft line) - multiple sizes, multiple colors
+//$r = $obj->get_product('076SA005000P'); // Walking shoe (soft line) - available in medium & wide widths
+//$r = $obj->get_product('00840604000P'); // Toaster (hard line)
+//$r = $obj->get_product('00621999000P'); // Exercise bike (hard line)
+$r = $obj->get_product('SPM10883623415'); // misc
+error_log('Product Details = '.print_r($r,true));
+//error_log('Standardized product = '.print_r($r->product,true));
 
-//$result = $obj->get_verticals();
-//error_log(print_r($result,true));
+//$prod_obj = new Product_Model('00840604000P');
+//error_log('$prod_obj = '.print_r($prod_obj,true));
 
 
-//$test = new Product_Model('3ZZVA55174312P');
-//$test = new Product_Model('015W001553543000P');
-//error_log('New product model = '.print_r($test,true));
-
-// Product Details Testing:
-// $test = new Product_Details_Api();
-// $result = $test->get_product('007VA54248712P');
-// error_log('$result = '.print_r($result,true));
+//echo get_verticals_dropdown();
 
 
 ?>

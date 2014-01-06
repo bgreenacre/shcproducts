@@ -47,7 +47,7 @@ class Sears_Api_Base {
 	
 	
 	function make_request() {
-		error_log('Making request - API URL: '.$this->request_url);
+		if(PHP_SAPI !== 'cli') error_log('Making request - API URL: '.$this->request_url);
 	
 		// Init the curl resource.
         $ch = curl_init($this->request_url);
@@ -85,6 +85,7 @@ class Sears_Api_Base {
 		} else if($this->args['return_type'] == 'xml') {
 			$this->raw_response = simplexml_load_string($this->raw_response, null, LIBXML_NOCDATA);
 		}
+		
         return true;
 	}
 
