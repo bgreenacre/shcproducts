@@ -48,12 +48,16 @@
 $obj = new Product_Details_Api();
 //$r = $obj->get_product('007VA58000212P'); // Sweatpants (soft line) - multiple sizes, 1 color
 //$r = $obj->get_product('007VA65853512P'); // Athletic shirt (soft line) - multiple sizes, multiple colors
-$r = $obj->get_product('076SA005000P'); // Walking shoe (soft line) - available in medium & wide widths
+//$r = $obj->get_product('076SA005000P'); // Walking shoe (soft line) - available in medium & wide widths
 //$r = $obj->get_product('00840604000P'); // Toaster (hard line)
 //$r = $obj->get_product('00621999000P'); // Exercise bike (hard line)
+$r = $obj->get_product('SPM10883623415'); // misc
+error_log('Product Details = '.print_r($r,true));
+//error_log('Standardized product = '.print_r($r->product,true));
 
-//error_log('Product Details = '.print_r($r,true));
-error_log('Standardized product = '.print_r($r->product,true));
+//$prod_obj = new Product_Model('00840604000P');
+//error_log('$prod_obj = '.print_r($prod_obj,true));
+
 
 //echo get_verticals_dropdown();
 

@@ -14,8 +14,9 @@
 >
     <testsuites>
         <testsuite name="SHC Products Test Suite">
-        	<file>tests/api-tests/api_tests_product_search.php</file>
-        <!--	<file>tests/api-tests/api_tests_product_search_v2xml.php</file>
+        	<file>tests/api-tests/api_tests_product_details.php</file>
+        <!--	<file>tests/api-tests/api_tests_product_search.php</file>
+        	<file>tests/api-tests/api_tests_product_search_v2xml.php</file>
         	<file>tests/api-tests/api_tests_product_search_v2json.php</file>
         	<file>tests/api-tests/api_tests_product_search_v1xml.php</file>
         	<file>tests/api-tests/api_tests_product_search_v1json.php</file>

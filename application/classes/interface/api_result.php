@@ -16,3 +16,11 @@ interface Search_Api_Result extends Api_Result {
 	function _standardize_products();
 	
 }
+
+
+interface Details_Api_Result extends Api_Result {
+	
+	function is_valid_product();
+	function is_softline();
+	
+}

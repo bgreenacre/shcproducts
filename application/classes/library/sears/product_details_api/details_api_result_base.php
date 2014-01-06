@@ -14,6 +14,22 @@ class Details_Api_Result_Base {
 	
 	
 	/**
+	* The API URL
+	*
+	* @var string
+	*/
+	public $api_url;
+	
+	
+	/**
+	* Error message
+	*
+	* @var string
+	*/
+	public $error_message = '';
+	
+	
+	/**
 	* Product - this holds the standardized product data.
 	*
 	* @var array
@@ -41,6 +57,7 @@ class Details_Api_Result_Base {
 		*/
 		'main_image_url'	=> '',
 		'all_image_urls'	=> array(),
+		'name' 				=> '',
 		'short_description' => '',
 		'long_description' 	=> '',
 		'brand'				=> '',
@@ -61,6 +78,52 @@ class Details_Api_Result_Base {
 			)
 		*/
 	);
+	
+	
+	/**
+	* Is Softline
+	*
+	* @return boolean
+	*/
+	function is_softline() {
+		if($this->product['product_line'] == 'soft') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	/**
+	* Is Valid Product
+	*
+	* @return boolean
+	*/
+	function is_valid_product() {
+		$msg = '';
+		$is_valid = true;
+		if(!empty($this->error_message)) {
+			// If an error message was set elsewhere, it's not a valid product.
+			$is_valid = false;
+		}
+		if(!is_numeric($this->product['price'])) {
+			// Don't enforce this for products that have a "range" of prices, e.g. "From $24.00 To $26.00"
+			if (strpos($this->product['price'], 'From') === false) {
+				$msg .= 'Price is not numeric. ';
+				$is_valid = false;
+			}
+		}
+		if( $this->product['price'] == '0.00') {
+			$msg .= 'Price cannot be 0.00. ';
+			$is_valid = false;
+		}
+		if( empty($this->product['cat_entry']) ) {
+			$msg .= 'CatEntryId is empty. ';
+			$is_valid = false;
+		}
+		if(!empty($msg)) $this->error_message .= $msg;
+		return $is_valid;
+	}
 
 
 }

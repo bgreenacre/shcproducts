@@ -3,7 +3,7 @@
 
 
 
-class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Result {
+class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Result, Details_Api_Result {
 	
 	/**
 	* __construct 
@@ -27,9 +27,17 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 		$this->product['brand'] = (string)$r->BrandName;
 		$this->product['main_image_url'] = (string)$r->MainImageUrl;
 		$this->product['all_image_urls'] = array();
-		foreach($r->ImageURLs->ImageURL as $image_url) {
-			$this->product['all_image_urls'][] = (string)$image_url;
+		if(isset($r->ImageURLs->ImageURL) && !empty($r->ImageURLs->ImageURL)) {
+			foreach($r->ImageURLs->ImageURL as $image_url) {
+				$this->product['all_image_urls'][] = (string)$image_url;
+			}
 		}
+		$this->product['name'] = (string)$r->DescriptionName;
+		// If the product name does not already contain the brand name, add it to the beginning:
+		if (!empty($this->product['brand']) && strpos($this->product['name'], $this->product['brand']) === false) {
+			$this->product['name'] = $this->product['brand'].' '.$this->product['name'];
+		}
+		
 		$this->product['short_description'] = (string)$r->ShortDescription;
 		$this->product['long_description'] = (string)$r->LongDescription;
 		
@@ -40,6 +48,12 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 		$product_variant = (string)$r->ProductVariant;
 		if($product_variant == 'VARIATION') {
 			$this->product['product_line'] = 'soft';
+			if( !isset($r->ProductVariants->prodList->product->attNames->attName) ) {
+				// In rare cases, the API may return products that are listed as VARIATION, but missing actual variants.
+				// To avoid errors, we will treat any such products as invalid, and not softlines.
+				$this->product['product_line'] = 'hard';
+				$this->error_message .= 'Product was listed as VARIATION, but no variants were found in the API response. ';
+			}
 		} else {
 			$this->product['product_line'] = 'hard';
 		}
@@ -48,6 +62,9 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 		$this->_standardize_price();
 		
 		$this->_standardize_cat_entry();
+		
+		// Unset the raw response, as it is no longer necessary:
+		//unset($this->raw_response);
 	}
 	
 	
@@ -62,6 +79,11 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 		
 		$this->product['price'] = (string)$r->SalePrice;
 		$this->product['crossed_out_price'] = (string)$r->RegularPrice;
+		
+		// Leave this blank if the product has a "range" of prices, e.g. "From $24.00 To $26.00"
+		if( !is_numeric($this->product['price']) ) {
+			$this->product['crossed_out_price'] = '';
+		}
 		
 		// Calculate savings (if applicable):
 		if( is_numeric($this->product['price']) && is_numeric($this->product['crossed_out_price']) ) {
@@ -85,6 +107,7 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 	*/
 	function _standardize_cat_entry() {
 		$r = $this->raw_response->SoftHardProductDetails;
+		
 		 
 		if($this->is_softline()) {
 			// Set attributes:
@@ -192,18 +215,7 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 	
 	
 	
-	/**
-	* Is Softline
-	*
-	* @return boolean
-	*/
-	function is_softline() {
-		if($this->product['product_line'] == 'soft') {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	
 	
 	
 }

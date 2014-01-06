@@ -59,7 +59,7 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
     	Randomly reduce the provided parameters to the specified number.
     	Allows a random sample to be taken.
     */
-	private function _reduce_parameters($parameters_array, $max = 20) {
+	private function _reduce_parameters($parameters_array, $max = 400) {
 		if( count($parameters_array) <= $max ) return $parameters_array;
 		$return_array = array();
 		for($i = 0; $i < $max; $i++) {
@@ -163,6 +163,7 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 		// Make sure the products property isn't empty:
 		$this->assertFalse( empty($result_object->products), '$result_object->products is empty.'.$message );
 		// Loop through and check the values:
+		$fp = fopen(dirname(__FILE__).'/data.txt', 'a');
 		foreach($result_object->products as $key => $product) {
 			// Each individual product should also be an array:
 			$this->assertInternalType('array', $product);
@@ -175,6 +176,7 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 			$this->assertTrue( isset($product['review_count']), 'Review Count not set for product '.$key.'.'.$message );
 			$this->assertTrue( isset($product['price']), 'Price not set for product '.$key.'.'.$message );
 			$this->assertTrue( isset($product['has_variants']), 'has_variants not set for product '.$key.'.'.$message );
+			
 			// The following fields are mandatory:
 			$this->assertFalse( empty($product['part_number']), 'Part number empty for product '.$key.'.'.$message );
 			$this->assertFalse( empty($product['name']), 'Product name empty for product '.$key.'.'.$message );
@@ -182,7 +184,71 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 			$this->assertFalse( empty($product['price']), 'Price empty for product '.$key.'.'.$message );
 			// The array key should match the part number field:
 			$this->assertEquals( $key, $product['part_number'], 'Array key does not match part number.'.$message );
+			fwrite($fp, $product['part_number'].PHP_EOL);
 		}
+		fclose($fp);
+	}
+	
+	
+	
+	function check_product_details($result_object){	
+		$message = ' API URL = '.$result_object->api_url;
+		$this->assertInstanceOf('Details_Api_Result', $result_object, 'The result object was not an instance of Details_Api_Result. $result_object = '.print_r($result_object,true).$message);
+	
+		if( !$result_object->is_valid_product() ) {
+			$this->markTestSkipped('Invalid product detected. Reason: '.$result_object->error_message.$message);
+		}
+		
+		$this->assertTrue( isset($result_object->product), '$result_object->product was not set.'.$message );
+		$product = $result_object->product;
+		$message .= ' $product = '.print_r($product,true);
+		// Make sure fields are set:
+		$this->assertTrue( isset($product['part_number']), 'part_number was not set.'.$message );
+		$this->assertTrue( isset($product['cat_entry']), 'cat_entry was not set.'.$message );
+		$this->assertTrue( isset($product['main_image_url']), 'main_image_url was not set.'.$message );
+		$this->assertTrue( isset($product['all_image_urls']), 'all_image_urls was not set.'.$message );
+		$this->assertTrue( isset($product['name']), 'Product name was not set.'.$message );
+		$this->assertTrue( isset($product['short_description']), 'short_description was not set.'.$message );
+		$this->assertTrue( isset($product['long_description']), 'long_description was not set.'.$message );
+		$this->assertTrue( isset($product['brand']), 'brand was not set.'.$message );
+		$this->assertTrue( isset($product['rating']), 'rating was not set.'.$message );
+		$this->assertTrue( isset($product['review_count']), 'review_count was not set.'.$message );
+		$this->assertTrue( isset($product['price']), 'price was not set.'.$message );
+		$this->assertTrue( isset($product['crossed_out_price']), 'crossed_out_price was not set.'.$message );
+		$this->assertTrue( isset($product['savings']), 'savings was not set.'.$message );
+		$this->assertTrue( isset($product['product_line']), 'product_line was not set.'.$message );
+		$this->assertTrue( isset($product['attributes']), 'attributes was not set.'.$message );
+		$this->assertTrue( isset($product['attribute_values']), 'attribute_values was not set.'.$message );
+		$this->assertTrue( isset($product['color_swatches']), 'color_swatches was not set.'.$message );
+		// Make sure required fields are not empty:
+		$this->assertFalse( empty($product['part_number']), 'part_number was empty.'.$message );
+		$this->assertFalse( empty($product['cat_entry']), 'cat_entry was empty.'.$message );
+		$this->assertFalse( empty($product['main_image_url']), 'main_image_url was empty.'.$message );
+		$this->assertFalse( empty($product['all_image_urls']), 'all_image_urls was empty.'.$message );
+		$this->assertFalse( empty($product['name']), 'Product name was empty.'.$message );
+		$this->assertFalse( empty($product['short_description']), 'short_description was empty.'.$message );
+		$this->assertFalse( empty($product['price']), 'price was empty.'.$message );
+		$this->assertFalse( empty($product['savings']), 'savings was empty.'.$message );
+		$this->assertFalse( empty($product['product_line']), 'product_line was empty.'.$message );
+		
+		// If the product is not a soft line product, some of the data will be different.
+		if(!$result_object->is_softline()) {
+			// Not a softline.
+			$this->assertInternalType('string', $product['cat_entry'], 'Hardline detected, but cat_entry was not a string.'.$message);
+			 return;
+		}
+		
+		$this->assertFalse( empty($product['attributes']), 'Softline detected, but attributes were empty.'.$message );
+		$this->assertFalse( empty($product['attribute_values']), 'Softline detected, but attribute_values were empty.'.$message );
+		
+		if(isset($product['attribute_values']['Color']) && is_array($product['attribute_values']['Color']) && count($product['attribute_values']['Color']) > 1) {
+			$this->assertFalse( empty($product['color_swatches']), 'Colors detected, but color_swatches was empty.'.$message );
+		}
+		
+		$this->assertInternalType('array', $product['cat_entry'], 'Softline detected, but cat_entry was not an array.'.$message);
+		
+		
+		//$this->markTestSkipped('Test has not been fully implemented. $result_object = '.print_r($result_object,true));
 	}
 	
 		
@@ -311,6 +377,21 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 		//return $this->generate_categories(true);
 	}
 
+
+	/*
+	*	Return an array of part numbers to pass as input to other tests.
+	*/
+	public function provider_partnumbers() {
+
+		include('input_partnumbers.php');
+		$rval = $this->_reduce_parameters($part_numbers);
+		
+		// Include the required part numbers every time:
+		include('input_partnumbers_required.php');
+		$rval = array_merge($rval, $part_numbers);
+		
+		return $rval;
+	}
 
 }
 
