@@ -44,6 +44,8 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 		$this->product['rating'] = (string)$r->Rating;
 		$this->product['review_count'] = (string)$r->NumReview;
 		
+		$this->product['in_stock'] = (int)$r->InStock;
+		
 		// Determine whether product is hardline or softline:
 		$product_variant = (string)$r->ProductVariant;
 		if($product_variant == 'VARIATION') {
@@ -62,6 +64,8 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 		$this->_standardize_price();
 		
 		$this->_standardize_cat_entry();
+		
+		$this->_standardize_specs();
 		
 		// Unset the raw response, as it is no longer necessary:
 		//unset($this->raw_response);
@@ -96,6 +100,33 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 			$this->product['savings'] = '0.00';
 		}
 		
+	}
+	
+	
+	/**
+	* Standardize Specs
+	*
+	* @return void
+	*/
+	function _standardize_specs() {
+		$r = $this->raw_response->SoftHardProductDetails;
+		
+		if(isset($r->Specifications->Specification) && !empty($r->Specifications->Specification)) {
+			foreach($r->Specifications->Specification as $specification){
+				$heading = (string)$specification->Label;
+				$heading = trim($heading, ':');
+				if(!empty($specification->Attribute)) {
+					$this->product['specifications'][$heading] = array();
+					foreach($specification->Attribute as $att) {
+						$single = (string)$att;
+						$splode = explode(':',$single);
+						if(isset($splode[0]) && isset($splode[1])) {
+							$this->product['specifications'][$heading][$splode[0]] = $splode[1]; 
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	

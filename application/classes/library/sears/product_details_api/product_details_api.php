@@ -155,7 +155,7 @@ class Product_Details_Api extends Sears_Api_Base {
 		$url_params['apikey'] = $this->api_key;
 		$url_params['contentType'] = $this->args['return_type'];
 		$url_params['store'] = $this->store;
-		$url_params['showSpec'] = true;
+		$url_params['showSpec'] = 'true';
 		$url_params['partNumber'] = $this->args['part_number'];
 		$url .= http_build_query($url_params);
 		$this->request_url = $url;

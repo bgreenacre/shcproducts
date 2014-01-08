@@ -63,14 +63,26 @@ class Details_Api_Result_Base {
 		'brand'				=> '',
 		'rating'			=> 0,
 		'review_count'		=> 0,
+		'in_stock'			=> 0,
 		'price'				=> 0.00,
 		'crossed_out_price'	=> 0.00,
 		'savings'			=> 0.00,
 		'product_line'		=> '', 		// 'soft' or 'hard'
+		'specifications' => array(),
+		/*
+			specifications => array(
+				'Header 1' => array(
+					'Specification Name' => 'Specification Value',
+					'Specification Name' => 'Specification Value'
+				),
+				'Header 2' => array( 
+					// etc. etc. etc.
+			)
+		*/
 		// Applicable to softlines only:
 		'attributes'		=> array(),	// Example: array('Size','Color')
 		'attribute_values'	=> array(), // Example: array( 'Size' => array('S','M','L','XL') )
-		'color_swatches'	=> array(),
+		'color_swatches'	=> array()
 		/*
 			color_swatches => array(
 				'Red'	=> 'http://example.com/red-image.jpg',
