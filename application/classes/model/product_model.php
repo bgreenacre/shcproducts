@@ -72,7 +72,7 @@ class Product_Model {
 		// If the product has already been imported, this will initialize the post.
 		$query_args = array(
 			'post_type' => 'shcproduct',
-			'meta_key' => 'partnumber',
+			'meta_key' => 'part_number',
 			'meta_value' => $this->part_number
 		);
 		$init_query = new WP_Query($query_args);
@@ -84,6 +84,7 @@ class Product_Model {
 			$this->look_up_product();
 		} else {
 			$this->already_imported = true;
+			$this->post_id = $this->post->ID;
 			$this->product = get_post_meta($this->post->ID, 'product_detail', true);
 		}
 	}
@@ -110,11 +111,13 @@ class Product_Model {
 	*/
 	function convert_product_to_post(){
 		$this->post_array = array();
-		$this->post_array['post_title'] = $this->product[''];
+		$this->post_array['post_title'] = $this->product['name'];
 		$this->post_array['post_content'] = $this->product['short_description'];
 		if(!empty($this->product['long_description'])) {
-			$this->post_array['post_content'] .= $this->product['long_description'];
+			$this->post_array['post_content'] .= '<br/>'.$this->product['long_description'];
 		}
+		$this->post_array['post_type'] = 'shcproduct';
+		$this->post_array['post_status'] = 'publish';
 	}
 	
 	
@@ -125,6 +128,14 @@ class Product_Model {
 	*/
 	function import_product() {
 		// Import the product (save it as a new post)
+		if($this->already_imported()) {
+			error_log('import_product - Cannot import - product already imported.');
+			return false;
+		}
+		$this->convert_product_to_post();
+		$this->post_id = wp_insert_post($this->post_array);
+		update_post_meta($this->post_id, 'part_number', $this->part_number);
+		update_post_meta($this->post_id, 'product_detail', $this->product);
 	}
 	
 	
@@ -136,5 +147,21 @@ class Product_Model {
 	function already_imported(){
 		return $this->already_imported;
 	}
+	
+	
+	
+	/**
+	* is_softline
+	*
+	* @return Boolean
+	*/
+	function is_softline() {
+		if($this->product['product_line'] == 'soft') {
+			return true;
+		} else {
+			return false;
+		}	
+	}
+	
 
 }

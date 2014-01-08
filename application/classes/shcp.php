@@ -216,8 +216,12 @@ class SHCP {
         		case 'Product_Model':
         			$location = SHCP_CLASS . '/model/product_model.php';
         			break;
+        		case 'Product_Post_Model':
+        			$location = SHCP_CLASS . '/model/product_post_model.php';
+        			break;
         		case 'Api_Result':
         		case 'Search_Api_Result':
+        		case 'Details_Api_Result':
         			$location = SHCP_CLASS . '/interface/api_result.php';
         			break;
         	}
