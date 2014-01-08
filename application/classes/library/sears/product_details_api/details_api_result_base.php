@@ -35,6 +35,7 @@ class Details_Api_Result_Base {
 	* @var array
 	*/
 	public $product = array(
+		'api_url' 			=> '',
 		'part_number' 		=> '',
 		'cat_entry'			=> '',
 		/*	

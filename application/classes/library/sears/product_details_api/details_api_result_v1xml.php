@@ -22,6 +22,9 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 	*/
 	function standardize_data() {
 		$r = $this->raw_response->SoftHardProductDetails;
+		// Save the API URL that was used to retrieve the product, in case it is ever needed
+		// for verification or debugging purposes.
+		$this->product['api_url'] = $this->api_url;
 		// Set basic info:
 		$this->product['part_number'] = (string)$r->PartNumber;
 		$this->product['brand'] = (string)$r->BrandName;

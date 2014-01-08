@@ -112,8 +112,8 @@ class Product_Details_Api extends Sears_Api_Base {
 		
 		// If the result object was successfully created, standardize the response data and return.
 		if(isset($this->result_object) && is_object($this->result_object) && $this->result_object instanceof Api_Result) {
-			$this->result_object->standardize_data();
 			$this->result_object->api_url = $this->request_url;
+			$this->result_object->standardize_data();
 			return $this->result_object;
 		} else {
 			// For debugging purposes:
