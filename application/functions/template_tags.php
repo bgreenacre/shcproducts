@@ -16,10 +16,10 @@ Based on functions that were originally contained in their own "SHC Products Tem
  * @param int $index [optional] Index of the meta value to be retrived
  */
 function product_meta($meta_key, $echo = true, $index = 0) {
-    $meta_value = get_post_meta(get_the_ID(), $meta_key, false);
-
-    if($echo){ echo $meta_value[$index]; }
-    else { return $meta_value[$index]; }
+//     $meta_value = get_post_meta(get_the_ID(), $meta_key, false);
+// 
+//     if($echo){ echo $meta_value[$index]; }
+//     else { return $meta_value[$index]; }
 }
 
 
@@ -43,35 +43,35 @@ function product_meta($meta_key, $echo = true, $index = 0) {
  */
 function product_detail($property = false, $echo = true, $post_id = false) {
 
-    $post_id = ($post_id) ? $post_id : get_the_ID();
-    if (!isset($detail)) {
-
-        static $detail = null;
-        $detail = get_post_meta($post_id, 'detail', true);
-
-        if (is_string($detail)) $detail = unserialize($detail);
-    }
-
-	if (is_object($detail)) {
-		// The following line doesn't appear to be necessary in this context,
-		// and has been found to cause problems in certain rare cases.
-		//$detail = $detail->current(); 
-		$detail = (!empty($property)) ? $detail->$property : $detail;
-
-		//Whoo, logic!
-		if ($echo) {
-			if (!is_string($detail)) { 
-				//print_pre($detail); // Enable for debugging.
-				return false;
-			} else { 
-				echo colon_dangit( htmlspecialchars_decode(html_entity_decode($detail) ) ); 
-			}
-		} else {  
-			return $detail; 
-		}
-    } else {
-    	return false;
-    }
+//     $post_id = ($post_id) ? $post_id : get_the_ID();
+//     if (!isset($detail)) {
+// 
+//         static $detail = null;
+//         $detail = get_post_meta($post_id, 'detail', true);
+// 
+//         if (is_string($detail)) $detail = unserialize($detail);
+//     }
+// 
+// 	if (is_object($detail)) {
+// 		// The following line doesn't appear to be necessary in this context,
+// 		// and has been found to cause problems in certain rare cases.
+// 		//$detail = $detail->current(); 
+// 		$detail = (!empty($property)) ? $detail->$property : $detail;
+// 
+// 		//Whoo, logic!
+// 		if ($echo) {
+// 			if (!is_string($detail)) { 
+// 				//print_pre($detail); // Enable for debugging.
+// 				return false;
+// 			} else { 
+// 				echo colon_dangit( htmlspecialchars_decode(html_entity_decode($detail) ) ); 
+// 			}
+// 		} else {  
+// 			return $detail; 
+// 		}
+//     } else {
+//     	return false;
+//     }
 }
 
 
@@ -85,33 +85,28 @@ function product_detail($property = false, $echo = true, $post_id = false) {
  */
 function product_description($preference, $max_lenth = null, $force = false, $echo = true){
 
-    $other = ($preference = 'long') ? 'short' : $preference;
+	if($echo) {
+		echo get_the_content();
+	} else {
+		return get_the_content();
+	}
 
-    //Use the prefered description if it exists, otherwise use the other one
-    $desc = (product_detail($preference.'description', false)) ? product_detail($preference.'description', false) : product_detail($other.'description', false);
-    $desc = ($force) ? product_detail($preference.'description', false) : $desc;
-
-    if($echo){
-        echo $desc;
-    } else {
-        return $desc;
-    }
 }
 
 
 function product_url(){
     
-    $detail = product_detail(false, false);
-    $options = get_option('shcp_options');
-    $store = strtolower($options['store']);
-    $base_url =  'http://www.' . $store .'.com/shc/s/p_';
-
-    $catalogid = $detail->catalogid;
-    $partnumber = $detail->partnumber;
-    $storeid = $detail->storeid;
-    $url = $base_url.$storeid.'_'.$catalogid.'_'.$partnumber;
-
-    return $url;
+//     $detail = product_detail(false, false);
+//     $options = get_option('shcp_options');
+//     $store = strtolower($options['store']);
+//     $base_url =  'http://www.' . $store .'.com/shc/s/p_';
+// 
+//     $catalogid = $detail->catalogid;
+//     $partnumber = $detail->partnumber;
+//     $storeid = $detail->storeid;
+//     $url = $base_url.$storeid.'_'.$catalogid.'_'.$partnumber;
+// 
+//     return $url;
 }
 
 
@@ -125,35 +120,35 @@ function product_url(){
  */
 function product_specs() {
 
-    $specifications = product_detail('specifications', false);
-    $specifications = $specifications->specification[1];
-
-    if(!empty($specifications)){
-        foreach ($specifications as $attribute) {
-
-            $heading = $attribute->label;
-            $specs = $attribute->attribute[1];
-
-            foreach ($specs as $spec) {
-
-                preg_match_all('/(.*?[a-hj-z\))])+([A-Z0-9\-])/', $spec->value, $label);
-
-                //print_pre($label);
-                $label = rtrim($label[0][0], $label[2][0]);
-
-                $value = str_replace($label, '', $spec->value);
-
-                $values[$label] = colon_dangit($value);
-            }
-
-            $attributes[] = array(
-                'heading' => $heading,
-                'values' => $values
-            );
-        }
-    }
-
-    return $attributes;
+//     $specifications = product_detail('specifications', false);
+//     $specifications = $specifications->specification[1];
+// 
+//     if(!empty($specifications)){
+//         foreach ($specifications as $attribute) {
+// 
+//             $heading = $attribute->label;
+//             $specs = $attribute->attribute[1];
+// 
+//             foreach ($specs as $spec) {
+// 
+//                 preg_match_all('/(.*?[a-hj-z\))])+([A-Z0-9\-])/', $spec->value, $label);
+// 
+//                 //print_pre($label);
+//                 $label = rtrim($label[0][0], $label[2][0]);
+// 
+//                 $value = str_replace($label, '', $spec->value);
+// 
+//                 $values[$label] = colon_dangit($value);
+//             }
+// 
+//             $attributes[] = array(
+//                 'heading' => $heading,
+//                 'values' => $values
+//             );
+//         }
+//     }
+// 
+//     return $attributes;
 }
 
 
@@ -173,49 +168,23 @@ function product_specs() {
  */
 function get_product_specs() {
 
-	// Grab the specification data:
-	$specifications = product_detail('specifications', false);
-    $specifications = $specifications->specification[1];
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	return $product['specifications'];
 
-	$rval = array(); // We'll return this later.
-
-    if(!empty($specifications) && is_array($specifications)){
-    	// Got our data, so far so good.
-    	// Now it's time to drill down through the many layers of objects and arrays.
-    	
-    	// Each item in $specifications is effectively a section - it has two relevant attributes:
-    	//	-- 'label' - a section header, which should be a string
-    	//	-- 'attribute' - an array of features, wrapped in another array just for fun
-        foreach ($specifications as $attribute) {        	
-        	
-        	if(isset($attribute->attribute[1]) && is_array($attribute->attribute[1])) {
-        		$features = $attribute->attribute[1];
-        		
-        		// The headers are given to us with colons at the end, 
-        		// which may not necessarily be wanted.
-        		$header = trim($attribute->label,':');
-        		
-        		$rval[$header] = array();
-        		
-        		foreach($features as $feature) {
-        			// Each individual feature is given to us as a string,
-        			// with feature name and feature value separated by a colon.
-        			// We'll explode these and add them to our multi-demensional array.
-        			$exploded_feature = explode(':',$feature->value);
-        			
-        			// Check that the exlosion did what we expected it to do, just in case:
-        			if(!empty($exploded_feature) && count($exploded_feature) == 2) {
-        				// Seems legit. Let's go ahead and add it to our array:
-						list($feature_name, $feature_value) = $exploded_feature;
-						$rval[$header][$feature_name] = $feature_value;
-        			}
-        		}
-        	}
-        }
-    }
-    return $rval;
 }
 
+
+
+function image_urls() {
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	return $product['all_image_urls'];
+}
+
+
+function product_rating() {
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	return $product['rating'];
+}
 
 
 /**
@@ -247,8 +216,9 @@ function product_rating_images($filled, $unfilled, $partial, $url_base = null, $
     $partial_image = $url_base . "/" . $partial;
 
     $stars = array();
-
-    $round_rating = floor(product_meta('rating', false));
+    
+    $product = get_post_meta(get_the_ID(), 'product_detail', true);
+	$round_rating = floor($product['rating']);
 
     if(!empty($round_rating)){
         for($star = 1; $star <= $round_rating; $star++){
@@ -388,8 +358,11 @@ function get_category_image_url($category_id = null, $echo = true, $thumb = fals
  */
 function product_image($height = '220', $width = null, $echo = true){
 
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	$img = $product['main_image_url'];
+
     $width = (!$width && $height) ?  $height: $width;
-    $image = Helper_Products::image_url(product_meta('imageid', false),$height,$width, FALSE);
+    $image = Helper_Products::image_url($img,$height,$width, FALSE);
 
     if($echo) { echo $image; }
     else { return $image; }
@@ -416,11 +389,12 @@ function colon_dangit($text){
  * @deprecated Replaced with product_price_info()
  */
 function product_savings($echo = true){
-    $savings = number_format(abs((float)product_meta('displayprice', false) - (float)product_meta('cutprice', false)), 2, '.', '');
-
-    if($echo) { echo $savings; }
-    else { return $savings; }
+//     $savings = number_format(abs((float)product_meta('displayprice', false) - (float)product_meta('cutprice', false)), 2, '.', '');
+// 
+//     if($echo) { echo $savings; }
+//     else { return $savings; }
 }
+
 
 /**
  * Fuckton of logic to find shit that should be easy to find.
@@ -430,64 +404,15 @@ function product_savings($echo = true){
  */
 function product_price_info($catentryid = null){
 
-	// Fetch the price info from the database:
-	$actual_price = product_meta('cutprice', false);
-	$actual_price2 = product_detail('saleprice', false);
-	$original_crossed_out_price = product_meta('displayprice', false);
-    
-    // If it's a softline product and we have the catalog entry ID, 
-    // look up the price for that specific variant instead:
-    if (is_softline() && !empty($catentryid)) {
-		$match = reset(get_variants(array('catentryid' => $catentryid)));
-		$actual_price = $match['price'];
-	}
-    
-    // Make sure $actual_price is set to something.
-    if(empty($actual_price)) {
-    	if(!empty($actual_price2)) {
-    		$actual_price = $actual_price2;
-    	} else {
-    		if(!empty($original_crossed_out_price)) {
-    			$actual_price = $original_crossed_out_price;
-    		} else {
-    			// This should never happen; products without pricing info should
-    			// be already rejected as invalid during the import/update process.
-    		}
-    	}
-    }
-    
-    // Format the price and set all the variables we need:
-    if(is_numeric($actual_price)) {
-    	// If it's numeric, format it to two decimal places all money-like:
-    	$actual_price = number_format((float)$actual_price, 2, '.', '');
-    	$range = false;
-    	// Calculate the savings if we can:
-    	if(is_numeric($original_crossed_out_price)) {
-    		$savings = (float)$original_crossed_out_price - (float)$actual_price;
-    		// Don't bother to show savings if it was $0.00:
-    		if($savings > 0) {
-    			$savings = number_format((float)$savings, 2, '.', '');
-    		} else {
-    			$savings = false;
-    		}
-    		$original_crossed_out_price = number_format((float)$original_crossed_out_price, 2, '.', '');
-    	} else {
-    		$savings = false;
-    	}
-    } else {
-    	// Otherwise, catch those that are ranges, i.e. "From $16.99 to $18.99"
-    	// Can't calculate savings and don't format.
-    	$range = $actual_price;
-    	$actual_price = false;
-    	$savings = false;
-    }
-    
-    // All done, put the data into the final format to be returned:
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	
+	$range = (!is_numeric($product['price'])) ? $product_price : '';
+	
 	$return_array = array(
-        'regular' => $original_crossed_out_price,
+		'regular' => $product['crossed_out_price'],
 		'range'	  => $range,
-        'savings' => $savings,
-        'price'   => $actual_price
+		'savings' => $product['savings'],
+		'price'   => $product['price']
     );
     
     return $return_array;
@@ -505,7 +430,9 @@ function montize_number($number){
  * @todo Determine if this holds true for soflines as well.
  */
 function is_in_stock($post_id = false) {
-    return (product_detail('instock', false, $post_id) == 1) ? true : false;
+    $product = get_post_meta(get_the_ID(), 'product_detail', true);
+	$in_stock = $product['in_stock'];
+	return ($in_stock == 1) ? true : false;
 }
 
 
@@ -940,7 +867,8 @@ function cart_savings(){
  * @return string with cart checkout link
  */
 function cart_checkout_link($echo = true){
-    $link = Library_Sears_Api::factory('cart')->checkout()->load()->url();
+    //$link = Library_Sears_Api::factory('cart')->checkout()->load()->url();
+	$link = SHCP::$global_cart->checkout()->load()->url();
 
     if($echo) { echo $link; }
     else { return $link; }
@@ -1090,8 +1018,60 @@ function product_ajax(){
     }
 }
 
+
+function product_modal(){
+
+    global $is_cart_page, $cartid, $catentryid;
+
+	//echo 'Added to cart.';
+
+	if(isset($_POST['postid'])){
+	
+		$template = $_POST['template'];
+		$id = (int) $_POST['postid'];
+		
+		query_posts( array(
+            'post_type' => 'shcproduct',
+            'p' => $id
+        ));
+
+        while (have_posts()) : the_post();
+            get_template_part('templates/' . $template);
+        endwhile;
+	
+	}
+
+//     if(isset($_POST['postid'])){
+//         $template = $_POST['template'];
+//         $id = (int) $_POST['postid'];
+// 		if (!isset($_POST['catentryid'])) {
+// 			// If it is a softline, we need to pull the catentryid of the variant out
+// 			if ($_POST['is_softline']=="1") {
+// 				$catentryid = retrieve_catentryid($_POST, $id);
+// 			} else {
+// 				$product = new Model_Products($id);
+// 				$catentryid = $product->load()->get_catentryid();
+// 			}
+// 			$_POST['catentryid'] = $catentryid;
+// 		}
+//         query_posts( array(
+//             'post_type' => 'shcproduct',
+//              'p' => $id
+//             ));
+// 
+//         while (have_posts()) : the_post();
+//             get_template_part('templates/' . $template);
+//         endwhile;
+// 
+//         wp_reset_query();
+//       //  exit;
+//     }
+}
+
 add_action('wp_ajax_product_ajax', 'product_ajax');
 add_action('wp_ajax_nopriv_product_ajax', 'product_ajax');
+
+
 
 
 /**
@@ -1100,30 +1080,29 @@ add_action('wp_ajax_nopriv_product_ajax', 'product_ajax');
 function cart_add_ajax() {
     if(isset($_POST['postid'])){
         $id = (int) $_POST['postid'];
-
-		if (!isset($_POST['catentryid'])) {
-			// If it is a softline, we need to pull the catentryid of the variant out
-			if ($_POST['is_softline']=="1") {
-				$_POST['catentryid'] = retrieve_catentryid($_POST, $id);
+        
+        $p = new Product_Post_Model($id);
+        
+        if (!isset($_POST['catentryid'])) {
+			if($p->is_softline()) {
+				// todo: Get catentryid for softlines
 			} else {
-				$product = new Model_Products($id);
-				$_POST['catentryid'] = $product->load()->get_catentryid();
+				$catentryid = $p->product_model->product['cat_entry'];
 			}
-		}
+        }
 
-		// We're going to use $oldcart to compare the item count before and after the add
-        $oldcart = new Controller_Front_Cart();
-        $oldcart->ajax_response = false;
-		$oldcart->cart->load(); 
-		$oldcart->cart->view()->load();
-		
+		$old_item_count = SHCP::$global_cart->cart->item_count;
+
         $cart = new Controller_Front_Cart();
         $cart->ajax_response = false;
-        $cart->action_add();
-
+        $cart->action_add_single($catentryid);
+        
 		// If nothing got added then we're assuming it was a bad request and will handle it via jQuery
-		if ($oldcart->cart->cart->item_count == $cart->cart->cart->item_count) {
+		if ($old_item_count == SHCP::$global_cart->cart->item_count) {
 			header("HTTP/1.0 400 Bad Request", true, 400);
+		} else {
+			// Otherwise, echo product info to be displayed in modal:
+			product_modal();
 		}
 
         exit;
@@ -1245,10 +1224,16 @@ add_action('wp_ajax_nopriv_cart_remove_ajax', 'cart_remove_ajax');
 /**
  * @return cart object
  */
-function get_cart_object($cart = null){
-    $cart = (isset($cart)) ? $cart : new Model_Cart();
+function get_cart_object($cart2 = null){
+	$cart = SHCP::$global_cart;
 
-    $cart = $cart->view()->load()->cart;
+	if(!isset($cart) || empty($cart)) {
+		$cart = new Model_Cart();
+		$cart = $cart->view()->load();
+	}
+
+	$cart = $cart->cart;
+    
     return $cart;
 }
 
@@ -1258,7 +1243,9 @@ function get_cart_object($cart = null){
  */
 function get_cart_products($cart = null, $sortby = 'display_partnumber'){
 
-    $items = get_cart_object($cart)->items;
+	$cart = get_cart_object();
+		
+    $items = $cart->items;
 
     foreach($items as $item){
         $products[$item->$sortby] = $item;

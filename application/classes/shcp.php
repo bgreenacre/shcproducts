@@ -46,6 +46,8 @@ class SHCP {
      * @var array
      */
     public static $global_data = array();
+    
+    public static $global_cart;
 
     public static $profiling = TRUE;
     public static $cache_dir = SHCP_CACHE;
@@ -78,6 +80,8 @@ class SHCP {
      */
     public static function init(array $params = array())
     {
+    	add_action( 'wp_loaded', array( SHCP, 'wp_init' ) );
+    
         if (self::$_init !== FALSE)
         {
             return;
@@ -152,6 +156,14 @@ class SHCP {
             SHCP::clear_cache();
             SHCP::cache('clear_out_cache', TRUE, 3600);
         }
+    }
+    
+    /*
+    * wp_init - Like init, except to be executed during the WordPress 'wp_loaded' action hook.
+    */
+    public static function wp_init() {
+		self::$global_cart = new Model_Cart();
+		self::$global_cart->view()->load()->cart;
     }
 
     /**

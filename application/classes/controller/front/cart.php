@@ -58,7 +58,7 @@ class Controller_Front_Cart {
         add_shortcode('shcp_cart', array(&$this, 'action_view'));
         add_shortcode('shcp_minicart', array(&$this, 'action_mini'));
 
-        $this->cart = new Model_Cart();
+        $this->cart = SHCP::$global_cart;
         SHCP::bind_global('cart', $this->cart);
     }
 
@@ -84,6 +84,27 @@ class Controller_Front_Cart {
     {
         $this->cart->view()->load();
         echo SHCP::view('front/cart/view', array('simple_cart' => $this->cart->cart));
+    }
+    
+    
+    /*
+    * add_single
+    *
+    * @return boolean
+    */
+    public function action_add_single($catentry_id) {
+    	// Library_Sears_Api_Cart
+    	// add($quantity = 1, $catalog_id = NULL, $catentry_id = NULL)
+    	error_log('action_add_single $catentry_id - '.$catentry_id);
+    	$this->cart->method('AddtoCart');
+    	$this->cart->add(1, 12605, $catentry_id);
+		try {
+			$this->cart->load(); //var_dump($this->cart);
+			//$this->cart->view()->load();
+		}
+		catch(Exception $e) {
+			throw new Exception($e);
+		}
     }
 
     /**

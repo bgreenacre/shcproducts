@@ -243,7 +243,7 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 				}
 			}
 		} else {
-			$this->product['cat_entry'] = (string)$r->CatEntryId;
+			$this->product['cat_entry'] = (string)$r->SkuList->Sku->CatEntryId;
 		}
 	}
 	
