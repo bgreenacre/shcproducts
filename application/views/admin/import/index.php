@@ -54,9 +54,9 @@ $obj = new Product_Details_Api();
 //$r = $obj->get_product('00621999000P'); // Exercise bike (hard line)
 //$r = $obj->get_product('SPM10883623415'); // misc
 // $r = $obj->get_product('SPM10883623415'); // misc
-$r = $obj->get_product('00869293000P'); // misc
-error_log('Product Details = '.print_r($r,true));
-error_log('Standardized product = '.print_r($r->product,true));
+// $r = $obj->get_product('00869293000P'); // misc
+// error_log('Product Details = '.print_r($r,true));
+// error_log('Standardized product = '.print_r($r->product,true));
 
 // Import process:
 //$prod_obj = new Product_Model('00840604000P');
@@ -74,7 +74,7 @@ error_log('Standardized product = '.print_r($r->product,true));
 // $c->add_to_cart('42972211');
 
 
-//echo get_verticals_dropdown();
+echo get_verticals_dropdown();
 
 
 ?>

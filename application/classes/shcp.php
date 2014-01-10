@@ -48,6 +48,8 @@ class SHCP {
     public static $global_data = array();
     
     public static $global_cart;
+    
+    public static $current_catentryid;
 
     public static $profiling = TRUE;
     public static $cache_dir = SHCP_CACHE;

@@ -74,6 +74,11 @@ function product_detail($property = false, $echo = true, $post_id = false) {
 //     }
 }
 
+function short_description() {
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	return $product['short_description'];
+}
+
 
 
 /**
@@ -406,13 +411,11 @@ function product_price_info($catentryid = null){
 
 	$product = get_post_meta(get_the_ID(), 'product_detail', true);
 	
-	$range = (!is_numeric($product['price'])) ? $product_price : '';
-	
 	$return_array = array(
 		'regular' => $product['crossed_out_price'],
-		'range'	  => $range,
-		'savings' => $product['savings'],
-		'price'   => $product['price']
+		'range'	  => (!is_numeric($product['price'])) ? $product['price'] : '',
+		'savings' => ($product['savings'] != 0.00) ? $product['savings'] : '' , // Don't return savings if it's zero
+		'price'   => (is_numeric($product['price'])) ? $product['price'] : ''
     );
     
     return $return_array;
@@ -442,12 +445,15 @@ function is_in_stock($post_id = false) {
 
 /**
  * @return bool
- * @todo WIll have to be refactored, and be much more complex, as 'hasvariant' has been found to be a completly untrustworthy indicator as to if the product _has variantss_ !!!!
  */
 function is_softline($post_id = false){
-	return (product_detail('productvariant', false, $post_id) == "VARIATION");
-//    $vars = true;//count(product_detail('skulist', false, $postid)->sku[1]);
-//    return (!empty($vars));
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	$product_line = $product['product_line'];
+	if($product_line == 'soft') {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 
@@ -463,13 +469,13 @@ function softline_class(){
  * @return string of sizes (?), or false if there are none.
  */
 function product_sizes(){
-
-    if ( is_softline() ) {
-        $product_variants = product_detail('productvariants', false);
-        $sizes = $product_variants->prodlist[1][0]->product[1][0]->prodvarlist->prodvar->attlist->attdata[1][1]->avals[1][0]->aval[1];
-
-        return str_replace('"', '', $sizes);
-    } else { return false; }
+// 
+//     if ( is_softline() ) {
+//         $product_variants = product_detail('productvariants', false);
+//         $sizes = $product_variants->prodlist[1][0]->product[1][0]->prodvarlist->prodvar->attlist->attdata[1][1]->avals[1][0]->aval[1];
+// 
+//         return str_replace('"', '', $sizes);
+//     } else { return false; }
 }
 
 
@@ -494,28 +500,9 @@ function product_sizes(){
  * @return array Associative array of color names => image url
  */
 function product_swatches($height = '50', $width = null, $specificcolor = false){
-
-    $width = (!$width && $height) ?  $height: $width;
-
-    if( is_softline() ) {
-        $product_variants = product_detail('productvariants', false);
-        $swatches_objs = false;
-        if(isset($product_variants->prodlist[1][0]->product[1][0]->prodvarlist->colorswatchlist)) {
-       		$swatches_objs = $product_variants->prodlist[1][0]->product[1][0]->prodvarlist->colorswatchlist->colorswatch[1];
-        }
-
-        if (!empty($swatches_objs)) {
-            foreach ($swatches_objs as $swatch) {
-                $img = Helper_Products::image_url($swatch->mainimagename, $height, $width, FALSE);
-				if (!$specificcolor || $specificcolor == $swatch->colorname) {
-					$swatches[$swatch->colorname] = $img;
-				}
-            }
-        }
-
-        //How happy it makes me when shit actually works out :)
-        if(isset($swatches)) return $swatches;
-    } else { return false; }
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	$color_swatches = $product['color_swatches'];
+	return $color_swatches;
 }
 
 
@@ -571,28 +558,28 @@ function product_variants($assoc = false, $postid = null){
  * @return type
  */
 function get_variants($args = array(), $postid = null){
-    $default_args = array(
-        'assoc' => false
-        //'limit' => 1
-    );
-
-    $options = array_merge( $default_args, $args);
-    $assoc = $options['assoc'];
-    //$limit = $options['limit'];
-    unset($options['assoc']);
-    //unset($options['limit']);
-
-    $product_variants = product_variants($assoc, $postid);
-
-    foreach($product_variants as $variant_key => $variant){
-        foreach($options as $opt_key => $opt_val){
-            if($opt_val != $variant[$opt_key] || !array_key_exists($opt_key, $variant)){
-				unset($product_variants[$variant_key]);
-            }
-        }
-    }
-
-    return (count($product_variants)) ? $product_variants : false;
+//     $default_args = array(
+//         'assoc' => false
+//         //'limit' => 1
+//     );
+// 
+//     $options = array_merge( $default_args, $args);
+//     $assoc = $options['assoc'];
+//     //$limit = $options['limit'];
+//     unset($options['assoc']);
+//     //unset($options['limit']);
+// 
+//     $product_variants = product_variants($assoc, $postid);
+// 
+//     foreach($product_variants as $variant_key => $variant){
+//         foreach($options as $opt_key => $opt_val){
+//             if($opt_val != $variant[$opt_key] || !array_key_exists($opt_key, $variant)){
+// 				unset($product_variants[$variant_key]);
+//             }
+//         }
+//     }
+// 
+//     return (count($product_variants)) ? $product_variants : false;
 }
 
 
@@ -601,53 +588,53 @@ function get_variants($args = array(), $postid = null){
  * @return type 
  */
 function product_atts($postid = false) {
-    $prod_vars = product_detail('productvariants', false, $postid);
-    $attdata = array();
-    
-    if (is_object($prod_vars) && isset($prod_vars->prodlist)) {
-        if (is_object($prod_vars->prodlist[1][0])) {
-            if (is_object($prod_vars->prodlist[1][0]->product[1][0])) {
-            	
-                $product = $prod_vars->prodlist[1][0]->product[1][0];
-                $attnames = $product->attnames[1][0]->attname[1];
-                if (!is_object($product->prodvarlist->prodvar)) {
-                    $prodvars = $product->prodvarlist->prodvar[1]; // This in preperation for more terribleness once we hash out the problem with prodvar in json
-                } else {
-                	if(isset($product->prodvarlist->colorswatchlist)) {
-                    	$prodvars = $product->prodvarlist->colorswatchlist; // This in preperation for more terribleness once we hash out the problem with prodvar in json
-                    }
-                    // Do something slightly different when there are sizes but no colors:
-                    if(empty($prodvars)) $prodvars = $product->prodvarlist->prodvar;
-                    $otherProdvars = $product->prodvarlist->prodvar;
-                }
-    
-               //print_pre($prodvars);
-            	if(is_array($prodvars) || is_object($prodvars) ) {
-					foreach($prodvars as $prodvar){
-						//$varname = $prodvar->varname[1][0]
-						if(isset($prodvar->varname)){
-							$varname = $prodvar->varname[1][0];
-							$attlist = $prodvar->attlist->attdata[1];
-							foreach ((array) $attlist as $index => $attvalue) {
-								$attdata[$varname][$attnames[$index]] = $attvalue->avals[1][0]->aval[1];
-							}
-						
-						} else if (isset($otherProdvars->varname)) {
-							$varname = $otherProdvars->varname[1][0];
-							$attlist = $otherProdvars->attlist->attdata[1];
-							foreach ((array) $attlist as $index => $attvalue) {
-								$attdata[$varname][$attnames[$index]] = $attvalue->avals[1][0]->aval[1];
-							}
-						}
-						//print_pre($varname);
-
-					} 
-                }
-            }
-        }
-    }
-    //print_pre($varnames);
-    return (!empty($attdata)) ? $attdata : null;
+//     $prod_vars = product_detail('productvariants', false, $postid);
+//     $attdata = array();
+//     
+//     if (is_object($prod_vars) && isset($prod_vars->prodlist)) {
+//         if (is_object($prod_vars->prodlist[1][0])) {
+//             if (is_object($prod_vars->prodlist[1][0]->product[1][0])) {
+//             	
+//                 $product = $prod_vars->prodlist[1][0]->product[1][0];
+//                 $attnames = $product->attnames[1][0]->attname[1];
+//                 if (!is_object($product->prodvarlist->prodvar)) {
+//                     $prodvars = $product->prodvarlist->prodvar[1]; // This in preperation for more terribleness once we hash out the problem with prodvar in json
+//                 } else {
+//                 	if(isset($product->prodvarlist->colorswatchlist)) {
+//                     	$prodvars = $product->prodvarlist->colorswatchlist; // This in preperation for more terribleness once we hash out the problem with prodvar in json
+//                     }
+//                     // Do something slightly different when there are sizes but no colors:
+//                     if(empty($prodvars)) $prodvars = $product->prodvarlist->prodvar;
+//                     $otherProdvars = $product->prodvarlist->prodvar;
+//                 }
+//     
+//                //print_pre($prodvars);
+//             	if(is_array($prodvars) || is_object($prodvars) ) {
+// 					foreach($prodvars as $prodvar){
+// 						//$varname = $prodvar->varname[1][0]
+// 						if(isset($prodvar->varname)){
+// 							$varname = $prodvar->varname[1][0];
+// 							$attlist = $prodvar->attlist->attdata[1];
+// 							foreach ((array) $attlist as $index => $attvalue) {
+// 								$attdata[$varname][$attnames[$index]] = $attvalue->avals[1][0]->aval[1];
+// 							}
+// 						
+// 						} else if (isset($otherProdvars->varname)) {
+// 							$varname = $otherProdvars->varname[1][0];
+// 							$attlist = $otherProdvars->attlist->attdata[1];
+// 							foreach ((array) $attlist as $index => $attvalue) {
+// 								$attdata[$varname][$attnames[$index]] = $attvalue->avals[1][0]->aval[1];
+// 							}
+// 						}
+// 						//print_pre($varname);
+// 
+// 					} 
+//                 }
+//             }
+//         }
+//     }
+//     //print_pre($varnames);
+//     return (!empty($attdata)) ? $attdata : null;
 }
 
 
@@ -662,33 +649,42 @@ function product_atts($postid = false) {
  * @param int $postid Post ID for the product of which to get the options
  */
 function product_options($postid = null, $label = null){ 
+
+	//error_log('Getting product options...');
+	
+	$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	$prodatts = $product['attribute_values'];
+	//error_log('$prodatts = '.print_r($prodatts,true));
+	
+	$prodvar_keys = array_keys($prodatts);
+	//error_log('$prodvar_keys = '.print_r($prodvar_keys,true));
     
-   $prodatts = product_atts($postid);
-   
-	if (!empty($prodatts)) {
-        
-        if(!empty($label))
-            ?><span class="productLabel"><?php echo $label; ?></span><?php
-            
-	} else $prodatts = array();
-	    
-   //print_pre($prodatts);
    $disabled = " disabled='disabled'";
    $selected = " selected='selected';";
-   $prodvar_keys = array_keys($prodatts);
    
    if(!empty($prodvar_keys[0])){
-   		$mystery_attribute = $prodvar_keys[0]; // Let's try to guess what this is since the API doesn't tell us.
+   		// Let's try to guess what this is since the API doesn't tell us.
+   		$mystery_attribute_name = '';
    		$att_keys = array_keys($prodatts[$prodvar_keys[0]]);
+   		   
+		error_log('$att_keys = '.print_r($att_keys,true));
    		   		
    		if(in_array('Shoe Size', $att_keys)) {
    			// Width - for shoes
-   			echo '<div class="softline-option-label">
-   			<b>Width:</b> '.$mystery_attribute.'</b><br/><br/></div>';
+   			$mystery_attribute_name = 'Width';
    		} else if (in_array('Size', $att_keys) || in_array('Color', $att_keys) ) {
    			// Fit - for clothing
-   			echo '<div class="softline-option-label">
-   			<b>Fit:</b> '.$mystery_attribute.'</b><br/><br/></div>';
+   			$mystery_attribute_name = 'Fit';
+   		}
+   		if(!empty($prodvar_keys) && is_array($prodvar_keys)) {
+   			echo '<div class="softline-option-label">';
+   			echo $mystery_attribute_name.':<br/>';
+   			echo '<select class="softline-options prodvar" name="pName" data-attname="varname">';
+   			foreach($prodvar_keys as $prodvar_key) {
+   				echo '<option value="'.$prodvar_key.'">'.$prodvar_key.'</option>';
+   			}
+   			echo '</select>';
+   			echo '</div>';
    		}
    }
    
@@ -775,8 +771,6 @@ function product_options($postid = null, $label = null){
    <div class="size_guide_and_reset"><a href="';
    fitstudio_sizeguide(); // this function will echo the proper URL based on the categories
    echo '" target="_blank">Size Guide</a> | <a id="reset" href="#" onclick="return false;">Reset Selection</a></div>';
-
-
 }
 
 
@@ -786,17 +780,16 @@ function product_options($postid = null, $label = null){
  * @param int $catentryid // CatEntry_ID for the variant of the product of which to get the options
  */
 function softline_details($catentryid, $echo = true) {
+	$variant = get_cat_entry(get_the_ID(), $catentryid);
+
 	$details_html = '<div class="shcp-item-softline-options">';
-	$matches = get_variants(array('catentryid' => $catentryid));
-	foreach ($matches as $variant) {
-		$prices['price'] = $variant['price']; // Get the price of the variant and overwrite the default price
-		foreach ($variant as $key => $value) {
-			// We don't know what keys are specific to product options, so we have to eliminate ones
-			// we know AREN'T product options and get the correct options via process of elimination
-			if($key != "partnumber" && $key != "price" && $key != "partnumber" 
-			&& $key != "instock" && $key != "pid" && $key != "catentryid"){
-				$details_html.= '&nbsp;&nbsp;<nobr><span class="softline-label">' . $key . '</span>: ' . $value . '</nobr> ';
-			}
+	$prices['price'] = $variant['price']; // Get the price of the variant and overwrite the default price
+	foreach ($variant as $key => $value) {
+		// We don't know what keys are specific to product options, so we have to eliminate ones
+		// we know AREN'T product options and get the correct options via process of elimination
+		if(!is_array($value) && $key != "partnumber" && $key != "price" && $key != "partnumber" 
+		&& $key != "instock" && $key != "pid" && $key != "catentryid" && $key != 'in_stock' && $key != $value){
+			$details_html.= '&nbsp;&nbsp;<nobr><span class="softline-label">' . $key . '</span>: ' . $value . '</nobr> ';
 		}
 	}
 	$details_html .= '</div>';
@@ -816,23 +809,34 @@ function softline_details($catentryid, $echo = true) {
  * @return 
  */
 function variant_image($catentryid, $height = '220', $width = null, $echo = true){
-    $width = (!$width && $height) ?  $height: $width;
-
-	$matches = get_variants(array('catentryid' => $catentryid));
-	foreach ($matches as $variant) {
-		foreach ($variant as $key => $value) {
-			if($key == "Color"){
-				$img_src = product_swatches($height, $width, $value);
-				if ($img_src) {
-					$image = reset($img_src);
-				}
-			}
-		}
+	$cat_entry = get_cat_entry(get_the_ID(), $catentryid);
+	$swatches = product_swatches();
+	
+	if(isset($cat_entry['Color']) && isset($swatches[$cat_entry['Color']])) {
+		$img = $swatches[$cat_entry['Color']];
+	} else {
+		$img = product_image($height);
 	}
-	// If there is no image, use the default product image
-	if (empty($image)) { $image = product_image($height, $width, $echo); }
-    if($echo) { echo $image; }
-    else { return $image; }
+
+	return $img;
+	
+//     $width = (!$width && $height) ?  $height: $width;
+// 
+// 	$matches = get_variants(array('catentryid' => $catentryid));
+// 	foreach ($matches as $variant) {
+// 		foreach ($variant as $key => $value) {
+// 			if($key == "Color"){
+// 				$img_src = product_swatches($height, $width, $value);
+// 				if ($img_src) {
+// 					$image = reset($img_src);
+// 				}
+// 			}
+// 		}
+// 	}
+// 	// If there is no image, use the default product image
+// 	if (empty($image)) { $image = product_image($height, $width, $echo); }
+//     if($echo) { echo $image; }
+//     else { return $image; }
 }
 
 
@@ -1021,9 +1025,9 @@ function product_ajax(){
 
 function product_modal(){
 
-    global $is_cart_page, $cartid, $catentryid;
-
-	//echo 'Added to cart.';
+    global $is_cart_page, $cartid;
+    
+    $catentryid = SHCP::$current_catentryid;
 
 	if(isset($_POST['postid'])){
 	
@@ -1085,11 +1089,23 @@ function cart_add_ajax() {
         
         if (!isset($_POST['catentryid'])) {
 			if($p->is_softline()) {
-				// todo: Get catentryid for softlines
+				$_POST['instock'] = "true";
+				$product_options = array();
+				// Build an array of the $_POST softline options
+				foreach ($_POST as $key => $value) {
+					// Discard keys that aren't associated with softline options
+					if ($key != "is_softline" && $key != "action" && $key != "postid" && $key != "template" && $key != "undefined") {
+						$product_options[str_replace("-"," ", str_replace("_"," ",$key))] = stripslashes($value);
+					}
+				}
+				// This checks to see if it exists and is in stock
+				$catentryid = retrieve_catentryid($product_options, $id);
 			} else {
 				$catentryid = $p->product_model->product['cat_entry'];
 			}
         }
+        
+        SHCP::$current_catentryid = $catentryid;
 
 		$old_item_count = SHCP::$global_cart->cart->item_count;
 
@@ -1133,23 +1149,32 @@ add_action('wp_ajax_nopriv_get_cart_count_ajax', 'get_cart_count_ajax');
  * 		Must contain the softline options: Ex: [Color=red&Size=M]
  * @param int $id [required] id of the product from which we're going to extract the catentryid of the matching variant.
  */
-function retrieve_catentryid($postdata, $id){
-	$product_options = array();
-	// Build an array of the $_POST softline options
-	foreach ($postdata as $key => $value) {
-
-		// Discard keys that aren't associated with softline options
-		if ($key != "is_softline" && $key != "action" && $key != "postid" && $key != "template" && $key != "undefined") {
-			$product_options[str_replace("-"," ", str_replace("_"," ",$key))] = stripslashes($value);
-		}
-	}
-	// Get the variant from this id that match the options we have
-	$prod_detail = get_variants($product_options, $id);
-
-	// Should only be one variant returned, grab the catentryid
-	if ($prod_detail) {
-		foreach ($prod_detail as $variant) {
-			return $variant['catentryid'];
+function retrieve_catentryid($product_options, $id){
+		
+	$product = get_post_meta($id, 'product_detail', true);
+	$cat_entry = $product['cat_entry'];
+		
+	if(is_array($cat_entry) && !empty($cat_entry)) {
+		foreach($cat_entry as $cat_entry_id => $attributes) {
+			// Start checking attributes:
+			$match = true;
+			foreach($product_options as $option_name => $option_value) {
+				// A few of the option names will need to be handled specially:
+				if($option_name == 'pName') $option_name = $option_value;
+				if($option_name == 'instock') $option_name = 'in_stock';
+				// Checking single attribute:
+				if(	!isset($attributes[$option_name]) || $attributes[$option_name] != $option_value) {
+					// No match, no point in continuing loop.
+					$match = false;
+					break;
+				} else {
+					// Match found on single attribute, keep going.
+				}
+			}
+			if($match) {
+				// Match found:
+				return $cat_entry_id;
+			}
 		}
 	}
 	return false;
@@ -1165,12 +1190,23 @@ function cart_check_avail_ajax(){
 	if(isset($_POST['postid'])){
         $id = (int) $_POST['postid'];
 		$_POST['instock'] = "true";
+		$product_options = array();
+		// Build an array of the $_POST softline options
+		foreach ($_POST as $key => $value) {
+
+			// Discard keys that aren't associated with softline options
+			if ($key != "is_softline" && $key != "action" && $key != "postid" && $key != "template" && $key != "undefined") {
+				$product_options[str_replace("-"," ", str_replace("_"," ",$key))] = stripslashes($value);
+			}
+		}
 		// This checks to see if it exists and is in stock
-		$catentryid = retrieve_catentryid($_POST, $id);
+		$catentryid = retrieve_catentryid($product_options, $id);
 		if ($catentryid) {
 			// Success, now echo the price for this variant
-			$match = array_shift(get_variants(array('catentryid' => $catentryid), $id));
-			echo number_format($match['price'], 2, '.', '');
+			//$match = array_shift(get_variants(array('catentryid' => $catentryid), $id));
+			//echo number_format($match['price'], 2, '.', '');
+			$cat_entry = get_cat_entry($id, $catentryid);
+			if(isset($cat_entry['price'])) echo $cat_entry['price'];
 			exit;
 		}
 	}
@@ -1178,6 +1214,20 @@ function cart_check_avail_ajax(){
 }
 add_action('wp_ajax_cart_check_avail_ajax', 'cart_check_avail_ajax');
 add_action('wp_ajax_nopriv_cart_check_avail_ajax', 'cart_check_avail_ajax');
+
+/*
+* Return the cat entry for the given post and catentryid if provided.
+*/
+function get_cat_entry($post_id, $cat_entry_id=null) {
+	$product = get_post_meta($post_id, 'product_detail', true);
+	$cat_entry = $product['cat_entry'];
+	
+	if(!empty($cat_entry_id) && isset($cat_entry[$cat_entry_id])) {
+		return $cat_entry[$cat_entry_id];
+	} else {
+		return $cat_entry;
+	}
+}
 
 /**
  * Ajax callback for updating the cart.

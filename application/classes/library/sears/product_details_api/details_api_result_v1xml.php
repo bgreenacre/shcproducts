@@ -22,6 +22,9 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 	*/
 	function standardize_data() {
 		$r = $this->raw_response->SoftHardProductDetails;
+		// Save the API response code and response message:
+		$this->api_response_code = (string)$this->raw_response->StatusData->ResponseCode;
+		$this->api_response_message = (string)$this->raw_response->StatusData->RespMessage;
 		// Save the API URL that was used to retrieve the product, in case it is ever needed
 		// for verification or debugging purposes.
 		$this->product['api_url'] = $this->api_url;
@@ -122,6 +125,7 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 					$this->product['specifications'][$heading] = array();
 					foreach($specification->Attribute as $att) {
 						$single = (string)$att;
+						$single = html_entity_decode($single);
 						$splode = explode(':',$single);
 						if(isset($splode[0]) && isset($splode[1])) {
 							$this->product['specifications'][$heading][$splode[0]] = $splode[1]; 
@@ -153,18 +157,22 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 			}
 			/* 	Set possible attribute values below.
 				The goal is to produce something like:
-				[Size] => Array
-					(
-						[0] => S
-						[1] => M
-						[2] => L
-						[3] => XL
-					)
+				[Medium] => Array (
+					[Size] => Array
+						(
+							[0] => 5
+							[1] => 6
+							[2] => 7
+							[3] => 8
+						)
 
-				[Color] => Array
-					(
-						[0] => Black Onyx
-					)
+					[Color] => Array
+						(
+							[0] => black
+							[1] => white
+						)
+				)
+				[Wide] => Array ( // Etc.
 			*/
 			$raw_vals = $r->ProductVariants->prodList->product->prodVarList->prodVar->attList->attData;
 			$j = 0;
@@ -193,18 +201,21 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 			// Set the cat entry id's array:
 			
 			$this->product['cat_entry'] = array();
+			$final_atts = array();
 			//$raw_cids = $r->ProductVariants->prodList->product->prodVarList->prodVar->skuList->sku;
 			$raw_cids = $r->ProductVariants->prodList->product->prodVarList->prodVar;
 			foreach($raw_cids as $outer_cid) {
 				$outer_name = (string)$outer_cid->varName;
 				$sku_list = $outer_cid->skuList->sku;
 				
-				$this->product['cat_entry'][$outer_name] = array();
+				//$this->product['cat_entry'][$cat_entry] = array();
+				$final_atts[$outer_name] = array();
 				foreach($sku_list as $cid) {
 		
 		//error_log('$cid = '.print_r($cid,true));
 					$price = (string)$cid->price;
-					/* // Which one of these is the cat entry id?
+					$in_stock = (string)$cid->stk;
+					/* // pId seems to be the 'catentryid' that the cart uses.
 						[pId] => 43936660
 						[stk] => true
 						[ksn] => 6121260
@@ -213,35 +224,45 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 						[regularPrice] => 30.00
 						[pI] => 0
 						[itemPNO] => 00765077025
-						[aVals] => SimpleXMLElement Object
-							(
-								[aVal] => Array
-									(
+						[aVals] => SimpleXMLElement Object (
+								[aVal] => Array (
 										[0] => S
 										[1] => Directorie Blue
 									)
 
 							)
-
-					)
 					*/
-					$cat_entry = (string)$cid->pId; // ??? is it this one?
-					$this->product['cat_entry'][$outer_name][$cat_entry] = array(
-						'price' => $price
-					);
+					// Enable this to only include the variant if it is in stock:
+					//if($in_stock == 'true') {
+						$cat_entry = (string)$cid->pId;
+						$this->product['cat_entry'][$cat_entry] = array(
+							$outer_name => $outer_name,
+							'price' => $price,
+							'in_stock' => $in_stock
+						);
 		
-					$cid_atts = $cid->aVals->aVal;
-					//error_log('$cid_atts = '.print_r($cid_atts,true));
-					$k = 0;
-					foreach($cid_atts as $cid_att) {
-						$att_name = $this->product['attributes'][$k];
-						$att_value = (string)$cid_att;
-						$this->product['cat_entry'][$outer_name][$cat_entry][$att_name] = $att_value;
-						$k++;
-					}
+						$cid_atts = $cid->aVals->aVal;
+						//error_log('$cid_atts = '.print_r($cid_atts,true));
+						$k = 0;
+						foreach($cid_atts as $cid_att) {
+							$att_name = $this->product['attributes'][$k];
+							$att_value = (string)$cid_att;
+							$this->product['cat_entry'][$cat_entry][$att_name] = $att_value;
+							if(!isset($final_atts[$outer_name][$att_name]) || !is_array($final_atts[$outer_name][$att_name])) {
+								$final_atts[$outer_name][$att_name] = array();
+							}
+							if(!in_array($att_value, $final_atts[$outer_name][$att_name])) {
+								$final_atts[$outer_name][$att_name][] = $att_value;
+								sort($final_atts[$outer_name][$att_name]);
+							}
+							$k++;
+						}
+					//} // End if in stock.
 					//$this->product['cat_entry']
 				}
 			}
+			error_log('$final_atts = '.print_r($final_atts,true));
+			$this->product['attribute_values'] = $final_atts;
 		} else {
 			$this->product['cat_entry'] = (string)$r->SkuList->Sku->CatEntryId;
 		}

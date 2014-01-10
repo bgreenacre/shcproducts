@@ -95,7 +95,7 @@ class Controller_Front_Cart {
     public function action_add_single($catentry_id) {
     	// Library_Sears_Api_Cart
     	// add($quantity = 1, $catalog_id = NULL, $catentry_id = NULL)
-    	error_log('action_add_single $catentry_id - '.$catentry_id);
+    	error_log('action_add_single $catentry_id - '.print_r($catentry_id,true));
     	$this->cart->method('AddtoCart');
     	$this->cart->add(1, 12605, $catentry_id);
 		try {

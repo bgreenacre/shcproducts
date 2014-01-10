@@ -332,7 +332,17 @@ class Product_Search_Api extends Sears_Api_Base {
 		);
 
 		$this->set_up_request($args);
-		return $this->make_request();
+		$result = $this->make_request();
+		
+		// If we got valid data, go ahead and return it.
+		if(isset($result->categories) && !empty($result->categories)) return $result;
+		
+		// Otherwise, let's try again using another API version:
+		$args['return_type'] = 'xml';
+		$this->set_up_request($args);
+		$result = $this->make_request();
+		
+		return $result;
 	}
 	
 	

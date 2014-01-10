@@ -58,7 +58,7 @@ class Product_Post_Model {
 	* @return Boolean
 	*/
 	function is_softline(){
-	
+		return $this->product_model->is_softline();
 	}
 	
 	

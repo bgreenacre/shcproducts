@@ -120,7 +120,46 @@ function callback() {
 		preview_products();
 	});
 	
+	jQuery('.import_button').click(function(){
+		console.log('importing');
+		var imported = jQuery(this).attr('data-imported');
+		var partnumber = jQuery(this).attr('data-partnumber');
+		console.log(imported);
+		if(imported == '') {
+			// Not yet imported, import now:
+			jQuery(this).addClass('importing');
+			jQuery(this).html('Importing Product...');
+			import_product(partnumber, jQuery(this));
+		} else {
+			jQuery(this).addClass('deleting');
+			jQuery(this).html('Deleting Product...');
+		}
+	});
+	
 	working = false;
+}
+
+
+function import_product(partnumber, j){
+	jQuery.post(
+		shcp_ajax.ajaxurl,
+		{
+			action        : 'import_single_product',
+			part_number	  : partnumber
+		},
+		function(response) {
+			if(response == 1) {
+				j.removeClass('importing');
+				j.addClass('already_imported');
+				j.attr('data-imported','imported');
+				j.html('Imported');
+			} else {
+				alert('Import error - ' + response);
+				j.attr('data-imported','error');
+				j.html('Could not import');
+			}
+		}
+	);
 }
 
 
@@ -129,6 +168,8 @@ function callback() {
 function preview_products() {
 	if(!working) {
 		working = true;
+		start_index = 1;
+		end_index = 25;
 		jQuery('#products_holder').html('<p>Loading products...</p>');
 		var category = jQuery('#category option:selected').val();
 		var vertical = jQuery('#vertical option:selected').val();
@@ -161,7 +202,7 @@ function preview_products() {
 				start_index += 25;
 				end_index += 25;
 				console.log('Preview products success');
-				console.log(response);
+				//console.log(response);
 				callback();
 			}
 		);

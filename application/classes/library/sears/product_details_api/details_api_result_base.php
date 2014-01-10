@@ -22,6 +22,22 @@ class Details_Api_Result_Base {
 	
 	
 	/**
+	* API Response Code
+	*
+	* @var string
+	*/
+	public $api_response_code;
+	
+	
+	/**
+	* API Response Message
+	*
+	* @var string
+	*/
+	public $api_response_message;
+	
+	
+	/**
 	* Error message
 	*
 	* @var string
@@ -119,20 +135,30 @@ class Details_Api_Result_Base {
 			// If an error message was set elsewhere, it's not a valid product.
 			$is_valid = false;
 		}
-		if(!is_numeric($this->product['price'])) {
-			// Don't enforce this for products that have a "range" of prices, e.g. "From $24.00 To $26.00"
-			if (strpos($this->product['price'], 'From') === false) {
-				$msg .= 'Price is not numeric. ';
+		// Check whether it was even a valid API repsonse before checking any of the fields:
+		if($this->api_response_code != 0) {
+			$msg .= $this->api_response_message.' (API response code '.$this->api_response_code.') ';
+			$is_valid = false;
+		} else {
+			if(!is_numeric($this->product['price'])) {
+				// Don't enforce this for products that have a "range" of prices, e.g. "From $24.00 To $26.00"
+				if (strpos($this->product['price'], 'From') === false) {
+					$msg .= 'Price is not numeric. ';
+					$is_valid = false;
+				}
+			}
+			if( $this->product['price'] == '0.00') {
+				$msg .= 'Price cannot be 0.00. ';
 				$is_valid = false;
 			}
-		}
-		if( $this->product['price'] == '0.00') {
-			$msg .= 'Price cannot be 0.00. ';
-			$is_valid = false;
-		}
-		if( empty($this->product['cat_entry']) ) {
-			$msg .= 'CatEntryId is empty. ';
-			$is_valid = false;
+			if( empty($this->product['cat_entry']) ) {
+				$msg .= 'CatEntryId is empty. ';
+				$is_valid = false;
+			}
+			if( $this->product['in_stock'] == 0) {
+				$msg .= 'Product is no longer in stock. ';
+				$is_valid = false;
+			}
 		}
 		if(!empty($msg)) $this->error_message .= $msg;
 		return $is_valid;

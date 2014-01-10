@@ -9,6 +9,7 @@ add_action('wp_ajax_get_verticals_products', 'ajax_verticals_preview_products');
 /*
 * Return the HTML for a dropdown menu containing Verticals from the Sears API,
 * with ajaxified categories / subcategories / filters that appear when a Vertical is selected.
+* Use with assets/js/admin_verticals_browser.js for best results.
 */
 function get_verticals_dropdown() {
 	$search_obj = new Product_Search_Api();
@@ -172,6 +173,14 @@ function ajax_verticals_preview_products(){
 		//$output .= '<ul id="product_preview_list" class="product_preview_list">';
 		$list_output = '';
 		foreach($result->products as $product){
+			$product_model = new Product_Model($product['part_number']);
+			if($product_model->already_imported()) {
+				$import_button = 'Imported';
+				$import_class = ' already_imported';
+			} else {
+				$import_class = '';
+				$import_button = 'Import Now';
+			}
 			$list_output .= '<li>
 				<a href="http://www.sears.com/search='.$product['part_number'].'" target="_blank">
 					<img src="'.$product['image_url'].'?hei=140&wid=140&op_sharpen=1" width="100" height="100" />
@@ -180,6 +189,8 @@ function ajax_verticals_preview_products(){
 				</a>
 				<br/>
 				'.$product['price'].' <span class="part_number">&bull; '.$product['part_number'].'</span>
+				<br/>
+				<div class="import_button'.$import_class.'" data-imported="'.trim($import_class).'" data-partnumber="'.$product['part_number'].'">'.$import_button.'</div>
 				
 			</li>';
 		}

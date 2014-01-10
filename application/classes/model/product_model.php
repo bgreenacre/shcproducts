@@ -50,6 +50,14 @@ class Product_Model {
 	* @var array
 	*/
 	public $product = array();
+	
+	
+	/**
+	* Fail Reason
+	*
+	* @var string
+	*/
+	public $fail_reason = '';
 
 
 	/**
@@ -81,7 +89,7 @@ class Product_Model {
 		
 		if( empty($this->post) ) {
 			$this->already_imported = false;
-			$this->look_up_product();
+			// $this->look_up_product();
 		} else {
 			$this->already_imported = true;
 			$this->post_id = $this->post->ID;
@@ -99,7 +107,11 @@ class Product_Model {
 		// Look up the product using the API.
 		$obj = new Product_Details_Api();
 		$r = $obj->get_product($this->part_number);
-		$this->product = $r->product;
+		if($r->is_valid_product()) {
+			$this->product = $r->product;
+		} else {
+			$this->fail_reason = $r->error_message;
+		}
 	}
 	
 	
@@ -111,11 +123,12 @@ class Product_Model {
 	*/
 	function convert_product_to_post(){
 		$this->post_array = array();
-		$this->post_array['post_title'] = $this->product['name'];
+		$this->post_array['post_title'] = html_entity_decode($this->product['name']);
 		$this->post_array['post_content'] = $this->product['short_description'];
 		if(!empty($this->product['long_description'])) {
 			$this->post_array['post_content'] .= '<br/>'.$this->product['long_description'];
 		}
+		$this->post_array['post_content'] = html_entity_decode($this->post_array['post_content']);
 		$this->post_array['post_type'] = 'shcproduct';
 		$this->post_array['post_status'] = 'publish';
 	}
@@ -129,13 +142,17 @@ class Product_Model {
 	function import_product() {
 		// Import the product (save it as a new post)
 		if($this->already_imported()) {
-			error_log('import_product - Cannot import - product already imported.');
-			return false;
+			return $this->fail_reason = 'Product has already been imported.';
+		}
+		$this->look_up_product();
+		if(empty($this->product)) {
+			return $this->fail_reason = 'Invalid product - '.$this->fail_reason;
 		}
 		$this->convert_product_to_post();
 		$this->post_id = wp_insert_post($this->post_array);
 		update_post_meta($this->post_id, 'part_number', $this->part_number);
 		update_post_meta($this->post_id, 'product_detail', $this->product);
+		return true;
 	}
 	
 	

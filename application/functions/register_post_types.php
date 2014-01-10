@@ -36,9 +36,20 @@ add_action('init', 'shcp_register_post_types');
 
 
 function add_shcproduct_columns($columns) {
-    return array_merge($columns, 
-              array('modified' => __('Last Modified') )
-              );
+	$new_columns = array();
+	foreach($columns as $key => $value) {
+		$new_columns[$key] = $value;
+		// Add image column after checkbox:
+		if($key == 'cb') {
+			$new_columns['image'] = 'Image';
+		}
+		// Add modified column after date:
+		if($key == 'date') {
+			$new_columns['modified'] = 'Last Modified';
+		}
+	}
+
+	return $new_columns;
 }
 add_filter('manage_shcproduct_posts_columns' , 'add_shcproduct_columns');
 
@@ -47,10 +58,19 @@ function custom_shcproduct_column( $column, $post_id ) {
 	$post = get_post($post_id);
 
     switch ( $column ) {
+    
+    	case 'image' :
+    		$post_object = new Product_Post_Model($post_id);
+    		if(!empty($post_object->product_model->product)) {
+				$img_url = $post_object->product_model->product['main_image_url'];
+				echo '<img src="'.$img_url.'?hei=140&wid=140&op_sharpen=1" width="80" height="80"/>';
+    		}
+    		break;
 
         case 'modified' :
         	$modified_date = date('Y/m/d H:i:s',strtotime($post->post_modified));
            echo $modified_date;
+        	break;
 
     }
 }

@@ -13,7 +13,8 @@ return array(
         'register_post_types', 
         'register_taxonomy',
         'template_tags',
-        'verticals_browser'
+        'verticals_browser',
+        'import_functions'
         ),
     
     'controllers'   => array(
@@ -23,6 +24,7 @@ return array(
         'admin_import', 
         'admin_related', 
         'admin_fileimport',
+        'admin_categorymapping',
         'front_products', 
         'front_cart', 
         'admin_metaboxes'
