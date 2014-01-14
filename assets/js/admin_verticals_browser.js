@@ -24,12 +24,22 @@ jQuery(document).ready(function($) {
 					jQuery('#subcategory_holder').html('');
 					jQuery('#filter_holder').html('');
 					jQuery('#products_holder').html('');
+					jQuery('#category_json').html('');
 					start_index = 1;
 					end_index = 25;
 					callback();
 				}
 			);
 		}
+	});
+	
+	$('#shcp_category').change(function(){
+		current_mapping_display();
+		mapping_button_display();
+	});
+	
+	jQuery('#mapping_button').click(function(){
+		save_category_mapping();
 	});
 
 });
@@ -63,6 +73,7 @@ function callback() {
 					jQuery('#subcategory_holder').html(response);
 					jQuery('#filter_holder').html('');
 					jQuery('#products_holder').html('');
+					jQuery('#category_json').html('');
 					start_index = 1;
 					end_index = 25;
 					callback();
@@ -95,6 +106,7 @@ function callback() {
 				function(response) {
 					jQuery('#filter_holder').html(response);
 					jQuery('#products_holder').html('');
+					jQuery('#category_json').html('');
 					start_index = 1;
 					end_index = 25;
 					callback();
@@ -137,6 +149,8 @@ function callback() {
 	});
 	
 	working = false;
+	
+	mapping_button_display();
 }
 
 
@@ -163,6 +177,70 @@ function import_product(partnumber, j){
 }
 
 
+function mapping_button_display() {
+	console.log('mapping_button_display');
+	// Decide whether to display mapping button:
+	var json_category = jQuery('#category_json').html();
+	if(json_category == '') {
+		jQuery('#mapping_button').hide();
+	} else {
+		jQuery('#mapping_button').show();
+	}
+}
+
+function current_mapping_display() {
+	// get_current_category_mapping
+	var category_id = jQuery('#shcp_category').val();
+	jQuery.post(
+		shcp_ajax.ajaxurl,
+		{
+			action        : 'get_current_category_mapping',
+			'wp_category_id' : category_id
+		},
+		function(response) {
+			console.log('current mapping display success');
+			console.log(response);
+			if(response != '') {
+				var robj = jQuery.parseJSON( response );
+				console.log(robj);
+				var rstring = '<b>Vertical: </b>'+robj.vertical+'<br/><b>Category: </b>'+robj.category+'<b><br/>Subcategory: </b>'+robj.subcategory;
+				if(robj.filter_name != '' && robj.filter_value != '') {
+					rstring += '<br/><b>Filter:</b> '+robj.filter_name+' = '+robj.filter_value;
+				}
+				jQuery('#current_shc_category').html('<h4>Current Sears API Category:</h4>'+rstring);
+			} else {
+				jQuery('#current_shc_category').html('This WordPress category is not currently associated with any Sears API category.');
+			}
+		}
+	);
+}
+
+function save_category_mapping() {
+	console.log('save_category_mapping()');
+	var json_category = jQuery('#category_json').html();
+	console.log(json_category);
+	var category_id = jQuery('#shcp_category').val();
+	console.log('wp category id = '+category_id);
+	
+	jQuery('#current_shc_category').html('Saving...');
+	
+	jQuery.post(
+		shcp_ajax.ajaxurl,
+		{
+			action        : 'save_category_mapping',
+			'shc_category_json' : json_category,
+			'wp_category_id' : category_id
+		},
+		function(response) {
+			if(response == 1) {
+				current_mapping_display();
+			} else {
+				jQuery('#current_shc_category').html(response);
+			}
+		}
+	);
+}
+
 
 
 function preview_products() {
@@ -186,6 +264,9 @@ function preview_products() {
 			'filter_name' : filter_name,
 			'filter_value' : filter_value
 		};
+		
+		var json_category_data = JSON.stringify(category_search);
+		jQuery('#category_json').html(json_category_data);
 		
 		console.log(category_search);
 	

@@ -32,6 +32,7 @@ function get_verticals_dropdown() {
 	$output .= '<div id="subcategory_holder"></div>';
 	$output .= '<div id="filter_holder"></div>';
 	$output .= '<div id="products_holder"></div>';
+	$output .= '<div id="category_json_holder" style="display:none;"><textarea id="category_json" name="category_json"></textarea></div>';
 	
 	return $output;
 }
@@ -166,7 +167,7 @@ function ajax_verticals_preview_products(){
 	if( empty($result->product_count) && $result->product_count !== 0) { 
 		$result_count_output = '<p><b><span id="result_count">No products found.</span></b> An error may have occurred.</p>';
 	} else {
-		$result_count_output = '<p><b><span id="result_count">'.$result->product_count.'</span></b> product'.$s.' found.</p>';
+		$result_count_output = '<p><b><span id="result_count">'.$result->product_count.'</span></b> product'.$s.' found. Preview below:</p>';
 	}
 	
 	if(isset($result->products) && is_array($result->products) && !empty($result->products)) {

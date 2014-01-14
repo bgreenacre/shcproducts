@@ -363,8 +363,11 @@ function get_category_image_url($category_id = null, $echo = true, $thumb = fals
  */
 function product_image($height = '220', $width = null, $echo = true){
 
-	$product = get_post_meta(get_the_ID(), 'product_detail', true);
-	$img = $product['main_image_url'];
+	//$product = get_post_meta(get_the_ID(), 'product_detail', true);
+	//$img = $product['main_image_url'];
+	$p = new Product_Post_Model(get_the_ID());
+	$img = $p->get_image_url();
+	
 
     $width = (!$width && $height) ?  $height: $width;
     $image = Helper_Products::image_url($img,$height,$width, FALSE);
@@ -407,7 +410,7 @@ function product_savings($echo = true){
  *
  * @return type
  */
-function product_price_info($catentryid = null){
+function product_price_info($catentryid = null, $quantity = 1){
 
 	$product = get_post_meta(get_the_ID(), 'product_detail', true);
 	
@@ -417,6 +420,31 @@ function product_price_info($catentryid = null){
 		'savings' => ($product['savings'] != 0.00) ? $product['savings'] : '' , // Don't return savings if it's zero
 		'price'   => (is_numeric($product['price'])) ? $product['price'] : ''
     );
+    
+    if($catentryid && isset($product['cat_entry'][$catentryid])) {
+	
+	}
+	
+	if($quantity != 1) {
+		$return_array['price_each'] = $return_array['price'];
+		// Calculate price:
+		$price_cents = $return_array['price'] * 100;
+		$price_cents = $price_cents * $quantity;
+		$price_dollars = $price_cents / 100;
+		$return_array['price'] = number_format($price_dollars,2);
+		// Calculate 'regular' (crossed out price):
+		$price_cents = $return_array['regular'] * 100;
+		$price_cents = $price_cents * $quantity;
+		$price_dollars = $price_cents / 100;
+		$return_array['regular'] = number_format($price_dollars,2);
+		// Calculate savings:
+		$price_cents = $return_array['savings'] * 100;
+		$price_cents = $price_cents * $quantity;
+		$price_dollars = $price_cents / 100;
+		$return_array['savings'] = number_format($price_dollars,2);
+	}
+    
+    error_log('product_price_info $return_array = '.print_r($return_array,true));
     
     return $return_array;
 }
@@ -994,6 +1022,8 @@ function print_pre($array){
 function product_ajax(){
 
     global $is_cart_page, $cartid, $catentryid;
+    
+    error_log('product_ajax $_POST = '.print_r($_POST,true));
 
     if(isset($_POST['postid'])){
         $template = $_POST['template'];
@@ -1013,10 +1043,11 @@ function product_ajax(){
              'p' => $id
             ));
 
-        while (have_posts()) : the_post();
-            get_template_part('templates/' . $template);
-        endwhile;
-
+		if($_POST['quantity'] != 0) {
+			while (have_posts()) : the_post();
+				get_template_part('templates/' . $template);
+			endwhile;
+		}
         wp_reset_query();
         exit;
     }
@@ -1311,13 +1342,19 @@ function get_cart_products($cart = null, $sortby = 'display_partnumber'){
  * @return type 
  */
 function product_cart_data($property, $cart = null, $key = null, $echo = true){
+
+	error_log('product_cart_data $property = '.$property);
     
     $cart_product = get_cart_products($cart, 'catentryid');
+    
+    error_log('$cart_product = '.print_r($cart_product,true));
+    error_log('$key = '.print_r($key,true));
     
     if ($key) {
 		$data = $cart_product[$key]->$property;
 	} else {
-		$data = $cart_product[product_meta('partnumber', false)]->$property;
+		//$data = $cart_product[product_meta('partnumber', false)]->$property;
+		$data = false;
 	}    
     if($echo) { echo $data; }
     else { return $data; }

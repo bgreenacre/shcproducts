@@ -403,3 +403,55 @@ th#modified {
 th.column-image, td.column-image {
 	width:100px;
 }
+
+
+.catmapping_shc_category {
+	width:50%; 
+	float:left;
+	max-height:600px;
+	overflow-y:scroll;
+	padding:10px;
+}
+
+.catmapping_wp_category {
+	width:42%;
+	float:right;
+	padding:10px;
+}
+
+
+#mapping_button {
+	background-color:#AFA;
+	width:150px;
+	height:30px;
+	line-height:30px;
+	margin-top:20px;
+	text-align:center;
+	cursor:pointer;
+}
+
+#current_shc_category {
+	margin-top:15px;
+	max-width:300px;
+}
+
+table.category_mapping {
+	width:100%;
+}
+
+table.category_mapping th {
+	font-weight:bold;
+	border-bottom:1px solid #EEE;
+}
+
+table.category_mapping td {
+	border-bottom:1px solid #EEE;
+}
+
+table.category_mapping td.ok {
+	background-color:#AFA;
+}
+table.category_mapping td.error {
+	background-color:#FF0000;
+	color:#FFFFFF;
+}

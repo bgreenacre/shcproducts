@@ -94,6 +94,24 @@ class Product_Model {
 			$this->already_imported = true;
 			$this->post_id = $this->post->ID;
 			$this->product = get_post_meta($this->post->ID, 'product_detail', true);
+			return;
+		}
+		
+		// If the data is detected in the old format, try to convert/update it:
+		$query_args = array(
+			'post_type' => 'shcproduct',
+			'meta_key' => 'partnumber',
+			'meta_value' => $this->part_number
+		);
+		
+		$init_query = new WP_Query($query_args);
+		
+		$this->post = $init_query->post;
+		
+		if( !empty($this->post) ) {
+			$this->already_imported = false;
+			$this->post_id = $this->post->ID;
+			$this->update_product();
 		}
 	}
 	
@@ -150,6 +168,25 @@ class Product_Model {
 		}
 		$this->convert_product_to_post();
 		$this->post_id = wp_insert_post($this->post_array);
+		update_post_meta($this->post_id, 'part_number', $this->part_number);
+		update_post_meta($this->post_id, 'product_detail', $this->product);
+		return true;
+	}
+	
+	
+	/**
+	* update_product
+	*
+	* @return void
+	*/
+	function update_product() {
+		// Update the product (update existing post)
+		$this->look_up_product();
+		if(empty($this->product)) {
+			return $this->fail_reason = 'Invalid product - '.$this->fail_reason;
+		}
+		$this->convert_product_to_post();
+		//$this->post_id = wp_insert_post($this->post_array);
 		update_post_meta($this->post_id, 'part_number', $this->part_number);
 		update_post_meta($this->post_id, 'product_detail', $this->product);
 		return true;

@@ -48,6 +48,12 @@ class Product_Post_Model {
 		$this->part_number = get_post_meta($this->post_id, 'part_number', true);
 		if(!empty($this->part_number)) {
 			$this->product_model = new Product_Model($this->part_number);
+			return;
+		}
+		// For backwards compatibility:
+		$this->part_number = get_post_meta($this->post_id, 'partnumber', true);
+		if(!empty($this->part_number)) {
+			$this->product_model = new Product_Model($this->part_number);
 		}
 	}
 	
@@ -60,6 +66,17 @@ class Product_Post_Model {
 	function is_softline(){
 		return $this->product_model->is_softline();
 	}
+	
+	
+	/**
+	* get_image_url
+	*
+	* @return string
+	*/
+	function get_image_url(){
+		return $this->product_model->product['main_image_url'];
+	}
+	
 	
 	
 }

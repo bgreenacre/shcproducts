@@ -27,7 +27,11 @@ class Controller_Admin_Categorymapping {
      */
     public function action_index()
     {
-        echo SHCP::view('admin/category_mapping/category_mapping_index');
+		if(isset($_GET['view']) && $_GET['view'] == 'all') {
+			echo SHCP::view('admin/category_mapping/category_mapping_listall');
+		} else {
+			echo SHCP::view('admin/category_mapping/category_mapping_index');
+		}
     }
 
     /**
