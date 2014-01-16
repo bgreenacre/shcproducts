@@ -707,7 +707,7 @@ function product_options($postid = null, $label = null){
    		if(!empty($prodvar_keys) && is_array($prodvar_keys)) {
    			echo '<div class="softline-option-label">';
    			echo $mystery_attribute_name.':<br/>';
-   			echo '<select class="softline-options prodvar" name="pName" data-attname="varname">';
+   			echo '<select class="softline-options prodvar" id="pNameSelect" name="pName" data-attname="varname">';
    			foreach($prodvar_keys as $prodvar_key) {
    				echo '<option value="'.$prodvar_key.'">'.$prodvar_key.'</option>';
    			}
@@ -742,8 +742,9 @@ function product_options($postid = null, $label = null){
 				$fullsize = product_swatches('1800', '1800', $postid);
 				$data_prodvar = ' data-prodvar="' . $prodvar_label . '"';
 				?>
+					<div class="softline-option-holder <?php echo $prodvar_label; ?>">
 					<div class="softline-option-label"><?php echo $label; ?>:</div>
-					<select class="softline-options" name="<?php echo trim($label, "\""); ?>" data-attname="<?php echo trim($label, "\""); ?>"<?php echo $data_prodvar; ?>>
+					<select class="softline-options" name="<?php echo trim($label, "\"").'|'.$prodvar_label; ?>" data-attname="<?php echo trim($label, "\""); ?>"<?php echo $data_prodvar; ?>>
 						<?php $disabled = " disabled='disabled'"; ?>
 						<option value="" selected="selected"<?php echo $disabled; ?>><?php echo 'Please select a '.strtolower($label); ?></option>
 						<?php foreach($values as $value) :
@@ -775,6 +776,7 @@ function product_options($postid = null, $label = null){
 
 						<?php endforeach; ?>
 					</select>
+					</div>
 				<?php
           } else {
 				// Display the color options as swatches
@@ -1121,12 +1123,18 @@ function cart_add_ajax() {
         if (!isset($_POST['catentryid'])) {
 			if($p->is_softline()) {
 				$_POST['instock'] = "true";
+				$pname = stripslashes($_POST['pName']);
 				$product_options = array();
 				// Build an array of the $_POST softline options
 				foreach ($_POST as $key => $value) {
 					// Discard keys that aren't associated with softline options
 					if ($key != "is_softline" && $key != "action" && $key != "postid" && $key != "template" && $key != "undefined") {
-						$product_options[str_replace("-"," ", str_replace("_"," ",$key))] = stripslashes($value);
+						$new_key = str_replace("-"," ", str_replace("_"," ",$key));
+						$new_key = str_replace('|'.$pname, '', $new_key);
+						$new_key = str_replace('|'.str_replace("'",'',$pname), '', $new_key);
+						if( strpos($new_key, '|') === false ) {
+							$product_options[$new_key] = stripslashes($value);
+						}
 					}
 				}
 				// This checks to see if it exists and is in stock
@@ -1134,6 +1142,12 @@ function cart_add_ajax() {
 			} else {
 				$catentryid = $p->product_model->product['cat_entry'];
 			}
+        }
+        
+        // If an invalid catentryid was received, don't attempt to proceed any further.
+        if( !isset($catentryid) || empty($catentryid) || is_array($catentryid) ) {
+        	header("HTTP/1.0 400 Bad Request", true, 400);
+        	exit;
         }
         
         SHCP::$current_catentryid = $catentryid;
@@ -1193,8 +1207,9 @@ function retrieve_catentryid($product_options, $id){
 				// A few of the option names will need to be handled specially:
 				if($option_name == 'pName') $option_name = $option_value;
 				if($option_name == 'instock') $option_name = 'in_stock';
+				$alt_value = ($option_value == 'true') ? 1 : $option_value;
 				// Checking single attribute:
-				if(	!isset($attributes[$option_name]) || $attributes[$option_name] != $option_value) {
+				if(	!isset($attributes[$option_name]) || ($attributes[$option_name] != $option_value && $attributes[$option_name] != $alt_value)) {
 					// No match, no point in continuing loop.
 					$match = false;
 					break;
@@ -1221,13 +1236,17 @@ function cart_check_avail_ajax(){
 	if(isset($_POST['postid'])){
         $id = (int) $_POST['postid'];
 		$_POST['instock'] = "true";
+		$pname = $_POST['pName'];
 		$product_options = array();
 		// Build an array of the $_POST softline options
 		foreach ($_POST as $key => $value) {
-
 			// Discard keys that aren't associated with softline options
 			if ($key != "is_softline" && $key != "action" && $key != "postid" && $key != "template" && $key != "undefined") {
-				$product_options[str_replace("-"," ", str_replace("_"," ",$key))] = stripslashes($value);
+				$new_key = str_replace("-"," ", str_replace("_"," ",$key));
+				$new_key = str_replace('|'.$pname, '', $new_key);
+				if( strpos($new_key, '|') === false ) {
+					$product_options[$new_key] = stripslashes($value);
+				}
 			}
 		}
 		// This checks to see if it exists and is in stock
