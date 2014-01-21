@@ -32,9 +32,11 @@
 		if(paused) {
 			jQuery("#begin_update_button_holder .button-primary").html('Working, Click To Pause');
 			paused = false;
+			jQuery('.meter').removeClass('paused');
 			ajax_update_next();
 		} else {
 			jQuery("#begin_update_button_holder .button-primary").html('Resume Update');
+			jQuery('.meter').addClass('paused');
 			paused = true;
 		}
 	}
@@ -86,10 +88,10 @@
 		complete_percent = complete_percent.toPrecision(4);
 		var status_bar = complete_percent;
 		
-		total_updated += data.updated;
-		total_draft += data.draft;
-		total_deleted += data.deleted;
-		total_no_action += data.no_action;
+		if(isNumber(data.updated)) total_updated += data.updated;
+		if(isNumber(data.draft)) total_draft += data.draft;
+		if(isNumber(data.deleted)) total_deleted += data.deleted;
+		if(isNumber(data.no_action)) total_no_action += data.no_action;
 		
 		// Put things into various boxes on the screen:
 		jQuery('#progress_percent_holder').html(complete_percent+'%');
@@ -123,6 +125,20 @@
 		detail_box.scrollTop(height);
 	}
 	
+	function selectText() {
+		var containerid = 'detail_holder';
+		jQuery('#detail_holder').scrollTop(0);
+        if (document.selection) {
+            var range = document.body.createTextRange();
+            range.moveToElementText(document.getElementById(containerid));
+            range.select();
+        } else if (window.getSelection) {
+            var range = document.createRange();
+            range.selectNode(document.getElementById(containerid));
+            window.getSelection().addRange(range);
+        }
+    }
+	
 	// Keep track of how much time this is taking:
 	jQuery(document).ready(function(){
 		setInterval(function() {
@@ -132,6 +148,10 @@
 			jQuery('#elapsed_time').html(elapsed_time);
 		}, 1000);
 	});
+	
+	function isNumber(n) {
+	  return !isNaN(parseFloat(n)) && isFinite(n);
+	}
 	
 </script>
 
@@ -160,6 +180,7 @@
 			<div id="detail_holder">
 				
 			</div>
+			<a href="javascript:void(0);" onclick="selectText()">Select All</a>
 		</td>
 
 	</tr>

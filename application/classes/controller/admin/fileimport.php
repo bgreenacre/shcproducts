@@ -32,7 +32,7 @@ class Controller_Admin_FileImport {
 
     public function action_admin_menu()
     {
-        add_submenu_page('edit.php?post_type=shcproduct', __('Import Products from File'), __('File Import Products'), 'edit_posts', 'fileimport', array(&$this, 'action_index'));
+        //add_submenu_page('edit.php?post_type=shcproduct', __('Import Products from File'), __('File Import Products'), 'edit_posts', 'fileimport', array(&$this, 'action_index'));
     }
 
     public function action_index()

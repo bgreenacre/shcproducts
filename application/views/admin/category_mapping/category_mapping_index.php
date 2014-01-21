@@ -19,16 +19,17 @@
 					'hide_empty'    => 0,
 					'hierarchical'  => 1,
 					'name'          => 'shcp_category',
-					'id'            => 'shcp_category'
+					'id'            => 'shcp_category',
+					'orderby'		=> 'NAME'
 					);
 			wp_dropdown_categories($dropdown_args); ?>
 			
 			<div id="current_shc_category">
 			</div>
 			
-			<div id="mapping_button" style="display:none;">
+			<a href="javascript:void(0);" id="mapping_button" style="display:none;" class="button-primary">
 				Link Categories
-			</div>
+			</a>
 
 	</div>
 
@@ -38,56 +39,3 @@
 	</div>
   
 </div>
-
-
-<?php
-
-
-// Import process:
-
-$post_obj = new Product_Post_Model(9168);
-//$prod_obj = new Product_Model('007VA54248712P');
-//error_log('$prod_obj = '.print_r($prod_obj,true));
-
-//$part_number = '00806901000P'; // Hardline / Kenmore Elite 900 Watt Brushed Aluminum Blender
-//$part_number = 'TEST12345678'; // Invalid part number
-//$part_number = '076SA005000P'; // Shoe available in Medium and Wide widths
-//$part_number = '076VA21776701P'; // Shoe available in Medium and Wide widths
-// $part_number = '076VA55548812P'; // Shoe available in Medium and Wide widths
-// 
-// $api_obj = new Product_Details_Api();
-// $api_result = $api_obj->get_product($part_number);
-// 
-// $prod_obj = new Product_Model($part_number); 
-// $import_result = $prod_obj->import_product();
-// 
-// 
-// echo '<pre>';
-// 
-// echo 'API Result = '.strip_tags(print_r($api_result,true));
-// 
-// echo '
-// ------------------------
-// 
-// ';
-// 
-// echo 'Standardized Product = '.strip_tags(print_r($api_result->product,true));
-// 
-// echo '
-// ------------------------
-// 
-// ';
-// 
-// echo '$prod_obj = '.print_r($prod_obj,true);
-// 
-// echo '
-// ------------------------
-// 
-// ';
-// 
-// echo 'Import result: '.print_r($import_result,true);
-// 
-// echo '</pre>';
-
-?>
-

@@ -165,7 +165,10 @@ class SHCP {
     */
     public static function wp_init() {
 		self::$global_cart = new Model_Cart();
-		self::$global_cart->view()->load()->cart;
+		// Don't load the cart unless we're on the front end of the site.
+		if(!is_admin() && (PHP_SAPI !== 'cli')) {
+			self::$global_cart->view()->load()->cart;
+		}
     }
 
     /**
@@ -192,7 +195,6 @@ class SHCP {
      */
     public static function autoload($class)
     {
-    	//error_log('Attempting to autoload '.$class);
         try {
         	// Specify the exact directory locations of certain classes.
         	$location = '';
@@ -232,6 +234,9 @@ class SHCP {
         			break;
         		case 'Product_Post_Model':
         			$location = SHCP_CLASS . '/model/product_post_model.php';
+        			break;
+        		case 'Product_Category_Model':
+        			$location = SHCP_CLASS . '/model/product_category_model.php';
         			break;
         		case 'Api_Result':
         		case 'Search_Api_Result':

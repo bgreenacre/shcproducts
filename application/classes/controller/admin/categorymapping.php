@@ -29,6 +29,18 @@ class Controller_Admin_Categorymapping {
     {
 		if(isset($_GET['view']) && $_GET['view'] == 'all') {
 			echo SHCP::view('admin/category_mapping/category_mapping_listall');
+		} else if(isset($_GET['sync']) && $_GET['sync'] = 'yes') {
+			$categories = get_full_categories();
+			$category_array = array();
+			foreach($categories as $category_id => $category_name) {
+				$category_array[] = array(
+					'name' => $category_name,
+					'id' => $category_id
+				);
+			}
+			$data = array();
+			$data['categories'] = json_encode($category_array);
+			echo SHCP::view('admin/category_mapping/category_mapping_sync', $data);
 		} else {
 			echo SHCP::view('admin/category_mapping/category_mapping_index');
 		}

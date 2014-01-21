@@ -302,6 +302,10 @@ th#modified {
 	overflow: hidden;
 }
 
+#progress_holder .meter.paused > span:after {
+	background-image:none;
+}
+
 #progress_percent_holder {
 	font-size:15px;
 	font-weight:bold;
@@ -347,6 +351,11 @@ th#modified {
 	-moz-border-radius-bottomright: 20px;
 	border-top-right-radius: 20px;
 	border-bottom-right-radius: 20px;
+}
+
+.current_category_name {
+	font-size:11px;
+	padding-bottom:15px;
 }
 
 /* Verticals browser section */
@@ -420,6 +429,7 @@ th.column-image, td.column-image {
 }
 
 
+/* 
 #mapping_button {
 	background-color:#AFA;
 	width:150px;
@@ -428,6 +438,11 @@ th.column-image, td.column-image {
 	margin-top:20px;
 	text-align:center;
 	cursor:pointer;
+}
+ */
+ 
+#mapping_button {
+	margin-top:20px;
 }
 
 #current_shc_category {

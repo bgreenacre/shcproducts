@@ -95,6 +95,11 @@ class Product_Details_Api extends Sears_Api_Base {
 		// $this->raw_response (with any xml/json already decoded)
 		parent::make_request();
 		
+		// If the request failed, don't attempt to do anything else to the data received.
+		if(!empty($this->error)) {
+			return false;
+		}
+		
 		// Initialize the result object depending on which version and response type we're using.
 		if($this->args['api_version'] == 'v1') {
 			

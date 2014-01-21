@@ -80,7 +80,6 @@ class Search_Api_Result_V2json extends Search_Api_Result_Base implements Search_
 						$group_id = (string)$category->CatGroupId;
 					} else {
 						// Sometimes, CatGroupId is not included in the response.
-						//error_log('$category->CatGroupId not found. $category = '.print_r($category,true));
 					}
 					$this->categories[$category->CategoryName] = array(
 						'category_name' => $category->CategoryName,
@@ -174,12 +173,10 @@ class Search_Api_Result_V2json extends Search_Api_Result_Base implements Search_
 						// Decrement the product count by 1, since this result is invalid in some way.
 						$this->product_count--;
 					}
-					//error_log('$raw_product = '.print_r($rp,true));
 				}
 			} 
-			///error_log('FOUND');
 		} else {
-			//error_log('Variable not found');
+			// Variable not found.
 		}
 	}
 	

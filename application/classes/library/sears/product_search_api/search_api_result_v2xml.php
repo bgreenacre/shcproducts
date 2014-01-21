@@ -73,7 +73,6 @@ class Search_Api_Result_V2xml extends Search_Api_Result_Base implements Search_A
 		// Standardize categories:
 		if(isset($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory)) {
 			foreach($r->NavGroups->NavGroup[0]->ShopByCategories->ShopByCategory as $category) {
-				//error_log('$category = '.print_r($category,true));
 				$category_name = (string)$category->CategoryName;
 				$product_count = (string)$category->AggProdCount;
 				$group_id = (string)$category->CatGroupId;

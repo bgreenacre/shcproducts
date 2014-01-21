@@ -550,7 +550,7 @@ class Library_Sears_Api implements Countable, Iterator, SeekableIterator, ArrayA
         }
         
         // Enable the following to see where API calls are going:
-         error_log('API URL: '.$this->_url);
+        // error_log('API URL: '.$this->_url);
 
         if (SHCP::$profiling)
         {

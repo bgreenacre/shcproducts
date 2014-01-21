@@ -341,10 +341,21 @@ class Controller_Admin_Options {
     		$post_id = $_POST['post_id'];
     		$response['message'] = 'Updating product '.$post_id;
     		
-    		$model_post = new Model_Products($post_id); 
-			$model_post->sync_from_api($this->_profile_mode);
+    		//$model_post = new Model_Products($post_id); 
+			//$model_post->sync_from_api($this->_profile_mode);
 			
-			$response['cron_msg'] = $model_post->cron_msg;
+			$model_post = new Product_Post_Model($post_id);
+			$post_title = get_the_title($post_id);
+			
+			$result = $model_post->sync_from_api();
+						
+			if($result === true) {
+				$response['cron_msg'] = 'Successfully updated '.$model_post->part_number.' ('.$post_id.')';
+			} else {
+				$response['cron_msg'] = $result.' -- '.$model_post->part_number.' ('.$post_id.')';
+			}
+			
+			$response['cron_msg'] .= ' -- '.$post_title;
 			
 			if($model_post->is_updated) {
     			$response['updated'] = 1;

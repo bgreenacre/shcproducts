@@ -22,7 +22,6 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 	
 	function tearDown() {
 		parent::tearDown();
-		//error_log('Peak memory usage: '.memory_get_peak_usage());
 	}
 	
 	public function test_Make_Sure_PHPUnit_Is_Working() {
@@ -120,7 +119,6 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 			$this->assertInternalType('string', $category['product_count']);
 			$this->assertInternalType('string', $category['group_id']);
 		}
-		//error_log('check_categories $result_object = '.print_r($result_object,true));
 	}
 	
 	
@@ -307,7 +305,6 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 		$return_array = array();
 		$verticals_array = $this->provider_verticals();
 		foreach($verticals_array as $key => $value) {
-			//error_log('provider_categories value = '.print_r($value,true));
 			$vertical_name = $value[0];
 			$test_object = new Product_Search_Api();
 			$result_object = $test_object->get_categories($vertical_name);
@@ -331,13 +328,12 @@ class SHC_API_Test_Parent extends WP_UnitTestCase {
 				error_log('$result_object = '.print_r($result_object,true));
 			}
 		}
-		//error_log('provider_categories = '.print_r($return_array,true));
 		if($subcategories) {
 			$this->subcategories = $return_array;
-			error_log('provider_subcategories = '.var_export($return_array,true));
+			//error_log('provider_subcategories = '.var_export($return_array,true));
 		} else {
 			$this->categories = $return_array;
-			error_log('provider_categories = '.var_export($return_array,true));
+			//error_log('provider_categories = '.var_export($return_array,true));
 		}
 		return $return_array;
 	}	

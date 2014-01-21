@@ -442,10 +442,7 @@ function product_price_info($catentryid = null, $quantity = 1){
 		$price_cents = $price_cents * $quantity;
 		$price_dollars = $price_cents / 100;
 		$return_array['savings'] = number_format($price_dollars,2);
-	}
-    
-    error_log('product_price_info $return_array = '.print_r($return_array,true));
-    
+	}    
     return $return_array;
 }
 
@@ -677,15 +674,11 @@ function product_atts($postid = false) {
  * @param int $postid Post ID for the product of which to get the options
  */
 function product_options($postid = null, $label = null){ 
-
-	//error_log('Getting product options...');
 	
 	$product = get_post_meta(get_the_ID(), 'product_detail', true);
 	$prodatts = $product['attribute_values'];
-	//error_log('$prodatts = '.print_r($prodatts,true));
 	
 	$prodvar_keys = array_keys($prodatts);
-	//error_log('$prodvar_keys = '.print_r($prodvar_keys,true));
     
    $disabled = " disabled='disabled'";
    $selected = " selected='selected';";
@@ -694,9 +687,7 @@ function product_options($postid = null, $label = null){
    		// Let's try to guess what this is since the API doesn't tell us.
    		$mystery_attribute_name = '';
    		$att_keys = array_keys($prodatts[$prodvar_keys[0]]);
-   		   
-		error_log('$att_keys = '.print_r($att_keys,true));
-   		   		
+   		      		   		
    		if(in_array('Shoe Size', $att_keys)) {
    			// Width - for shoes
    			$mystery_attribute_name = 'Width';
@@ -1025,8 +1016,6 @@ function product_ajax(){
 
     global $is_cart_page, $cartid, $catentryid;
     
-    error_log('product_ajax $_POST = '.print_r($_POST,true));
-
     if(isset($_POST['postid'])){
         $template = $_POST['template'];
         $id = (int) $_POST['postid'];
@@ -1045,11 +1034,10 @@ function product_ajax(){
              'p' => $id
             ));
 
-		if($_POST['quantity'] != 0) {
-			while (have_posts()) : the_post();
-				get_template_part('templates/' . $template);
-			endwhile;
-		}
+		while (have_posts()) : the_post();
+			get_template_part('templates/' . $template);
+		endwhile;
+			
         wp_reset_query();
         exit;
     }
@@ -1361,13 +1349,8 @@ function get_cart_products($cart = null, $sortby = 'display_partnumber'){
  * @return type 
  */
 function product_cart_data($property, $cart = null, $key = null, $echo = true){
-
-	error_log('product_cart_data $property = '.$property);
     
     $cart_product = get_cart_products($cart, 'catentryid');
-    
-    error_log('$cart_product = '.print_r($cart_product,true));
-    error_log('$key = '.print_r($key,true));
     
     if ($key) {
 		$data = $cart_product[$key]->$property;

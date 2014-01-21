@@ -446,7 +446,6 @@ class Product_Search_Api extends Sears_Api_Base {
 			$args['start_index'] = $start_end['start_index'];
 			$args['end_index'] = $start_end['end_index'];
 		}
-		error_log('$args = '.print_r($args,true));
 		$this->set_up_request($args);
 		$result = $this->make_request();
 		// If we got valid data, return it:

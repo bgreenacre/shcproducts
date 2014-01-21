@@ -43,9 +43,7 @@ function ajax_get_verticals_category(){
 	$type_selected = $_POST['type_selected'];
 	$search_keyword = $_POST['search_keyword'];
 	$category_search = $_POST['category_search'];
-	
-	error_log('$category_search = '.print_r($category_search, true));
-	
+		
 	$search_obj = new Product_Search_Api();
 	
 	// If a vertical was selected, display categories within that vertical.
@@ -61,9 +59,7 @@ function ajax_get_verticals_category(){
 		$result = $search_obj->get_subcategories($vertical, $category);
 		$what_to_select = 'Subcategory';
 	}
-	
-	error_log(print_r($result,true));
-	
+		
 	if(is_array($result->categories) && !empty($result->categories)) {
 		$output .= '<select name="'.strtolower($what_to_select).'" id="'.strtolower($what_to_select).'">';
 		$output .= '<option value="">-- Select '.$what_to_select.' --</option>';
@@ -90,9 +86,7 @@ function ajax_get_verticals_filter() {
 	$vertical = (isset($category_search['vertical'])) ? $category_search['vertical'] : '';
 	$category = (isset($category_search['category'])) ? $category_search['category'] : '';
 	$subcategory = (isset($category_search['subcategory'])) ? $category_search['subcategory'] : '';
-	
-	error_log('$category_search = '.print_r($category_search,true));
-	
+		
 	$search_obj = new Product_Search_Api();
 	$result = $search_obj->get_available_filters($vertical, $category, $subcategory);
 	
@@ -123,9 +117,7 @@ function ajax_get_verticals_filter() {
 	} else {
 		echo 'No filters are available for this category.';
 	}
-	
-	error_log('$result = '.print_r($result,true));
-	
+		
 	echo $output;
 	echo $filter_option_output;
 		
@@ -135,8 +127,6 @@ function ajax_get_verticals_filter() {
 
 
 function ajax_verticals_preview_products(){
-	error_log('$_POST = '.print_r($_POST,true));
-
 	// Set up the variables needed to retrieve the products:
 		// Category search (array):
 		$category_search = $_POST['category_search'];
@@ -212,9 +202,6 @@ function ajax_verticals_preview_products(){
 	}
 	
 	echo $output;
-
-	
-	//error_log('$result = '.print_r($result,true));
 	
 	die();
 }

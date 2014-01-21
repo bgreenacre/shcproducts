@@ -3,14 +3,11 @@ var start_index = 1;
 var end_index = 25;
 
 jQuery(document).ready(function($) {
-
-	console.log('admin_verticals_browser ready');
 	
 	$('#vertical').change(function(){
 		if(!working) {
 			working = true;
 			var search_keyword = $('#vertical option:selected').val();
-			console.log(search_keyword);
 		
 			jQuery.post(
 				shcp_ajax.ajaxurl,
@@ -59,7 +56,6 @@ function callback() {
 			};
 		
 			var search_keyword = vertical+'|'+category;
-			console.log(search_keyword);
 		
 			jQuery.post(
 				shcp_ajax.ajaxurl,
@@ -85,7 +81,6 @@ function callback() {
 	jQuery('#subcategory').change(function(){
 		if(!working) {
 			working = true;
-			console.log('changed subcategory');
 			var category = jQuery('#category option:selected').val();
 			var vertical = jQuery('#vertical option:selected').val();
 			var subcategory = jQuery('#subcategory option:selected').val();
@@ -117,14 +112,11 @@ function callback() {
 	});
 	
 	jQuery('#filter').change(function(){
-		console.log('Changed filter.');
 		var selected_filter_id = jQuery('#filter option:selected').attr('data-id');
 		jQuery('.single_filter').hide();
 		jQuery('#'+selected_filter_id).show();
 		start_index = 1;
 		end_index = 25;
-		console.log('Selected Filter: '+selected_filter_id);
-		console.log(jQuery('#'+selected_filter_id));
 	});
 	
 	
@@ -133,10 +125,8 @@ function callback() {
 	});
 	
 	jQuery('.import_button').click(function(){
-		console.log('importing');
 		var imported = jQuery(this).attr('data-imported');
 		var partnumber = jQuery(this).attr('data-partnumber');
-		console.log(imported);
 		if(imported == '') {
 			// Not yet imported, import now:
 			jQuery(this).addClass('importing');
@@ -176,9 +166,12 @@ function import_product(partnumber, j){
 	);
 }
 
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 
 function mapping_button_display() {
-	console.log('mapping_button_display');
 	// Decide whether to display mapping button:
 	var json_category = jQuery('#category_json').html();
 	if(json_category == '') {
@@ -198,16 +191,21 @@ function current_mapping_display() {
 			'wp_category_id' : category_id
 		},
 		function(response) {
-			console.log('current mapping display success');
-			console.log(response);
 			if(response != '') {
-				var robj = jQuery.parseJSON( response );
-				console.log(robj);
-				var rstring = '<b>Vertical: </b>'+robj.vertical+'<br/><b>Category: </b>'+robj.category+'<b><br/>Subcategory: </b>'+robj.subcategory;
-				if(robj.filter_name != '' && robj.filter_value != '') {
-					rstring += '<br/><b>Filter:</b> '+robj.filter_name+' = '+robj.filter_value;
+				var robj2 = jQuery.parseJSON( response );
+				var rstring = '';
+				for(var rindex in robj2) {
+					var robj = robj2[rindex];
+					rstring += '<b>Vertical: </b>'+robj.vertical+'<br/><b>Category: </b>'+robj.category+'<b><br/>Subcategory: </b>'+robj.subcategory;
+					if(robj.filter_name != '' && robj.filter_value != '') {
+						rstring += '<br/><b>Filter:</b> '+robj.filter_name+' = '+robj.filter_value;
+					}
+					var param_index = -1;
+					if(isNumber(rindex)) param_index = rindex;
+					rstring += '<br/><a href="javascript:void(0);" onclick="remove_category_mapping('+param_index+')" class="button">Remove</a>';
+					rstring += '<br/><br/>';
 				}
-				jQuery('#current_shc_category').html('<h4>Current Sears API Category:</h4>'+rstring);
+				jQuery('#current_shc_category').html('<h4>Current Sears API category mapping:</h4>'+rstring);
 			} else {
 				jQuery('#current_shc_category').html('This WordPress category is not currently associated with any Sears API category.');
 			}
@@ -216,11 +214,8 @@ function current_mapping_display() {
 }
 
 function save_category_mapping() {
-	console.log('save_category_mapping()');
 	var json_category = jQuery('#category_json').html();
-	console.log(json_category);
 	var category_id = jQuery('#shcp_category').val();
-	console.log('wp category id = '+category_id);
 	
 	jQuery('#current_shc_category').html('Saving...');
 	
@@ -230,6 +225,29 @@ function save_category_mapping() {
 			action        : 'save_category_mapping',
 			'shc_category_json' : json_category,
 			'wp_category_id' : category_id
+		},
+		function(response) {
+			if(response == 1) {
+				current_mapping_display();
+			} else {
+				jQuery('#current_shc_category').html(response);
+			}
+		}
+	);
+}
+
+
+function remove_category_mapping(option_index) {
+	var category_id = jQuery('#shcp_category').val();
+	
+	jQuery('#current_shc_category').html('Saving...');
+	
+	jQuery.post(
+		shcp_ajax.ajaxurl,
+		{
+			action        : 'remove_category_mapping',
+			'wp_category_id' : category_id,
+			'option_index' : option_index
 		},
 		function(response) {
 			if(response == 1) {
@@ -267,9 +285,7 @@ function preview_products() {
 		
 		var json_category_data = JSON.stringify(category_search);
 		jQuery('#category_json').html(json_category_data);
-		
-		console.log(category_search);
-	
+			
 		jQuery.post(
 			shcp_ajax.ajaxurl,
 			{
@@ -282,8 +298,6 @@ function preview_products() {
 				jQuery('#products_holder').html(response);
 				start_index += 25;
 				end_index += 25;
-				console.log('Preview products success');
-				//console.log(response);
 				callback();
 			}
 		);
@@ -293,7 +307,6 @@ function preview_products() {
 
 
 function view_more_products() {
-	console.log('Loading more products...');
 	if(!working) {
 		working = true;
 		jQuery('.load_more_products').html('<p>Loading more products...</p>');
@@ -312,9 +325,7 @@ function view_more_products() {
 			'filter_name' : filter_name,
 			'filter_value' : filter_value
 		};
-		
-		console.log(category_search);
-	
+			
 		jQuery.post(
 			shcp_ajax.ajaxurl,
 			{
@@ -333,8 +344,6 @@ function view_more_products() {
 				}
 				start_index += 25;
 				end_index += 25;
-				console.log('Preview products success');
-				console.log(response);
 				callback();
 			}
 		);

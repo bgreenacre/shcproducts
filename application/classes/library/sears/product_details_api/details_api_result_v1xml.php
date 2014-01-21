@@ -51,6 +51,7 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 		$this->product['review_count'] = (string)$r->NumReview;
 		
 		$this->product['in_stock'] = (int)$r->InStock;
+		$this->product['web_status'] = (int)$r->WebStatus;
 		
 		// Determine whether product is hardline or softline:
 		$product_variant = (string)$r->ProductVariant;
@@ -199,20 +200,16 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 				}
 			}
 			// Set the cat entry id's array:
-			
 			$this->product['cat_entry'] = array();
 			$final_atts = array();
-			//$raw_cids = $r->ProductVariants->prodList->product->prodVarList->prodVar->skuList->sku;
 			$raw_cids = $r->ProductVariants->prodList->product->prodVarList->prodVar;
 			foreach($raw_cids as $outer_cid) {
 				$outer_name = (string)$outer_cid->varName;
 				$sku_list = $outer_cid->skuList->sku;
 				
-				//$this->product['cat_entry'][$cat_entry] = array();
 				$final_atts[$outer_name] = array();
 				foreach($sku_list as $cid) {
 		
-		//error_log('$cid = '.print_r($cid,true));
 					$price = (string)$cid->price;
 					$in_stock = (string)$cid->stk;
 					/* // pId seems to be the 'catentryid' that the cart uses.
@@ -242,7 +239,6 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 						);
 		
 						$cid_atts = $cid->aVals->aVal;
-						//error_log('$cid_atts = '.print_r($cid_atts,true));
 						$k = 0;
 						foreach($cid_atts as $cid_att) {
 							$att_name = $this->product['attributes'][$k];
@@ -258,7 +254,6 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 							$k++;
 						}
 					//} // End if in stock.
-					//$this->product['cat_entry']
 				}
 			}
 			$this->product['attribute_values'] = $final_atts;

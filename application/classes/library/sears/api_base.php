@@ -42,12 +42,11 @@ class Sears_Api_Base {
 		$this->store = $options['store'];
 		$this->app_id = $options['appid'];
 		$this->auth_id = $options['authid'];
-    	//error_log('$options = '.print_r($options,true));
 	}
 	
 	
 	function make_request() {
-		if(PHP_SAPI !== 'cli') error_log('Making request - API URL: '.$this->request_url);
+		// if(PHP_SAPI !== 'cli') error_log('Making request - API URL: '.$this->request_url);
 	
 		// Init the curl resource.
         $ch = curl_init($this->request_url);

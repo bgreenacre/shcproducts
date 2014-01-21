@@ -111,7 +111,6 @@ function import_products(el, method, page_data) {
   }
   
   if(method == 'partnumber') {
-  	console.log('Searching for part number... '+partnumber_terms);
   	jQuery.post(
       shcp_ajax.ajaxurl,
       {
