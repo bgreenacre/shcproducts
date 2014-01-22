@@ -210,7 +210,8 @@ function ajax_update_single_shc_product() {
 
 	$output = array(
 		'msg' => 'Part number '.$part_number.' - '.$msg,
-		'imported' => $obj->last_imported
+		'imported' => $obj->last_imported,
+		'added_to_category' => $obj->last_added_to_category
 	);
 	
 	echo json_encode($output);

@@ -26,6 +26,9 @@
 	var paused = true;
 	
 	var total_imported = 0;
+	var total_already_imported = 0;
+	var total_skipped_invalid = 0;
+	var total_added_to_category = 0;
 	var total_products_processed = 0;
 	
 // 	var total_updated = 0;
@@ -117,14 +120,20 @@
 					data:post_data,
 					dataType:'json',
 					type:'post',
-					success:function(data){						
+					success:function(data){	
+						var screen_data = {
+							'msg' : data.msg
+						};					
 						if(data.imported) {
 							total_imported++;
+						} else if(data.added_to_category) {
+							total_added_to_category++;
+						} else {
+							total_skipped_invalid++;
+							screen_data.type = 'red';
 						}
 						
-						update_screen({
-							'msg' : data.msg
-						});
+						update_screen(screen_data);
 						
 						if(!paused) {
 							ajax_update_next();
@@ -141,8 +150,11 @@
 				});
 			} else {
 				update_screen({
-					'msg' : 'Part number '+product_to_update.part_number+' - '+product_to_update.action
+					'msg' : 'Part number '+product_to_update.part_number+' - '+product_to_update.action,
+					'type' : 'gray'
 				});
+				
+				total_already_imported++;
 			
 				if(!paused) {
 					ajax_update_next();
@@ -166,6 +178,9 @@
 		jQuery('#processed_count').html(current_category);
 		jQuery('#imported_count').html(total_imported);
 		jQuery('#product_processed_count').html(total_products_processed);
+		jQuery('#already_imported_count').html(total_already_imported);
+		jQuery('#added_to_category_count').html(total_added_to_category);
+		jQuery('#skipped_invalid_count').html(total_skipped_invalid);
 		
 		// Update current category:
 		jQuery('#current_category_name').html('Current Category: <b>'+categories[current_category].name+'</b>');
@@ -181,10 +196,19 @@
 			} else {
 				msg += ' -- No products found in this category.';
 			}
+			msg = '<b>'+msg+'</b>';
 		}
 		
 		if(data != undefined && data.msg != undefined) {
 			msg = data.msg;
+		}
+		
+		if(data != undefined && data.type != undefined) {
+			if(data.type == 'gray') {
+				msg = '<span style="color:#888;">'+msg+'</span>';
+			} else if(data.type == 'red') {
+				msg = '<span style="color:#F00;"><b>'+msg+'</b></span>';
+			} 
 		}
 		
 		
@@ -192,23 +216,7 @@
 		if(msg != '') {
 			jQuery('#detail_holder').append('<p>'+msg+'</p>');
 		}
-		
-// 		total_updated += data.updated;
-// 		total_draft += data.draft;
-// 		total_deleted += data.deleted;
-// 		total_no_action += data.no_action;
-// 		
-// 		// Put things into various boxes on the screen:
-// 		jQuery('#progress_percent_holder').html(complete_percent+'%');
-// 		jQuery('#detail_holder').append('<p>'+data.cron_msg+'</p>');
-// 		jQuery('#progress_holder .meter span').css('width', status_bar+'%');
-// 		
-// 		jQuery('#updated #updated_count').html(total_updated);
-// 		jQuery('#deleted #deleted_count').html(total_deleted);
-// 		jQuery('#draft #draft_count').html(total_draft);
-// 		jQuery('#no_action #no_action_count').html(total_no_action);
-// 		jQuery('#processed_count').html(current);
-// 		
+		 		
 // 		// Add some obnoxious highlighting for error messages, etc.:
 // 		if(total_draft > 0) {
 // 			jQuery('#draft').css('color','#FF8800');
@@ -268,7 +276,13 @@
 			<br>
 			<b>Products Processed: <span id="product_processed_count">0</span></b>
 			<br/><br/>
-			<span id="imported">Products Imported: <span id="imported_count">0</span> </span>
+			<span id="imported">New Products Imported: <span id="imported_count">0</span> </span>
+			<br/>
+			<span id="categorized">Existing Products Categorized: <span id="added_to_category_count">0</span> </span>
+			<br/>
+			<span id="already_imported">Already Imported: <span id="already_imported_count">0</span> </span>
+			<br/>
+			<span id="skipped_invalid">Skipped / Invalid: <span id="skipped_invalid_count">0</span> </span>
 			<br/><br/>
 			Elapsed Time: <span id="elapsed_time">0</span> seconds
 		</td>

@@ -28,6 +28,13 @@ class Product_Category_Model {
 	public $last_imported = false;
 	
 	/**
+	* Last added to category?
+	*
+	* @var bool
+	*/
+	public $last_added_to_category = false;
+	
+	/**
 	* Valid SHC Category?
 	*
 	* @var bool
@@ -244,6 +251,7 @@ class Product_Category_Model {
 				$this->sync_change_log[$part_number] = 'Already imported ('.$prod_obj->post_id.'), adding to category.';
 				// Add to category:
 				$prod_obj->add_to_category($this->category_id);
+				$this->last_added_to_category = true;
 			} else {
 				$this->sync_change_log[$part_number] = 'Not imported - '.$import_result;
 			}
