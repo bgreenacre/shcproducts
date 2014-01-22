@@ -22,6 +22,13 @@ $part_numbers = array(
 	
 	// As of 2014-01-06, this was a "collection" product.
 	// Collections are not supported by the plugin at this time. Product should register as invalid.
-	array('024CO55922312B')
+	array('024CO55922312B'),
+	
+	// As of 2014-01-10, these products provide examples of various softlines combinations:
+	array('076VA55548812P'), // Shoe available in Medium and Wide widths
+	array('076VA21776701P'), // Shoe available in Medium and Wide widths
+	array('076SA005000P'), // Shoe available in Medium and Wide widths
+	array('007VA58000212P'), // Sweatpants (soft line) - multiple sizes, 1 color
+	array('007VA65853512P'), // Athletic shirt (soft line) - multiple sizes, multiple colors
 
 );

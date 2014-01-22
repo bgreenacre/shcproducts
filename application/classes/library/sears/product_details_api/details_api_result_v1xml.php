@@ -258,7 +258,9 @@ class Details_Api_Result_V1xml extends Details_Api_Result_Base implements Api_Re
 			}
 			$this->product['attribute_values'] = $final_atts;
 		} else {
-			$this->product['cat_entry'] = (string)$r->SkuList->Sku->CatEntryId;
+			if(isset($r->SkuList->Sku->CatEntryId)) {
+				$this->product['cat_entry'] = (string)$r->SkuList->Sku->CatEntryId;
+			}
 		}
 	}
 	
