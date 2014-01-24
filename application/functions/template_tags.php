@@ -88,12 +88,16 @@ function short_description() {
  * @param bool $echo [optional]
  * @param int $force [optional]
  */
-function product_description($preference, $max_lenth = null, $force = false, $echo = true){
+function product_description($preference = '', $max_lenth = null, $force = false, $echo = true){
+
+	$content = get_the_content();
+	$allowed_tags = '<p><a><li><ul><b><i><strong><br><br/>';
+	$content = strip_tags($content, $allowed_tags);
 
 	if($echo) {
-		echo get_the_content();
+		echo $content;
 	} else {
-		return get_the_content();
+		return $content;
 	}
 
 }
