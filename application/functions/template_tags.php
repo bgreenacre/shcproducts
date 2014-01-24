@@ -1231,7 +1231,7 @@ function cart_check_avail_ajax(){
 	if(isset($_POST['postid'])){
         $id = (int) $_POST['postid'];
 		$_POST['instock'] = "true";
-		$pname = $_POST['pName'];
+		$pname = stripslashes($_POST['pName']);
 		$product_options = array();
 		// Build an array of the $_POST softline options
 		foreach ($_POST as $key => $value) {
@@ -1239,6 +1239,7 @@ function cart_check_avail_ajax(){
 			if ($key != "is_softline" && $key != "action" && $key != "postid" && $key != "template" && $key != "undefined") {
 				$new_key = str_replace("-"," ", str_replace("_"," ",$key));
 				$new_key = str_replace('|'.$pname, '', $new_key);
+				$new_key = str_replace('|'.str_replace("'",'',$pname), '', $new_key);
 				if( strpos($new_key, '|') === false ) {
 					$product_options[$new_key] = stripslashes($value);
 				}
