@@ -438,10 +438,12 @@ function product_price_info($catentryid = null, $quantity = 1){
 		$price_dollars = $price_cents / 100;
 		$return_array['regular'] = number_format($price_dollars,2);
 		// Calculate savings:
-		$price_cents = $return_array['savings'] * 100;
-		$price_cents = $price_cents * $quantity;
-		$price_dollars = $price_cents / 100;
-		$return_array['savings'] = number_format($price_dollars,2);
+		$savings_cents = $return_array['savings'] * 100;
+		$savings_cents = $savings_cents * $quantity;
+		$savings_dollars = $savings_cents / 100;
+		if($savings_dollars > 0) {
+			$return_array['savings'] = number_format($savings_dollars,2);
+		}
 	}    
     return $return_array;
 }
