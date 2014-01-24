@@ -723,6 +723,7 @@ function product_options($postid = null, $label = null){
        
    foreach($prodatts as $prodvar_name => $prodvar){
        $prodvar_label = str_replace("'", "", trim($prodvar_name, "\""));
+       $prodvar_label = str_replace(" ", "_", $prodvar_name);
        
        foreach((array)$prodvar as $label => $values){
       
