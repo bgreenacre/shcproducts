@@ -282,6 +282,19 @@ class Product_Model {
 			$size_values_string = implode(',', $size_values);
 			update_post_meta($this->post_id, 'search_size', $size_values_string);
 		}
+		// Save cat entry id as post meta for searching purposes:
+		if(is_array($this->product['cat_entry'])) {
+			$c = array_keys($this->product['cat_entry']);
+			$catentry_meta = '';
+			if(is_array($c) && !empty($c)) {
+				foreach($c as $catentryid) {
+					$catentry_meta .= '('.$catentryid.')';
+				}
+			}
+		} else {
+			$catentry_meta = '('.$this->product['cat_entry'].')';
+		}
+		update_post_meta($this->post_id, 'search_catentryid', $catentry_meta);
 	}
 	
 	
