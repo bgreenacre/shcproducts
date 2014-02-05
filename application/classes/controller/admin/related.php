@@ -38,7 +38,8 @@ class Controller_Admin_Related {
 
         add_action('wp_ajax_action_filter_list', array(&$this, 'action_filter_list'));
         add_action('wp_ajax_action_page_list', array(&$this, 'action_filter_list'));
-        add_action('add_meta_boxes', array(&$this, 'metabox'));
+		// Temporarily disable "Related Products" metabox on product edit screen.
+		// add_action('add_meta_boxes', array(&$this, 'metabox'));
         add_action('save_post', array(&$this, 'action_save'));
     }
 

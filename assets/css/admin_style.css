@@ -302,6 +302,10 @@ th#modified {
 	overflow: hidden;
 }
 
+#progress_holder .meter.paused > span:after {
+	background-image:none;
+}
+
 #progress_percent_holder {
 	font-size:15px;
 	font-weight:bold;
@@ -347,4 +351,122 @@ th#modified {
 	-moz-border-radius-bottomright: 20px;
 	border-top-right-radius: 20px;
 	border-bottom-right-radius: 20px;
+}
+
+.current_category_name {
+	font-size:11px;
+	padding-bottom:15px;
+}
+
+/* Verticals browser section */
+
+.product_preview_list li {
+	display:block;
+	float:left;
+	border:1px solid #CCC;
+	background-color:#FFF;
+	padding:7px;
+	width:150px;
+	height:160px;
+	text-align:center;
+	font-size:10px;
+	line-height:11px;
+	margin:4px;
+	overflow:hidden;
+	position:relative;
+}
+
+.import_button {
+	background-color:#CCC;
+	margin-top:5px;
+	padding:5px;
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	cursor:pointer;
+}
+.import_button.already_imported {
+	background-color:#AFA;
+}
+.import_button.importing {
+	background-color:#FF8;
+}
+.import_button.deleting {
+	background-color:#FF8;
+}
+
+.product_preview_list li span.part_number {
+	color:#AAA;
+}
+
+.product_preview_list li a {
+	text-decoration:none;
+}
+
+.load_more_products {
+	padding:15px;
+	clear:both;
+}
+
+
+th.column-image, td.column-image {
+	width:100px;
+}
+
+
+.catmapping_shc_category {
+	width:50%; 
+	float:left;
+	max-height:600px;
+	overflow-y:scroll;
+	padding:10px;
+}
+
+.catmapping_wp_category {
+	width:42%;
+	float:right;
+	padding:10px;
+}
+
+
+/* 
+#mapping_button {
+	background-color:#AFA;
+	width:150px;
+	height:30px;
+	line-height:30px;
+	margin-top:20px;
+	text-align:center;
+	cursor:pointer;
+}
+ */
+ 
+#mapping_button {
+	margin-top:20px;
+}
+
+#current_shc_category {
+	margin-top:15px;
+	max-width:300px;
+}
+
+table.category_mapping {
+	width:100%;
+}
+
+table.category_mapping th {
+	font-weight:bold;
+	border-bottom:1px solid #EEE;
+}
+
+table.category_mapping td {
+	border-bottom:1px solid #EEE;
+}
+
+table.category_mapping td.ok {
+	background-color:#AFA;
+}
+table.category_mapping td.error {
+	background-color:#FF0000;
+	color:#FFFFFF;
 }

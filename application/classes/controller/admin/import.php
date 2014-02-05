@@ -249,77 +249,19 @@ class Controller_Admin_Import {
 
     public function action_save()
     {
-        $product_count = count(SHCP::get($_POST, 'import_single'));
-        $shcp_category = SHCP::get($_POST, 'shcp_category');
-
-        $keys = array_keys($_POST);
-        
-        unset($keys[array_search('import_all', $keys)]);
-        unset($keys[array_search('import_single', $keys)]);
-        unset($keys[array_search('action', $keys)]);
-
-        for($i=0; $i<$product_count; $i++)
-        {
-            $check = new Model_Products();
-            $shcproduct = new Model_Products();
-            $data = array();
-            $categories = array();
-
-            foreach($keys as $field_name)
-            {
-                if($field_name != 'shcp_category') {
-                    $field_values = SHCP::get($_POST, $field_name);
-                    $data[$field_name] = $field_values[$i];
-                }
-            } 
-
-            if ( ! $check->meta('partnumber', '=', $data['partnumber'])->loaded())
-            {
-
-                $detail = Library_Sears_Api::factory('product')
-                    ->get($data['partnumber'])
-                    ->param('showSpec', 'true')
-                    ->load();
-                    
-                if(is_object($detail)) {
-                    $data['detail'] = serialize($detail);
-                } else {
-                    $data['detail'] = $detail;
-                }    
-
-                $shcproduct->values($data);
-
-                if ($shcproduct->check())
-                {
-                    $shcproduct->save();
-                    
-                    $categories[] = $shcp_category;
-
-                    $product_detail = unserialize(SHCP::get($data, 'detail'));
-                    
-                    $brand_name = isset($product_detail) ? $product_detail->brandname : null;
-                    
-                    /**
-                    * if there is a category that matches the brand name (slug) add that as a category for the product
-                    */                    
-                    $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
-                    
-                    if(isset($brand_name)) {
-                        $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
-                    } 
-                    if(isset($brand->term_id)) {
-                        $categories[] = $brand->term_id;
-                    }           
-                            
-                    wp_set_post_categories($shcproduct->ID, $categories);      
-                }
-                $errors[] = $shcproduct->errors();
-            }
-        }
-
-        echo(json_encode(array('errors' => $errors)));
-  
-        die(); // have to do this in WP otherwise a zero will be appended to all responses          
+    	$part_numbers = SHCP::get($_POST, 'partnumber');
+    	
+    	$wp_category_id = SHCP::get($_POST, 'shcp_category');
+    	
+    	foreach($part_numbers as $part_number) {
+    		$prod_obj = new Product_Model($part_number);
+    		$prod_obj->import_product();
+    		if(!empty($wp_category_id)) {
+    			$prod_obj->add_to_category($wp_category_id);
+    		}
+    	}
+    	
+    	die();      
     }
 
     /**
@@ -329,85 +271,47 @@ class Controller_Admin_Import {
      * @return  void
      */    
     public function action_save_all()
-    {        
-        $data = array();
+    {  
+    	$wp_category_id = SHCP::get($_POST, 'assigned_category');
+    	
+    	$vertical = SHCP::get($_POST, 'vertical_terms');
+    	$category = SHCP::get($_POST, 'category_terms');
+    	$category = trim(substr($category, 0, strpos($category, '('))); // Remove count.
+    	$subcategory = SHCP::get($_POST, 'subcategory_terms');
+    	$subcategory = trim(substr($subcategory, 0, strpos($subcategory, '('))); // Remove count.
+    	$filter = SHCP::get($_POST, 'filter_terms');
+    	$filter_name = $filter_value = '';
+    	if(!empty($filter)) {
+    		$splode_filter = explode('|', $filter);
+    		if(is_array($splode_filter)) {
+    			if(isset($splode_filter[0]) && isset($splode_filter[1])) {
+    				$filter_name = $splode_filter[0];
+    				$filter_value = $splode_filter[1];
+    			}
+    		}
+    	}
+    	
+    	$category = array(
+    		'vertical' => $vertical,
+    		'category' => $category,
+    		'subcategory' => $subcategory,
+    		'filter_name' => $filter_name,
+    		'filter_value' => $filter_value
+    	);
+    
+    	$api_result = get_all_products_in_category($category);
 
-        foreach($_POST as $key => $value) {
-            $data[$key] = $value;
-        }
-        
-        // split data into chunks of 100 to facilitate import process and work around timeout issues.
-        $chunk_size = 100;
-        
-        for($i = 0; $i < $data['product_count']; $i+=$chunk_size) {
-
-            $limit = $this->get_product_limits($i, $data['product_count'], $chunk_size);
-
-            $result = $this->get_api_result($data, $limit);
-
-            foreach($result as $product)
-            {
-                $check = new Model_Products();
-                $shcproduct = new Model_Products();
-                $product_data = array();
-                $categories = array();
-                $detail = '';
-
-                $product_data['post_title']     = isset($product->name)         ? $product->name            : '';
-                $product_data['catentryid']     = isset($product->catentryid)   ? $product->catentryid      : '';
-                $product_data['cutprice']       = isset($product->cutprice)     ? $product->cutprice        : '';
-                $product_data['displayprice']   = isset($product->displayprice) ? $product->displayprice    : '';
-                $product_data['imageid']        = isset($product->imageid)      ? $product->imageid         : '';
-                $product_data['numreview']      = isset($product->numreview)    ? $product->numreview       : '';
-                $product_data['partnumber']     = isset($product->partnumber)   ? $product->partnumber      : '';
-                $product_data['rating']         = isset($product->rating)       ? $product->rating          : '';
-
-                if ( ! $check->meta('partnumber', '=', $product_data['partnumber'])->loaded()) // check if product exists
-                {   
-                    $detail = Library_Sears_Api::factory('product')
-                        ->get($product_data['partnumber'])
-                        ->param('showSpec', 'true')
-                        ->load(); 
-                
-                    if(is_object($detail)) {
-                        $product_data['detail'] = serialize($detail);
-                    } else {
-                        $product_data['detail'] = $detail;
-                    }
-
-                    $shcproduct->values($product_data);
-
-                    if ($shcproduct->check()) // check if there are errors
-                    {   
-                        $shcproduct->save();
-                    
-                        $categories[] = SHCP::get($data, 'assigned_category', 1);
-                    
-                        /**
-                        * if there is a category that matches the brand name (slug) add that as a category for the product
-                        */
-                        $product_detail = unserialize(SHCP::get($product_data, 'detail'));
-                    
-                        $brand_name = isset($product_detail) ? $product_detail->brandname : null;
-                    
-                        if(isset($brand_name)) {
-                            $brand = get_category_by_slug(str_replace(' ', '-', strtolower($brand_name)));
-                        } 
-                        if(isset($brand->term_id)) {
-                            $categories[] = $brand->term_id;
-                        }           
-
-                        wp_set_post_categories($shcproduct->ID, $categories);
-                    }
-
-                    $errors[] = $shcproduct->errors();   
-                }
-            }
-        }    
-
-        echo(json_encode(array('errors' => $errors)));
-  
-        die(); // have to do this in WP otherwise a zero will be appended to all responses
+		if(is_object($api_result) && isset($api_result->products) && is_array($api_result->products)) {
+			foreach($api_result->products as $part_number => $product_info) {
+				$prod_obj = new Product_Model($part_number);
+				$prod_obj->import_product();
+				if(!empty($wp_category_id)) {
+					$prod_obj->add_to_category($wp_category_id);
+				}
+			}
+		}
+    
+    	die();
     }  
 
     /**

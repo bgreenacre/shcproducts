@@ -24,7 +24,21 @@
       <label for="search_terms">Vertical Search: </label>
     </div>
     <div class="shcp_form_fields">
-      <input type="text" name="search_terms" class="search_terms" id="search_terms_vertical" value="Enter search terms" />
+    	<?php
+    		$search_obj = new Product_Search_Api();
+			$result = $search_obj->get_verticals();
+	
+			if(is_array($result->verticals)) {
+				$output .= '<select name="search_terms" class="search_terms" id="search_terms_vertical">';
+				$output .= '<option value="">-- Select Vertical --</option>';
+				foreach($result->verticals as $vertical) {
+					$output .= '<option value="'.$vertical['vertical_name'].'">'.$vertical['vertical_name'].'</option>';
+				}
+				$output .= '</select>';
+			}
+			
+			echo $output;
+    	?>
       <input type="submit" name="submit_vertical" id="submit_vertical" value="Search" />
     </div>
     <div class="shcp_form_fields">

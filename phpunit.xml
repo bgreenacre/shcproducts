@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="false"
+         bootstrap="tests/bootstrap_tests.php" 
+         verbose="true"
+>
+    <testsuites>
+        <testsuite name="SHC Products Test Suite">
+        	<file>tests/api-tests/api_tests_product_details.php</file>
+        <!--	<file>tests/api-tests/api_tests_product_search.php</file>
+        	<file>tests/api-tests/api_tests_product_search_v2xml.php</file>
+        	<file>tests/api-tests/api_tests_product_search_v2json.php</file>
+        	<file>tests/api-tests/api_tests_product_search_v1xml.php</file>
+        	<file>tests/api-tests/api_tests_product_search_v1json.php</file>
+            <file>tests/api-tests/api_tests_categories.php</file>
+            <file>tests/api-tests/api_tests_categories_v1json.php</file>
+            <file>tests/api-tests/api_tests_categories_v1xml.php</file>
+            <file>tests/api-tests/api_tests_categories_v2json.php</file>
+            <file>tests/api-tests/api_tests_categories_v2xml.php</file>
+            <file>tests/api-tests/api_tests_filters.php</file>
+            <file>tests/api-tests/api_tests_filters_v1json.php</file>
+            <file>tests/api-tests/api_tests_filters_v1xml.php</file>
+            <file>tests/api-tests/api_tests_filters_v2json.php</file>
+            <file>tests/api-tests/api_tests_filters_v2xml.php</file> -->
+        </testsuite>
+    </testsuites>
+</phpunit>

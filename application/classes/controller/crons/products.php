@@ -175,6 +175,23 @@ class Controller_Crons_Products {
 	 */
 	protected $_is_manual_update = false;
 	
+	/**
+	*
+	* @var int
+	*/
+	protected $notice_count = 0;
+	protected $warning_count = 0;
+	protected $total_category_count = 0;
+	protected $total_products_imported = 0;
+	protected $total_already_imported = 0;
+	protected $total_categorized = 0;
+	protected $total_skipped_invalid = 0;
+	
+	protected $total_product_count = 0;
+	protected $total_products_updated = 0;
+	protected $total_products_deleted = 0;
+	protected $total_products_no_action = 0;
+	protected $total_products_set_to_draft = 0;
 	
 	/**
 	 * Constructor - Sets initial properties
@@ -191,78 +208,138 @@ class Controller_Crons_Products {
 		$this->_log_dir_path = $this->_log_root_dir_path . $this->_log_dir;
 		
 	}
+	
+	protected function _action_sync_categories() {
+		$categories = get_full_categories();
+		$category_array = array();
+		foreach($categories as $category_id => $category_name) {
+			$this->total_category_count++;
+		
+			$category_name = str_replace('&rarr;', '--', $category_name);
+		
+			$this->log_message('');
+			$this->log_message('ID #'.$category_id.' ('.$category_name.')');
+		
+			$cat_obj = new Product_Category_Model($category_id);
+			$cat_sync_outcome = $cat_obj->sync();
+						
+			if(is_array($cat_sync_outcome) && !empty($cat_sync_outcome)) {
+				$reverse_array = array();
+				foreach($cat_sync_outcome as $part_number => $outcome) {
+					if(!isset($reverse_array[$outcome])) {
+						$reverse_array[$outcome] = array($part_number);
+					} else {
+						$reverse_array[$outcome][] = $part_number;
+					}
+					// Increment stats based on outcome:
+					if(strpos($outcome,'Already imported and in category') !== false){
+						$this->total_already_imported++;
+					}
+					if(strpos($outcome,'Not imported') !== false){
+						$this->total_skipped_invalid++;
+					}
+					if(strpos($outcome,'adding to category') !== false){
+						$this->total_categorized++;
+					}
+					if(strpos($outcome,'Successfully imported') !== false){
+						$this->total_products_imported++;
+					}
+				}
+				foreach($reverse_array as $outcome => $part_numbers) {
+					$this->log_message('-- '.trim($outcome,' .').': '.implode(', ', $part_numbers));
+				}
+			} else {
+				$this->log_message('No operations performed.');
+			}
+			// Process notices & warnings for category sync:
+			$notices = $cat_obj->notices;
+			if(is_array($notices) && !empty($notices)) {
+				$notice_count = count($notices);
+				$s = ($notice_count == 1) ? '' : 's';
+				$this->log_message($notice_count.' notice'.$s.':');
+				foreach($notices as $notice) {
+					$this->log_message('-- '.$notice);
+					$this->notice_count++;
+				}
+			}
+			$warnings = $cat_obj->warnings;
+			if(is_array($warnings) && !empty($warnings)) {
+				$warning_count = count($warnings);
+				$s = ($warning_count == 1) ? '' : 's';
+				$this->log_message($warning_count.' warning'.$s.':');
+				foreach($warnings as $warning) {
+					$this->log_message('-- '.$warning);
+					$this->warning_count++;
+				}
+			}
+		}
+	}
+	
+	protected function _action_update_products($posts) {
+		$outcome_array = array(
+			'Successfully Updated' => array()
+		);
+		
+		foreach ($posts as $key => $post) {
+			$this->total_product_count++;
+		
+			$prod_obj = new Product_Post_Model($post->ID);
+			$outcome = $prod_obj->sync_from_api();
 
-    public function action_update($force = false)
-    {set_time_limit(0);
-    	//Only proceed if the API server is reachable
+			if($outcome !== true) {
+				if(!isset($outcome_array[$outcome])) {
+					$outcome_array[$outcome] = array($post->ID);
+				} else {
+					$outcome_array[$outcome][] = $post->ID;
+				}
+			} else {
+				$outcome_array['Successfully Updated'][] = $post->ID;
+			}
+			
+			if($prod_obj->is_updated) {
+				$this->total_products_updated++;
+			}
+			if($prod_obj->is_deleted) {
+				$this->total_products_deleted++;
+			}
+			if($prod_obj->no_action) {
+				$this->total_products_no_action++;
+			}
+			if($prod_obj->is_draft) {
+				$this->total_products_set_to_draft++;
+			}
+		}
+		
+		// Log outcomes:
+		foreach($outcome_array as $key => $value_array) {
+			if(!empty($value_array)) {
+				$this->log_message('');
+				$this->log_message(trim($key,'. ').': '.implode(', ',$value_array));
+			}
+		}
+	}
+
+    public function action_update($force = false) {
+    
+		set_time_limit(0);
     	
     	$this->elapsed_time_start = microtime(true);
+    	
+    	// Grab list of posts before performing any imports:
+		global $wpdb;
+		$sql = "SELECT ID FROM ".$wpdb->prefix."posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
+		$posts = $wpdb->get_results($sql);
     	    	
-    	if($this->is_api_available()) {
-    		
-    		
-    		if($force) {
-    			
-    			$this->_force_update = true;
-    		}
-    		
-    		global $wpdb;
-    		$sql = "SELECT ID FROM ".$wpdb->prefix."posts WHERE post_type = 'shcproduct' AND (post_status = 'publish' OR post_status = 'draft') ORDER BY post_modified ASC";
-    		$posts = $wpdb->get_results($sql);
-    		            
-            $this->set_threshold($posts);
-           
-	        foreach ($posts as $key=>$post)
-	        {
-	        	//If the number of 'deletes' equals threshold, fail job.
-	        	if((!$this->_force_update && !$this->_forceupdate_override) && ($this->_num_deleted >= $this->_fail_threshold_cnt) && (! $this->_profile_mode)) {
-	        		
-	        		$this->fail_job("\n\n WARNING! -- Maximum number of deletes reached ({$this->_fail_threshold_cnt}). Job aborted.");
-	        		
-	        	}
-	        	
-	        	if(isset($post->ID) && !empty($post->ID) && is_numeric($post->ID)) {
-	        	
-					// Run update:
-					$model_post = new Model_Products($post->ID); 
-					$model_post->sync_from_api($this->_profile_mode);
+		// Step 1: Loop through categories and import products as needed:
+		$this->_action_sync_categories();
+		
+		// Step 2: Loop through posts and update / delete products as needed:
+		$this->_action_update_products($posts);
 				
-					// Log the outcome (for email report / log file):
-					$this->log_message($model_post);
-					
-					//error_log($model_post->cron_msg);
-										   
-					unset($model_post);
-				
-					wp_cache_flush();
-	            }
-	        }
-	        
-	        $this->elapsed_time_end = microtime(true);
-	        
-	        
-	        //Create Log file
-	        $this->create_log();
-	        
-	        //Rotate out logs that are older than 30 days /appl/wordpress/log/
-	        $this->rotate_logs();
-	        
-	        //Mail report
-	        $this->mail_report();
-	        
-        
-         } else {
-    		
-    		//Fail Job
-    		$this->fail_job('WARNING! -- API Server was NOT available. Job aborted.');
-    		
-    		$this->create_log();
-    		
-    		$this->rotate_logs();
-    		
-    		$this->mail_report();
-    
-    	}
+		$this->elapsed_time_end = microtime(true);
+		
+		// Step 3: Email the report:
+		$this->mail_report();
     }
     
     /**
@@ -315,31 +392,10 @@ class Controller_Crons_Products {
     }
     
     
-    // Log all types of messages, depending on what was set in the post object, with optional formatting.
-    protected function log_message($post) {
-    	$msg = $post->cron_msg."\n";
-    	if(empty($msg)) return;
-    	if(! $this->_profile_mode) {
-    		
-    		if($post->is_updated) {
-    			$this->_num_updated++;
-    		}
-    		if($post->is_deleted) {
-    			$this->_num_deleted++;
-    			$msg = '<span style="color:#FF0000;"><b>'.$msg.'</b></span>';
-    		} 
-    		if($post->is_draft) {
-    			$this->_num_draft++;
-    			$msg = '<span style="color:#ff6c00;"><b>'.$msg.'</b></span>';
-    		}  
-    		if($post->no_action) {
-    			$this->_num_no_action++;
-    			$msg = '<span style="color:#FF0000;background-color:#FFFF00;"><b>'.$msg.'</b></span>';
-    		}  		
-    		$this->_activity_log[] = $msg;
-    	} else {
-    		$this->_profile_log[] = $msg;
-    	}
+    // Log all types of messages:
+    protected function log_message($text) {
+    	$text = html_entity_decode($text);
+    	$this->_activity_log[] = $text."\n";
     }
     
     
@@ -401,48 +457,43 @@ class Controller_Crons_Products {
     	$subject = 'SHC Products Update for ' . $this->_blog_name;
     	
     	$body =  "Product update completed on: " . date('Y-m-d h:i:s a T') ."\n";
-    	
-    	$body .= 'Update mode: ';
-    	if($this->_is_manual_update) {
-    		$body .= 'Manual (admin panel force update)';
-    	} else {
-    		$body .= 'Automatic (cron job)';
-    	}
-    	$body .= "\n";
-			
+    				
 		$elapsed_time = $this->elapsed_time_end - $this->elapsed_time_start;
+		$elapsed_time_minutes = $elapsed_time / 60;
+		$elapsed_time_minutes = number_format($elapsed_time_minutes,2);
 		$elapsed_time = number_format($elapsed_time,3);
-		$body .= "Elapsed Time: ".$elapsed_time." seconds \n\n";
+		$body .= "Elapsed Time: ".$elapsed_time." seconds (".$elapsed_time_minutes." minutes)\n\n";
 		
-    	if($this->_activity_log) {
-    		$status = "Job Status: <b>{$this->_status}</b> \n";
-    		$total = "Total Products: {$this->_num_posts}\n";
-    		$updated = "Products Updated: {$this->_num_updated} \n";
-    		$draft = "Products Set to Draft: {$this->_num_draft}\n";
-    		$deleted = "Products Permanently Deleted: {$this->_num_deleted}\n";
-    		$no_action = "No Action Taken: {$this->_num_no_action} \n";
-    		
-    		if($this->_num_draft > 0) $draft = '<span style="color:#ff6c00;"><b>'.$draft.'</b></span>';
-    		if($this->_num_deleted > 0) $deleted = '<span style="color:#ff0000;"><b>'.$deleted.'</b></span>';
-    		if($this->_num_no_action > 0) $no_action = '<span style="color:#FF0000;background-color:#FFFF00;"><b>'.$no_action.'</b></span>';
-    		
-    		$log_string = $this->log_to_string($this->_activity_log);
-    		
-    		$body .= $status.$total.$updated.$draft.$deleted.$no_action."\n".$log_string;
-    		
-    		
-    		
-    	} else {
-    		$body .= 'No products were updated or set to draft.';
-    	}
+		$body .= "Summary:\n\n";
+		
+		// Category sync summary:
+		$body .= "Total Categories: {$this->total_category_count}\n";
+		$body .= "New Products Imported: {$this->total_products_imported}\n";
+		$body .= "Existing Products Categorized: {$this->total_categorized}\n";
+		$body .= "Already Imported: {$this->total_already_imported}\n";
+		$body .= "Skipped / Invalid: {$this->total_skipped_invalid}\n";
+		if($this->notice_count > 0) $body .= "Notices: {$this->notice_count}\n";
+		if($this->warning_count > 0) $body .= "Warnings: {$this->warning_count}\n";
+		
+		// Product update summary:
+		$body .= "\n";
+		$body .= "Total Products: {$this->total_product_count}\n";
+		$body .= "Successfully Updated: {$this->total_products_updated}\n";
+		$body .= "Permanently Deleted: {$this->total_products_deleted}\n";
+		$body .= "Set To Draft: {$this->total_products_set_to_draft}\n";
+		$body .= "No Action: {$this->total_products_no_action}\n";
+		    		
+    	$log_string = $this->log_to_string($this->_activity_log);
     	
-    	if($this->_profile_mode) {
+    	$body .= "\n".$log_string;	
+    	$body = nl2br($body);
     		
-    		$body .= "\n CHANGES NEEDED TO BE PERFORMED: \n\n" . $this->log_to_string($this->_profile_log);
-    	}
-
+		// Make it an HTML message with some light formatting:
 		$headers = array();
-    	wp_mail($to, $subject, strip_tags($body), $headers);
+		$headers[] = 'Content-Type: text/html';
+		$body = '<div style="font-size:13px;">'.$body.'</div>';
+
+    	wp_mail($to, $subject, $body, $headers);
     }
     
     /**

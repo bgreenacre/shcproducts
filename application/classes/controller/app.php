@@ -60,6 +60,8 @@ class Controller_App {
 
             // declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
             wp_localize_script('sears-products-admin-scripts', 'shcp_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'imageurl' => SHCP_IMAGES));
+            
+             wp_enqueue_script('sears-products-admin-verticals', SHCP_JS.'/admin_verticals_browser.js', array('jquery'));
         }
         else
         {

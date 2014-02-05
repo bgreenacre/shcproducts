@@ -46,6 +46,10 @@ class SHCP {
      * @var array
      */
     public static $global_data = array();
+    
+    public static $global_cart;
+    
+    public static $current_catentryid;
 
     public static $profiling = TRUE;
     public static $cache_dir = SHCP_CACHE;
@@ -78,6 +82,8 @@ class SHCP {
      */
     public static function init(array $params = array())
     {
+    	add_action( 'wp_loaded', array( SHCP, 'wp_init' ) );
+    
         if (self::$_init !== FALSE)
         {
             return;
@@ -153,6 +159,17 @@ class SHCP {
             SHCP::cache('clear_out_cache', TRUE, 3600);
         }
     }
+    
+    /*
+    * wp_init - Like init, except to be executed during the WordPress 'wp_loaded' action hook.
+    */
+    public static function wp_init() {
+		self::$global_cart = new Model_Cart();
+		// Don't load the cart unless we're on the front end of the site.
+		if(!is_admin() && (PHP_SAPI !== 'cli')) {
+			self::$global_cart->view()->load()->cart;
+		}
+    }
 
     /**
      * Convert special characters to HTML entities. All untrusted content
@@ -178,8 +195,66 @@ class SHCP {
      */
     public static function autoload($class)
     {
-        try
-        {
+        try {
+        	// Specify the exact directory locations of certain classes.
+        	$location = '';
+        	switch($class){
+        		case 'Sears_Api_Base':
+        			$location = SHCP_CLASS . '/library/sears/api_base.php';
+        			break;
+        		case 'Product_Search_Api':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/product_search_api.php';
+        			break;
+        		case 'Product_Details_Api':
+        			$location = SHCP_CLASS . '/library/sears/product_details_api/product_details_api.php';
+        			break;
+        		case 'Search_Api_Result_Base':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_base.php';
+        			break;
+        		case 'Search_Api_Result_V1xml':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_v1xml.php';
+        			break;
+        		case 'Search_Api_Result_V1json':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_v1json.php';
+        			break;
+        		case 'Search_Api_Result_V2xml':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_v2xml.php';
+        			break;
+        		case 'Search_Api_Result_V2json':
+        			$location = SHCP_CLASS . '/library/sears/product_search_api/search_api_result_v2json.php';
+        			break;
+        		case 'Details_Api_Result_Base':
+        			$location = SHCP_CLASS . '/library/sears/product_details_api/details_api_result_base.php';
+        			break;
+        		case 'Details_Api_Result_V1xml':
+        			$location = SHCP_CLASS . '/library/sears/product_details_api/details_api_result_v1xml.php';
+        			break;
+        		case 'Product_Model':
+        			$location = SHCP_CLASS . '/model/product_model.php';
+        			break;
+        		case 'Product_Post_Model':
+        			$location = SHCP_CLASS . '/model/product_post_model.php';
+        			break;
+        		case 'Product_Category_Model':
+        			$location = SHCP_CLASS . '/model/product_category_model.php';
+        			break;
+        		case 'Api_Result':
+        		case 'Search_Api_Result':
+        		case 'Details_Api_Result':
+        			$location = SHCP_CLASS . '/interface/api_result.php';
+        			break;
+        	}
+        	if (is_file($location)) {
+                require $location;
+                return TRUE;
+            } else {
+            	if(!empty($location)) {
+            		error_log('Failed to load class '.$class.' - directory not found ['.$location.']');
+            	}
+            }
+        	
+        	// Old version is below:
+        
             $file = str_replace('_', '/', strtolower($class));
 
             $themepath = get_stylesheet_directory() . '/application/classes/' . $file . '.php';
@@ -358,8 +433,11 @@ class SHCP {
         if ( ! is_dir($dir))
         {
             // Create the cache directory
-            mkdir($dir, 0777, TRUE);
-
+            @mkdir($dir, 0777, TRUE);
+			
+			// Creating the directory failed.
+			if(!is_dir($dir)) return false;
+			
             // Set permissions (must be manually set to fix umask issues)
             chmod($dir, 0777);
         }
