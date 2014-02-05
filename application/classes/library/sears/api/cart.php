@@ -75,6 +75,9 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
             {
                 $this->_total_rows = 1;
                 $this->_data = array(& $this->_object->Shoppingcart);
+				if(empty($this->order_id) && isset($this->_data[0]) && is_object($this->_data[0]->OrderId)) {
+					$this->order_id = (string)$this->_data[0]->OrderId;
+				}
             }
         }
     }
@@ -269,7 +272,7 @@ class Library_Sears_Api_Cart extends Library_Sears_Api {
      */
     public function remove($line_id, $order_id = NULL, $catalog_id = NULL)
     {
-        if ($order_id === NULL OR $catalog_id === NULL)
+        if ($order_id === NULL OR $catalog_id === NULL OR empty($order_id))
         {
             if ($this->method())
             {
